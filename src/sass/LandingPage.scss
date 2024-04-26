@@ -1,0 +1,16 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.landing-page {
+    position: relative;
+    height: calc(100vh - 20px);
+    width: calc(100vw - 20px);
+    margin: 10px;  // This ensures the 10px margin on all sides if that's the intention
+    background: white url('../assets/images/port-splash.png') no-repeat center center;
+    background-size: contain;
+    box-sizing: border-box;  // Includes padding and border in the element's total width and height
+}
