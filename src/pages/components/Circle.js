@@ -15,22 +15,26 @@ const icons = {
   shop: ShopIcon
 };
 
-const Circle = ({ icon, text, angle, distance }) => {
+const Circle = ({ icon, text, angle, distance, className }) => {
+  console.log("Received icon key:", icon);
+
   const IconComponent = icons[icon];
+  
+  console.log("IconComponent determined:", IconComponent);
 
   const positionCircle = () => {
     const radian = (angle * Math.PI) / 180;
     const offsetLeft = distance * Math.cos(radian);
     const offsetTop = distance * Math.sin(radian);
     return {
-      left: `calc(50% + ${offsetLeft}px - 60px)`,
-      top: `calc(50% - ${offsetTop}px - 60px)`
+      left: `calc(50% + ${offsetLeft}px - 58px)`,
+      top: `calc(50% - ${offsetTop}px - 58px)`
     };
   };
 
   return (
-    <div className="white-circle" style={positionCircle()}>
-      <IconComponent />
+    <div className={`white-circle ${className}`} style={positionCircle()}>
+      {IconComponent ? <IconComponent /> : null}
       <span className="circle-text">{text}</span>
     </div>
   );

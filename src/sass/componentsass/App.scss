@@ -1,0 +1,33 @@
+/* App-wide styles */
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Prevents scrolling on the html/body directly */
+  }
+  
+  .mainWrap {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .header, .footer {
+    flex-shrink: 0; /* Ensures that header and footer do not shrink */
+    width: 100%;
+    position: sticky; /* Sticky positioning */
+    top: 0; /* Header sticks at the top */
+    background-color: #fff; /* Background color for visibility */
+    z-index: 1000; /* Ensures it's above other content */
+  }
+  
+  .footer {
+    top: auto;
+    bottom: 0; /* Footer sticks at the bottom */
+  }
+  
+  .mainContent {
+    flex-grow: 1; /* Takes up all available space */
+    overflow-y: auto; /* Enables scrolling on the main content */
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+  }
