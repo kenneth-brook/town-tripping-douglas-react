@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import '../../sass/componentsass/HomeContent.scss'; // Assume you have CSS/SCSS for styling
+import '../../sass/componentsass/HomeContent.scss';
 import Circle from './Circle';
 import chair from '../../assets/images/chair.png';
 
