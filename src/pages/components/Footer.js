@@ -1,11 +1,16 @@
 import React from 'react';
+import { useOrientation } from '../../hooks/OrientationContext';
+import '../../sass/componentsass/Footer.scss';
 
-const Footer = () => {
+function Footer() {
+  console.log("Footer rendering");
+  const orientation = useOrientation();
+
   return (
     <footer>
-      {/* Visitor Information Center and other info */}
+      <p>{orientation === 'portrait' ? 'Portrait Footer' : 'Landscape Footer'}</p>
     </footer>
   );
-};
+}
 
 export default Footer;

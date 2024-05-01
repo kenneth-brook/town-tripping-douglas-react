@@ -13,11 +13,9 @@ const HomeContent = () => {
     // Calculate positions and create circle data
     const newCircles = texts.map((text, index) => {
       const angle = index * 60;
-      const distance = 125; // Distance from center
+      const distance = 128; // Distance from center
       return { icon: iconsKeys[index], text, angle, distance };
     });
-
-    console.log("New circles:", newCircles);
 
     setCircles(newCircles);
   }, []);

@@ -1,14 +1,14 @@
 import React from 'react';
-import { useAppOrientation } from '../../hooks/OrientationContext';
+import { useOrientation } from '../../hooks/OrientationContext';
+import '../../sass/componentsass/Header.scss';
 
 function Header() {
-  const orientation = useAppOrientation();
+  console.log("Header rendering");
+  const orientation = useOrientation();
 
   return (
     <header>
-      {orientation === 0 || orientation === 180
-        ? <h1>Portrait Header</h1>
-        : <h1>Landscape Header</h1>}
+      <h1>{orientation.includes('portrait') ? 'Portrait Header' : 'Landscape Header'}</h1>
     </header>
   );
 }

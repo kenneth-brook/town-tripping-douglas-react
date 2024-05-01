@@ -16,11 +16,8 @@ const icons = {
 };
 
 const Circle = ({ icon, text, angle, distance, className }) => {
-  console.log("Received icon key:", icon);
 
   const IconComponent = icons[icon];
-  
-  console.log("IconComponent determined:", IconComponent);
 
   const positionCircle = () => {
     const radian = (angle * Math.PI) / 180;

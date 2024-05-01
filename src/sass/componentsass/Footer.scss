@@ -1,0 +1,14 @@
+footer {
+    /* Gradient background from top to bottom */
+    background-image: linear-gradient(
+        to bottom,
+        #007037, /* Top color */
+        #BF772F /* Bottom color */
+    );
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+    text-align: center;
+    color: white;
+    height: 100px;
+    width: 100%;
+    flex-shrink: 0;
+}

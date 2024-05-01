@@ -1,10 +1,21 @@
-import React, { createContext, useContext } from 'react';
-import useOrientation from './useOrientation';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
-const OrientationContext = createContext();
+const OrientationContext = createContext(null);
 
 export const OrientationProvider = ({ children }) => {
-  const orientation = useOrientation();
+  const [orientation, setOrientation] = useState(window.screen.orientation?.type);
+
+  useEffect(() => {
+    const handleOrientationChange = () => {
+      setOrientation(window.screen.orientation?.type);
+    };
+
+    window.addEventListener('orientationchange', handleOrientationChange);
+    return () => {
+      window.removeEventListener('orientationchange', handleOrientationChange);
+    };
+  }, []);
+
   return (
     <OrientationContext.Provider value={orientation}>
       {children}
@@ -12,4 +23,4 @@ export const OrientationProvider = ({ children }) => {
   );
 };
 
-export const useAppOrientation = () => useContext(OrientationContext);
+export const useOrientation = () => useContext(OrientationContext);
