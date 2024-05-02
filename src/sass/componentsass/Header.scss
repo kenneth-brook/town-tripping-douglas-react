@@ -1,6 +1,6 @@
 header {
     background-color: #007037; /* Placeholder: deep green, pick the actual color from the image */
-    padding-top: env(safe-area-inset-top, 20px);
+    /*padding-top: env(safe-area-inset-top, 20px);*/
     text-align: center;
     color: #ffffff;
     height: auto;
@@ -12,6 +12,7 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
+    top: 0;
 }
 
 .header-container {

@@ -1,14 +1,28 @@
 footer {
-    /* Gradient background from top to bottom */
-    background-image: linear-gradient(
-        to bottom,
-        #007037, /* Top color */
-        #BF772F /* Bottom color */
-    );
-    padding-bottom: env(safe-area-inset-bottom, 20px);
+    background-image: linear-gradient(to bottom, #007037, #BF772F);
     text-align: center;
     color: white;
     height: 100px;
     width: 100%;
     flex-shrink: 0;
+    position: relative;
+    bottom: 0;
+
+    .footer-circles {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px; // Adjust as necessary
+    }
+
+    .footer-icon {
+        width: 30px;
+        height: 30px;
+        margin: 0 10px;
+        fill: white;
+        cursor: pointer; /* Shows a pointer on hover to indicate clickability */
+        display: flex; /* Ensures the SVG centers correctly */
+        justify-content: center;
+        align-items: center;
+    }
 }

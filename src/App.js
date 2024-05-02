@@ -3,6 +3,12 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './sass/componentsass/App.scss';
 import HomePage from './pages/HomePage';
 import LandingPage from './pages/LandingPage';
+import Stay from './pages/Stay';
+import Play from './pages/Play';
+import Dine from './pages/Dine';
+import Shop from './pages/Shop';
+import Events from './pages/Events';
+import Maps from './pages/Maps';
 import { OrientationProvider } from './hooks/OrientationContext';
 
 function App() {
@@ -32,6 +38,12 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/home" element={<HomePage />} />
+            <Route path="/stay" element={<Stay pageTitle="Stay"/>} />
+            <Route path="/play" element={<Play pageTitle="Play"/>} />
+            <Route path="/dine" element={<Dine pageTitle="Dine"/>} />
+            <Route path="/shop" element={<Shop pageTitle="Shop"/>} />
+            <Route path="/events" element={<Events pageTitle="Events"/>} />
+            <Route path="/maps" element={<Maps pageTitle="Maps"/>} />
           </Routes>
         </div>
       </OrientationProvider>

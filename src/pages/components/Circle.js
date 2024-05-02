@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ReactComponent as DineIcon } from '../../assets/icos/dine.svg';
 import { ReactComponent as PlayIcon } from '../../assets/icos/play.svg';
 import { ReactComponent as StayIcon } from '../../assets/icos/stay.svg';
@@ -16,7 +17,7 @@ const icons = {
 };
 
 const Circle = ({ icon, text, angle, distance, className }) => {
-
+  const navigate = useNavigate();
   const IconComponent = icons[icon];
 
   const positionCircle = () => {
@@ -29,8 +30,12 @@ const Circle = ({ icon, text, angle, distance, className }) => {
     };
   };
 
+  const handleNavigation = () => {
+    navigate(`/${icon}`);
+  };
+
   return (
-    <div className={`white-circle ${className}`} style={positionCircle()}>
+    <div className={`white-circle ${className}`} style={positionCircle()} onClick={handleNavigation}>
       {IconComponent ? <IconComponent /> : null}
       <span className="circle-text">{text}</span>
     </div>
