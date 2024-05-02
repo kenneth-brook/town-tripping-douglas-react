@@ -9,23 +9,59 @@ footer {
     bottom: 0;
     box-sizing: border-box;
     padding-bottom: 20px;
+    display: flex;
+    
 
     .footer-circles {
         display: flex;
-        justify-content: center;
+        justify-content: space-around;
         align-items: center;
-        margin-bottom: 10px; // Adjust as necessary
         width: 100%;
+        
     }
 
     .footer-icon {
-        width: 30px;
-        height: 30px;
-        margin: 0 10px;
-        fill: white;
-        cursor: pointer; /* Shows a pointer on hover to indicate clickability */
-        display: flex; /* Ensures the SVG centers correctly */
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        background-color: white;
+        cursor: pointer;
+        display: flex;
         justify-content: center;
         align-items: center;
+        position: relative;
+        overflow: hidden;
+        border: 2px solid #BF772F;
+        box-shadow: 3px 3px 6px #000;
+    }
+
+    .icon-svg {
+        width: 65%;
+        fill: #E7E7E7;
+        position: absolute;
+    }
+
+    .icon-label {
+        color: #007037;
+        font-size: 16px;
+        font-weight: bold;
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        top: 50%;  // Centers vertically
+        transform: translateY(-50%);  // Offset for exact centering
+        z-index: 1;  // Ensures text is above the icon
+    }
+
+    .active {
+        background-color: #007037;  // Active background color
+    }
+    
+    .active-icon {
+        fill: #BF772F;  // Active icon fill
+    }
+    
+    .active-text {
+        color: white;  // Active text color
     }
 }

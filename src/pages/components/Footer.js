@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useOrientation } from '../../hooks/OrientationContext';
 import { ReactComponent as DineIcon } from '../../assets/icos/dine.svg';
 import { ReactComponent as PlayIcon } from '../../assets/icos/play.svg';
@@ -20,9 +20,9 @@ const icons = {
 
 function Footer({ showCircles = false }) {
   const orientation = useOrientation();
-  const navigate = useNavigate(); // Hook to navigate
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Function to handle navigation
   const handleNavigate = (path) => {
     navigate(`/${path}`);
   };
@@ -33,9 +33,11 @@ function Footer({ showCircles = false }) {
         <div className="footer-circles">
           {Object.keys(icons).map((key, index) => {
             const Icon = icons[key];
+            const isActive = location.pathname === `/${key}`;
             return (
-              <div key={index} className="footer-icon" onClick={() => handleNavigate(key)}>
-                <Icon />
+              <div key={index} className={`footer-icon ${isActive ? 'active' : ''}`} onClick={() => handleNavigate(key)}>
+                <Icon className={`icon-svg ${isActive ? 'active-icon' : ''}`} />
+                <span className={`icon-label ${isActive ? 'active-text' : ''}`}>{key.charAt(0).toUpperCase() + key.slice(1)}</span>
               </div>
             );
           })}

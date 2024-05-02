@@ -10,7 +10,7 @@ const Stay = ({ pageTitle }) => {
                 <h1>{pageTitle}</h1>
                 {/* You can add more content here as needed */}
             </main>
-            <Footer />
+            <Footer showCircles={true} />
         </>
     );
 };
