@@ -7,7 +7,7 @@ header {
     box-shadow: 0 12px 16px rgba(0, 0, 0, 0.8);
     position: relative;
     z-index: 10;
-    width: 90%;
+    width: 100%;
     flex-shrink: 0;
     display: flex;
     justify-content: center;
@@ -19,9 +19,10 @@ header {
     display: flex;/* Ensures buttons are on the edges and content is spaced out */
     align-items: center;
     justify-content: center;
-    width: 80%;
+    width: 100%;
     padding: 0; /* Reduce padding for space efficiency */
     box-sizing: border-box;
+    padding-top: 20px;
 
     .centerWrap {
         display: flex;

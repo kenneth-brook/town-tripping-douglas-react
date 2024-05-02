@@ -4,14 +4,14 @@ import Footer from './components/Footer';
 
 const Maps = ({ pageTitle }) => {
     return (
-        <div className="sample-page">
+        <>
             <Header />
             <main className='main-content'>
                 <h1>{pageTitle}</h1>
                 {/* You can add more content here as needed */}
             </main>
             <Footer showCircles={true} />
-        </div>
+        </>
     );
 };
 
