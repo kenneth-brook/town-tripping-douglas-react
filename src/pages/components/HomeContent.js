@@ -21,6 +21,7 @@ const HomeContent = () => {
 
   return (
     <main className="main-content homePage">
+      <h1 className="exploring-header">Tap to begin exploring</h1>
       <div id="main-container">
         <div className="background-circle2"></div>
         <div className="background-circle"></div> 
@@ -34,6 +35,7 @@ const HomeContent = () => {
             maxHeight: '65%',
             zIndex: 1
           }} />
+          
           {circles.map((circle, index) => (
             <Circle
               key={index}

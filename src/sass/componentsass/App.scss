@@ -176,3 +176,13 @@ body, html {
     width: auto;
     font-weight: bolder;
 }
+
+.exploring-header {
+  position: absolute;
+  top: 22%; /* Adjust this value based on actual layout needs */
+  width: 100%;
+  text-align: center;
+  z-index: 2; /* Ensure it is above the background but below interactive elements if needed */
+  font-size: 34px; /* Adjust size as necessary */
+  color: #006837; /* Assuming white text */
+}

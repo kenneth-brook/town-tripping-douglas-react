@@ -1,81 +1,86 @@
 header {
-    background-color: #007037; /* Placeholder: deep green, pick the actual color from the image */
+    background-color: #007037;
     /*padding-top: env(safe-area-inset-top, 20px);*/
     text-align: center;
     color: #ffffff;
     height: auto;
     box-shadow: 0 12px 16px rgba(0, 0, 0, 0.8);
     position: relative;
-    z-index: 10;
+    z-index: 100;
     width: 100%;
     flex-shrink: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     top: 0;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 .header-container {
-    display: flex;/* Ensures buttons are on the edges and content is spaced out */
+    display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding: 0; /* Reduce padding for space efficiency */
+    padding: 0;
     box-sizing: border-box;
     padding-top: 20px;
+    position: relative;
+    z-index: 99;
+    background-color: #007037;
 
     .centerWrap {
         display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: auto;
-    margin: 0 10px; 
-    box-sizing: border-box;
+        flex-direction: column;
+        align-items: center;
+        width: auto; 
+        box-sizing: border-box;
+        width: 50%;
     
         .centered-image {
             width: auto;
-    height: auto;
-    max-height: 75px;
+            height: auto;
+            max-height: 75px;
         }
 
         .search-box {
             width: auto;
-    padding: 8px 8px; /* Reduce padding slightly */
-    box-sizing: border-box; /* Ensures padding does not add to width */
-    margin-top: 10px;
-    margin-bottom: 10px;
+            padding: 8px 8px;
+            box-sizing: border-box;
+            margin-top: 10px;
+            margin-bottom: 10px;
         }
     }
 
 
-.square-button, .circle-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 5px;
-    background-color: #8BC43E;
-}
+    .square-button, .circle-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 5px;
+        background-color: #8BC43E;
+    }
 
-.square-button {
-    border-radius: 12px;
-    flex-direction: column;
-    padding: 3px;
-    width: 65px;
-    height: 65px;
-    margin-right: 20px;
-    color: white;
-    fill: white;
-    box-shadow: 4px 4px 8px #000000;
-    line-height: 1;
-}
+    .square-button {
+        border-radius: 12px;
+        flex-direction: column;
+        padding: 3px;
+        width: 65px;
+        height: 65px;
+        margin-right: 20px;
+        color: white;
+        fill: white;
+        box-shadow: 4px 4px 8px #000000;
+        line-height: 1;
+    }
 
-.circle-button {
-    border-radius: 50%;
-    font-size: 20px;
-    cursor: pointer;
-    width: 50px;
-    height: 50px;
-    margin-left: 20px;
-    color: white;
-}
+    .circle-button {
+        border-radius: 50%;
+        font-size: 20px;
+        cursor: pointer;
+        width: 50px;
+        height: 50px;
+        margin-left: 20px;
+        color: white;
+    }
 }
