@@ -1,7 +1,7 @@
-import React from 'react';
-import Header from './components/Header';
-import HomeContent from './components/HomeContent';
-import Footer from './components/Footer';
+import React from 'react'
+import Header from './components/Header'
+import HomeContent from './components/HomeContent'
+import Footer from './components/Footer'
 
 const App = () => {
   return (
@@ -10,7 +10,7 @@ const App = () => {
       <HomeContent />
       <Footer />
     </>
-  );
-};
+  )
+}
 
-export default App;
+export default App
