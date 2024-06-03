@@ -46,7 +46,6 @@ function App() {
             <Route path="/shop" element={<Shop pageTitle="Shop" />} />
             <Route path="/events" element={<Events pageTitle="Events" />} />
             <Route path="/maps" element={<Maps pageTitle="Maps" />} />
-            <Route path="/maps" element={<Maps pageTitle="Maps" />} />
           </Routes>
         </div>
       </OrientationProvider>
