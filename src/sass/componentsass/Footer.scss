@@ -28,8 +28,8 @@ footer {
     align-items: center;
     position: relative;
     overflow: hidden;
-    border: 2px solid #bf772f;
-    box-shadow: 3px 3px 6px #000;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px #8bc43e inset;
     z-index: 2;
   }
 
@@ -52,11 +52,13 @@ footer {
   }
 
   .active {
-    background-color: #007037; // Active background color
+    background-color: #8bc43e; // Active background color
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 3px #8a957b inset;
   }
 
   .active-icon {
-    fill: #bf772f; // Active icon fill
+    fill: #8a957b; // Active icon fill
   }
 
   .active-text {
