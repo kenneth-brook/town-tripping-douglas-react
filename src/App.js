@@ -9,6 +9,7 @@ import Dine from './pages/Dine'
 import Shop from './pages/Shop'
 import Events from './pages/Events'
 import Maps from './pages/Maps'
+import Itinerary from './pages/Itinerery'
 import { OrientationProvider } from './hooks/OrientationContext'
 
 function App() {
@@ -46,6 +47,10 @@ function App() {
             <Route path="/shop" element={<Shop pageTitle="Shop" />} />
             <Route path="/events" element={<Events pageTitle="Events" />} />
             <Route path="/maps" element={<Maps pageTitle="Maps" />} />
+            <Route
+              path="/itinerery"
+              element={<Itinerary pageTitle="Itinerery" />}
+            />
           </Routes>
         </div>
       </OrientationProvider>
