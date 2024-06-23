@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Header, HeaderHeightContext } from './components/Header';
+import { Header } from './components/Header';
 import Footer from './components/Footer';
 import { ReactComponent as PlayIcon } from '../assets/icos/ticket-icon.svg';
+import HeaderHeightContext from '../hooks/HeaderHeightContext';
 import '../sass/componentsass/Play.scss';
 
 const Play = ({ pageTitle }) => {

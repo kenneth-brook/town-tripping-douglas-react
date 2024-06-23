@@ -1,74 +1,68 @@
 footer {
-  //   text-align: center;
-  //   color: white;
-  //   height: 100px;
-  //   width: 100%;
-  //   flex-shrink: 0;
-  //   position: relative;
-  //   bottom: 0;
-  //   box-sizing: border-box;
-  //   padding-bottom: 20px;
-  //   display: flex;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: #fff;
+}
 
-  .footer-circles {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    width: 100%;
-  }
+.footer-circles {
+  display: flex;
+  justify-content: space-around;
+}
 
-  .footer-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: white;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-    border: 2px solid #fff;
-    box-shadow: 0 0 0 2px #8bc43e inset;
-    z-index: 2;
-  }
+.footer-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: white;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px #8bc43e inset;
+  z-index: 2;
+}
 
-  .icon-svg {
-    width: 65%;
-    fill: #e7e7e7;
-    position: absolute;
-  }
+.icon-svg {
+  width: 65%;
+  fill: #e7e7e7;
+  position: absolute;
+}
 
-  .icon-label {
-    color: #007037;
-    font-size: 16px;
-    font-weight: bold;
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    top: 50%; // Centers vertically
-    transform: translateY(-50%); // Offset for exact centering
-    z-index: 1; // Ensures text is above the icon
-  }
+.icon-label {
+  color: #007037;
+  font-size: 16px;
+  font-weight: bold;
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+}
 
-  .active {
-    background-color: #8bc43e; // Active background color
-    border: 2px solid #fff;
-    box-shadow: 0 0 0 3px #8a957b inset;
-  }
+.active {
+  background-color: #8bc43e;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 3px #8a957b inset;
+}
 
-  .active-icon {
-    fill: #8a957b; // Active icon fill
-  }
+.active-icon {
+  fill: #8a957b;
+}
 
-  .active-text {
-    color: white; // Active text color
-  }
+.active-text {
+  color: white;
 }
 
 .footer-container {
   position: relative;
   padding: 20px;
+  text-align: center;
 }
 
 .circle-background {
@@ -86,6 +80,7 @@ footer {
   flex-direction: column;
   z-index: 1;
 }
+
 .circle-background h3 {
   color: #ffe28e;
   font-size: 39px;

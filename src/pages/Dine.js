@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Header, HeaderHeightContext } from './components/Header';
+import { Header } from './components/Header';
 import Footer from './components/Footer';
 import { ReactComponent as DineIcon } from '../assets/icos/dine.svg';
+import HeaderHeightContext from '../hooks/HeaderHeightContext';
 import '../sass/componentsass/Dine.scss';
 
-const Eat = ({ pageTitle }) => {
+const Dine = ({ pageTitle }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -70,4 +71,4 @@ const Eat = ({ pageTitle }) => {
   );
 };
 
-export default Eat;
+export default Dine;

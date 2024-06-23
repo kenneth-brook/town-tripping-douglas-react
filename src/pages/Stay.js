@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Header, HeaderHeightContext } from './components/Header';
+import { Header } from './components/Header';
 import Footer from './components/Footer';
 import { ReactComponent as StayIcon } from '../assets/icos/stay.svg';
+import HeaderHeightContext from '../hooks/HeaderHeightContext';
 import '../sass/componentsass/Stay.scss'; // Import the SCSS file with the correct path
 
 const Stay = ({ pageTitle }) => {
