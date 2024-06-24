@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Header } from './components/Header';
+import { Header, HeaderHeightContext } from './components/Header';
 import Footer from './components/Footer';
 import { ReactComponent as ShopIcon } from '../assets/icos/shop.svg';
-import HeaderHeightContext from '../hooks/HeaderHeightContext';
 import '../sass/componentsass/Shop.scss'; // Import the SCSS file with the correct path
 
 const Shop = ({ pageTitle }) => {

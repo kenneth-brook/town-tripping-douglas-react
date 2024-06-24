@@ -1,7 +1,7 @@
 html, body {
     height: 100%;
     margin: 0;
-    overflow: auto;
+    overflow: hidden;
   }
   
   body {
@@ -28,16 +28,14 @@ html, body {
     overflow-y: auto;
     padding-top: var(--header-height);
     padding-bottom: var(--footer-height);
-    //margin-top: var(--header-height);
-    //margin-bottom: var(--footer-height);
+    margin-top: var(--header-height);
+    margin-bottom: var(--footer-height);
   }
   
   .page-title {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
-    position: relative;
-    margin-top: 50px;
   }
   
   .content {
