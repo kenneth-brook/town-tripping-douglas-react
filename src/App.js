@@ -10,6 +10,7 @@ import Shop from './pages/Shop'
 import Events from './pages/Events'
 import Maps from './pages/Maps'
 import Itinerary from './pages/Itinerery'
+import { HeightProvider } from './hooks/HeightContext';
 import { OrientationProvider } from './hooks/OrientationContext'
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
   return (
     <Router>
       <OrientationProvider>
+      <HeightProvider>
         {' '}
         {/* Providing orientation context */}
         <div className="mainWrap">
@@ -53,6 +55,7 @@ function App() {
             />
           </Routes>
         </div>
+        </HeightProvider>
       </OrientationProvider>
     </Router>
   )

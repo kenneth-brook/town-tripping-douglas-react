@@ -1,13 +1,4 @@
-html, body {
-    height: 100%;
-    margin: 0;
-    overflow: hidden;
-  }
-  
-  body {
-    display: flex;
-    flex-direction: column;
-  }
+
   
   header, footer {
     position: fixed;
@@ -26,10 +17,7 @@ html, body {
   main.internal-content {
     flex: 1 0 auto;
     overflow-y: auto;
-    padding-top: var(--header-height);
-    padding-bottom: var(--footer-height);
-    margin-top: var(--header-height);
-    margin-bottom: var(--footer-height);
+    
   }
   
   .page-title {

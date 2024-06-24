@@ -1,14 +1,13 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Header, HeaderHeightContext } from './components/Header';
+import Header from './components/Header';
 import Footer from './components/Footer';
 import { ReactComponent as PlayIcon } from '../assets/icos/ticket-icon.svg';
-import '../sass/componentsass/Play.scss';
+//import '../sass/componentsass/Play.scss';
 
 const Play = ({ pageTitle }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const headerHeight = useContext(HeaderHeightContext);
   const footerRef = useRef(null);
   const [footerHeight, setFooterHeight] = useState(0);
 
@@ -41,7 +40,7 @@ const Play = ({ pageTitle }) => {
   return (
     <>
       <Header />
-      <main className="internal-content" style={{ paddingTop: `${headerHeight}px`, paddingBottom: `${footerHeight}px` }}>
+      <main className="internal-content">
         <div className="page-title">
           <PlayIcon className="play-icon" />
           <h1>{pageTitle}</h1>

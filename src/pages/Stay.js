@@ -1,14 +1,13 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Header, HeaderHeightContext } from './components/Header';
+import Header from './components/Header';
 import Footer from './components/Footer';
 import { ReactComponent as StayIcon } from '../assets/icos/stay.svg';
-import '../sass/componentsass/Stay.scss'; // Import the SCSS file with the correct path
+//import '../sass/componentsass/Stay.scss'; // Import the SCSS file with the correct path
 
 const Stay = ({ pageTitle }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const headerHeight = useContext(HeaderHeightContext);
   const footerRef = useRef(null);
   const [footerHeight, setFooterHeight] = useState(0);
 
@@ -41,7 +40,7 @@ const Stay = ({ pageTitle }) => {
   return (
     <>
       <Header />
-      <main className="internal-content" style={{ paddingTop: `${headerHeight}px`, paddingBottom: `${footerHeight}px` }}>
+      <main className="internal-content">
         <div className="page-title">
           <StayIcon />
           <h1>{pageTitle}</h1>

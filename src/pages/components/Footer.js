@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useOrientation } from '../../hooks/OrientationContext';
 import { ReactComponent as DineIcon } from '../../assets/icos/dine.svg';
@@ -8,6 +8,7 @@ import { ReactComponent as MapsIcon } from '../../assets/icos/maps.svg';
 import { ReactComponent as EventsIcon } from '../../assets/icos/events.svg';
 import { ReactComponent as ShopIcon } from '../../assets/icos/shop.svg';
 import '../../sass/componentsass/Footer.scss';
+import { useHeightContext } from '../../hooks/HeightContext';
 
 const icons = {
   dine: DineIcon,
@@ -22,12 +23,19 @@ const Footer = forwardRef(({ showCircles = false }, ref) => {
   const orientation = useOrientation();
   const navigate = useNavigate();
   const location = useLocation();
+  const { setFooterHeight } = useHeightContext();
 
   const handleNavigate = (path) => {
     navigate(`/${path}`);
   };
 
   const isHomePage = location.pathname === '/home';
+
+  useEffect(() => {
+    if (ref && ref.current) {
+      setFooterHeight(ref.current.offsetHeight);
+    }
+  }, [ref, setFooterHeight]);
 
   return (
     <footer ref={ref}>

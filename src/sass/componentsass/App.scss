@@ -5,10 +5,10 @@ html {
   padding: 0;
   height: 100%;
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
+  //display: flex;
+  //justify-content: center;
+  //align-items: center;
+  //position: fixed;
   object-fit: contain;
   font-family: 'Segoe UI', sans-serif;
 }
@@ -18,7 +18,7 @@ html {
 }
 
 #root {
-  display: flex;
+  //display: flex;
   width: 100%;
 }
 
@@ -27,40 +27,39 @@ html {
 // }
 
 .mainWrap {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 100vh;
-  min-height: calc(var(--vh, 1vh) * 100);
-  flex-grow: 1;
+  //display: flex;
+  //flex-direction: column;
+  //height: 100%;
+  //min-height: 100vh;
+  //min-height: calc(var(--vh, 1vh) * 100);
+  //flex-grow: 1;
 }
 
-.header,
-.footer {
-  flex-shrink: 0; /* Ensures that header and footer do not shrink */
+header, footer {
+  position: fixed;
   width: 100%;
-  position: sticky; /* Sticky positioning */
-  top: 0; /* Header sticks at the top */
-  background-color: #fff; /* Background color for visibility */
-  z-index: 1000; /* Ensures it's above other content */
+  z-index: 1000;
 }
 
-.footer {
-  top: auto;
-  bottom: 0; /* Footer sticks at the bottom */
+header {
+  top: 0;
+}
+
+footer {
+  bottom: 0;
 }
 
 .mainContent {
-  flex-grow: 1; /* Takes up all available space */
+  //flex-grow: 1; /* Takes up all available space */
   overflow-y: auto; /* Enables scrolling on the main content */
   -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
 }
 
 .main-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-grow: 1;
+  //display: flex;
+  //justify-content: center;
+  //align-items: center;
+  //flex-grow: 1;
   max-height: 100%;
   background-image: repeating-linear-gradient(
     0deg,
@@ -75,13 +74,13 @@ html {
 }
 
 .internal-content {
-  flex-grow: 1; /* Takes up all available space */
+  //flex-grow: 1; /* Takes up all available space */
   overflow-y: auto; /* Enables scrolling on the main content */
   -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  flex-grow: 1;
+  //display: flex;
+  //justify-content: center;
+  //align-items: flex-start;
+  //flex-grow: 1;
   max-height: 100%;
   margin: 10px 20px;
 }

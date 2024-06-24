@@ -1,16 +1,15 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Header, HeaderHeightContext } from './components/Header';
+import React, { useContext, useEffect, useState } from 'react';
+import Header from './components/Header';
 import Footer from './components/Footer';
 import { ReactComponent as DineIcon } from '../assets/icos/dine.svg';
-import '../sass/componentsass/Dine.scss';
+//import '../sass/componentsass/Dine.scss';
+import { useHeightContext } from '../hooks/HeightContext';
 
 const Eat = ({ pageTitle }) => {
+  const { headerHeight, footerHeight, footerRef } = useHeightContext();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const headerHeight = useContext(HeaderHeightContext);
-  const footerRef = useRef(null);
-  const [footerHeight, setFooterHeight] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,19 +31,10 @@ const Eat = ({ pageTitle }) => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    if (footerRef.current) {
-      setFooterHeight(footerRef.current.offsetHeight);
-    }
-  }, []);
-
   return (
     <>
       <Header />
-      <main
-        className="internal-content"
-        style={{ paddingTop: `${headerHeight}px`, paddingBottom: `${footerHeight}px` }}
-      >
+      <main className="internal-content" style={{ paddingTop: `calc(${headerHeight}px + 30px)`, paddingBottom: `calc(${footerHeight}px + 50px)` }}>
         <div className="page-title">
           <DineIcon className="dine-icon" />
           <h1>{pageTitle}</h1>
