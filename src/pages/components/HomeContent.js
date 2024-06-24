@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Circle from './Circle';
 import chair from '../../assets/images/chair.png';
 
+
 const HomeContent = () => {
   const [circles, setCircles] = useState([]);
 

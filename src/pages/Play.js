@@ -3,13 +3,13 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import { ReactComponent as PlayIcon } from '../assets/icos/ticket-icon.svg';
 //import '../sass/componentsass/Play.scss';
+import { useHeightContext } from '../hooks/HeightContext';
 
 const Play = ({ pageTitle }) => {
+  const { headerHeight, footerHeight, footerRef } = useHeightContext();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const footerRef = useRef(null);
-  const [footerHeight, setFooterHeight] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -31,16 +31,10 @@ const Play = ({ pageTitle }) => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    if (footerRef.current) {
-      setFooterHeight(footerRef.current.offsetHeight);
-    }
-  }, []);
-
   return (
     <>
       <Header />
-      <main className="internal-content">
+      <main className="internal-content" style={{ paddingTop: `calc(${headerHeight}px + 30px)`, paddingBottom: `calc(${footerHeight}px + 50px)` }}>
         <div className="page-title">
           <PlayIcon className="play-icon" />
           <h1>{pageTitle}</h1>
@@ -49,17 +43,25 @@ const Play = ({ pageTitle }) => {
         {error && <p>{error}</p>}
         {!loading && !error && (
           <div className="content">
-            {data.map((item) => (
-              <div key={item.id} className="content-item">
-                <h2>{item.name}</h2>
+          {data.map((item) => (
+            <div key={item.id} className="content-item">
+              <h2>{item.name}</h2>
+              <div className="descriptBox">
                 <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
-                <p>Location: {item.city}, {item.state}</p>
-                <p>Phone: {item.phone}</p>
-                <p>Website: <a href={item.web} target="_blank" rel="noopener noreferrer">{item.web}</a></p>
-                {/* Add more fields as needed */}
               </div>
-            ))}
-          </div>
+              <div className="reviews-container">
+                <div className="reviews-section">
+                  <div className="stars">
+                    {/* You can replace this with actual star rating components */}
+                    ★★★★☆
+                  </div>
+                  <p className="reviews-text">{item.googleReviews} Google reviews</p>
+                </div>
+                <button className="more-button">more</button>
+              </div>
+            </div>
+          ))}
+        </div> 
         )}
       </main>
       <Footer ref={footerRef} showCircles={true} />
