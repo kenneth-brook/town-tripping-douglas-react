@@ -26,6 +26,9 @@ jobs:
         unset CI
         npm run build
 
+    - name: Debug - Print Host
+      run: echo "${{ secrets.EC2_HOST }}"
+
     - name: Deploy to EC2
       env:
         HOST: ${{ secrets.EC2_HOST }}
