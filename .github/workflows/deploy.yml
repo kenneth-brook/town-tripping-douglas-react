@@ -30,10 +30,8 @@ jobs:
       run: echo "EC2_HOST=${{ secrets.EC2_HOST }}"
 
     - name: Create Key File
-      env:
-        KEY: ${{ secrets.EC2_KEY }}
       run: |
-        echo "${{ secrets.KEY }}" | tr -d '\r' > key.pem
+        echo "${{ secrets.EC2_KEY }}" > key.pem
         chmod 600 key.pem
         ls -l key.pem
         head -c 50 key.pem # Print only the first 50 characters to verify
