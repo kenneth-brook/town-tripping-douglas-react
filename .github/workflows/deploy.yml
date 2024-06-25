@@ -27,14 +27,22 @@ jobs:
         npm run build
 
     - name: Debug - Print Host
-      run: echo "${{ secrets.EC2_HOST }}"
+      run: echo "EC2_HOST=${{ secrets.EC2_HOST }}"
+
+    - name: Debug - Create Key File
+      env:
+        KEY: ${{ secrets.EC2_KEY }}
+      run: |
+        echo "${{ secrets.KEY }}" > key.pem
+        chmod 600 key.pem
+        ls -l key.pem
+        cat key.pem
 
     - name: Deploy to EC2
       env:
         HOST: ${{ secrets.EC2_HOST }}
         KEY: ${{ secrets.EC2_KEY }}
       run: |
-        echo "${{ secrets.KEY }}" > key.pem
-        chmod 600 key.pem
-        scp -r -o StrictHostKeyChecking=no -i key.pem build/* ubuntu@${{ secrets.HOST }}:/home/ubuntu/town-tripping-douglas-react/build/
-        ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@${{ secrets.HOST }} "sudo systemctl restart nginx"
+        echo "Deploying to host: ${HOST}"
+        scp -r -o StrictHostKeyChecking=no -i key.pem build/* ubuntu@${HOST}:/home/ubuntu/town-tripping-douglas-react/build/
+        ssh -o StrictHostKeyChecking=no -i key.pem ubuntu@${HOST} "sudo systemctl restart nginx"
