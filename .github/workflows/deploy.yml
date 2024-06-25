@@ -36,12 +36,11 @@ jobs:
         echo "${{ secrets.KEY }}" > key.pem
         chmod 600 key.pem
         ls -l key.pem
-        cat key.pem
+        head -c 50 key.pem # Print only the first 50 characters to verify
 
     - name: Deploy to EC2
       env:
         HOST: ${{ secrets.EC2_HOST }}
-        KEY: ${{ secrets.EC2_KEY }}
       run: |
         echo "Deploying to host: ${HOST}"
         scp -r -o StrictHostKeyChecking=no -i key.pem build/* ubuntu@${HOST}:/home/ubuntu/town-tripping-douglas-react/build/
