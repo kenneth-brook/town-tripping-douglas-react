@@ -11,12 +11,12 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set up Node.js
-      uses: actions/setup-node@v2
+      uses: actions/setup-node@v3
       with:
-        node-version: '18'
+        node-version: '20'
 
     - name: Install dependencies
       run: npm install
@@ -29,11 +29,11 @@ jobs:
     - name: Debug - Print Host
       run: echo "EC2_HOST=${{ secrets.EC2_HOST }}"
 
-    - name: Debug - Create Key File
+    - name: Create Key File
       env:
         KEY: ${{ secrets.EC2_KEY }}
       run: |
-        echo "${{ secrets.KEY }}" > key.pem
+        echo "${{ secrets.KEY }}" | tr -d '\r' > key.pem
         chmod 600 key.pem
         ls -l key.pem
         head -c 50 key.pem # Print only the first 50 characters to verify
