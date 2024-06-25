@@ -22,7 +22,9 @@ jobs:
       run: npm install
 
     - name: Build the project
-      run: npm run build
+      run: |
+        unset CI
+        npm run build
 
     - name: Deploy to EC2
       env:
