@@ -33,7 +33,7 @@ jobs:
       env:
         KEY: ${{ secrets.EC2_KEY }}
       run: |
-        echo "${{ secrets.KEY }}" > key.pem
+        echo "${{ secrets.EC2_KEY }}" > key.pem
         chmod 600 key.pem
         ls -l key.pem
         head -c 50 key.pem # Print only the first 50 characters to verify
