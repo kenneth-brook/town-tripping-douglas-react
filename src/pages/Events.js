@@ -14,7 +14,7 @@ const Events = ({ pageTitle }) => {
           <EventsIcon />
           <h1>{pageTitle}</h1>
         </div>
-        {/* You can add more content here as needed */}
+        <h2>You can add more content here as needed </h2>
       </main>
       <Footer showCircles={true} />
     </>
