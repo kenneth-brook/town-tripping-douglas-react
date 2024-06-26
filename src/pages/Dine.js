@@ -63,38 +63,39 @@ const Eat = ({ pageTitle }) => {
     <>
       <Header />
       <main className="internal-content" style={{ paddingTop: `calc(${headerHeight}px + 30px)`, paddingBottom: `calc(${footerHeight}px + 50px)` }}>
-        <div className="page-title">
-          <DineIcon className="dine-icon" />
-          <h1>{pageTitle}</h1>
-        </div>
-        {loading && <p>Loading...</p>}
-        {error && <p>{error}</p>}
-        {!loading && !error && (
-          <div className="content">
-            {data.map((item) => (
-              <div key={item.id} className="content-item">
-                <h2>{item.name}</h2>
-                <div className="descriptBox">
-                  <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
-                </div>
-                <div className="reviews-container">
-                  <div className="reviews-block">
-                    {item.rating && (
-                      <>
-                        <div className="stars">
-                          {renderStars(item.rating)}
-                        </div>
-                        <p className="reviews-text">{item.rating.toFixed(1)} Google reviews</p>
-                      </>
-                    )}
+  <div className="page-title">
+    <DineIcon className="dine-icon" />
+    <h1>{pageTitle}</h1>
+  </div>
+  {loading && <p>Loading...</p>}
+  {error && <p>{error}</p>}
+  {!loading && !error && (
+    <div className="content">
+      {data.map((item) => (
+        <div key={item.id} className="content-item">
+          <h2>{item.name}</h2>
+          <div className="descriptBox">
+            <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
+          </div>
+          <div className="reviews-container">
+            <div className="reviews-block" style={{ display: item.rating ? 'block' : 'none' }}>
+              {item.rating && (
+                <>
+                  <div className="stars">
+                    {renderStars(item.rating)}
                   </div>
-                  <button className="more-button">more</button>
-                </div>
-              </div>
-            ))}
-          </div>         
-        )}
-      </main>
+                  <p className="reviews-text">{item.rating.toFixed(1)} Google reviews</p>
+                </>
+              )}
+            </div>
+            <button className="more-button">more</button>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</main>
+
       <Footer ref={footerRef} showCircles={true} />
     </>
   );
