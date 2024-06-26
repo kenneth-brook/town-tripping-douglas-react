@@ -24,7 +24,7 @@ const Maps = ({ pageTitle }) => {
           }}
           style={{ width: '100%', height: '100%', position: 'absolute', top: 0, left: 0 }}
           mapStyle="mapbox://styles/mapbox/streets-v11"
-          mapboxAccessToken="YOUR_MAPBOX_ACCESS_TOKEN"
+          mapboxAccessToken="pk.eyJ1Ijoid29tYmF0MTk3MiIsImEiOiJjbDN1bmdqM2MyZHF2M2J1djg4bzRncWZpIn0.dXd3qQMnwuob5XB9HKXgkw"
         />
       </main>
       <Footer showCircles={true} />

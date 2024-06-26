@@ -322,18 +322,6 @@ footer {
 }
 
 .page-title-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: rgba(255, 255, 255, 0.8); /* Light background to ensure readability */
-  padding: 10px;
-  box-sizing: border-box;
+  position: relative;
   z-index: 10; /* Higher z-index ensures it's on top of the map */
-}
-
-.page-title-overlay h1 {
-  margin: 0;
-  padding-left: 20px;
-  color: #333; /* Color for the title */
 }
