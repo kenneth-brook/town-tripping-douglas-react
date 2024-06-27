@@ -20,16 +20,21 @@ const Maps = ({ pageTitle }) => {
       }`}
     >
       <Header />
-      <main>
-        <div className="page-title page-title-overlay">
+      <main style={{
+            height: '100vh',
+            width: '100%',
+            position: 'relative',
+            overflow: 'hidden',
+          }}>
+        <div className="page-title page-title-overlay" style={{
+          top: '165px',
+        }}>
           <MapsIcon />
           <h1>{pageTitle}</h1>
         </div>
         <div
           className="internal-content"
           style={{
-            paddingTop: `calc(${headerHeight}px + 30px)`,
-            paddingBottom: `calc(${footerHeight}px + 50px)`,
             height: '100vh',
             position: 'relative',
             overflow: 'hidden',
@@ -42,11 +47,8 @@ const Maps = ({ pageTitle }) => {
               zoom: 3.5,
             }}
             style={{
-              width: '100%',
-              height: '100%',
-              position: 'absolute',
-              top: 0,
-              left: 0,
+              position: 'relative',
+              objectFit: 'contain',
             }}
             mapStyle="mapbox://styles/mapbox/streets-v11"
             mapboxAccessToken="pk.eyJ1Ijoid29tYmF0MTk3MiIsImEiOiJjbDN1bmdqM2MyZHF2M2J1djg4bzRncWZpIn0.dXd3qQMnwuob5XB9HKXgkw"
