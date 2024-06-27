@@ -78,14 +78,37 @@ footer {
   transform: translateX(-50%);
   width: 484px;
   height: 200px;
-  background-color: #bf772f;
-  border-radius: 50%;
-  border: 10px solid #007037;
   text-align: center;
   display: flex;
   flex-direction: column;
+}
+
+.circle-background::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 484px;
+  height: 200px;
+  background-color: #bf772f;
+  border-radius: 50%;
   z-index: 1;
 }
+
+.circle-background::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 484px;
+  height: 200px;
+  background-color: #007037;
+  border-radius: 50%;
+  z-index: 0;
+}
+
 .circle-background h3 {
   color: #ffe28e;
   font-size: 39px;
@@ -101,4 +124,8 @@ footer {
   margin: 0;
   text-shadow: 1px 1px 2px black;
   font-weight: 600;
+}
+
+.footer-content {
+  z-index: 3;
 }

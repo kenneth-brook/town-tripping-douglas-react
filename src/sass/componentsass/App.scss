@@ -33,12 +33,14 @@ html {
   min-height: 100vh;
   min-height: calc(var(--vh, 1vh) * 100);
   flex-grow: 1;
+  width: 100%;
 }
 
-header, footer {
+header,
+footer {
   position: fixed;
   width: 100%;
-  z-index: 1000;
+  // z-index: 100;
 }
 
 header {
@@ -232,7 +234,7 @@ footer {
 }
 
 .content-item:nth-child(odd) {
-  background-color: #04A2C922;
+  background-color: #04a2c922;
 }
 
 .content-item {
@@ -245,8 +247,8 @@ footer {
   }
 
   .descriptBox {
-    border-top: 1px solid #AAAAAA;
-    border-bottom: 1px solid #AAAAAA;
+    border-top: 1px solid #aaaaaa;
+    border-bottom: 1px solid #aaaaaa;
     padding: 10px;
 
     p {
@@ -263,7 +265,7 @@ footer {
 
     .stars {
       font-size: 2.2rem;
-      color: #FFD700; /* Gold color for stars */
+      color: #ffd700; /* Gold color for stars */
       display: flex;
     }
 
@@ -281,11 +283,11 @@ footer {
       left: 0;
       width: 50%;
       overflow: hidden;
-      color: #FFD700;
+      color: #ffd700;
     }
 
     .star.empty {
-      color: #DDD;
+      color: #ddd;
     }
 
     .reviews-text {
@@ -296,7 +298,7 @@ footer {
     }
 
     .more-button {
-      background-color: #BCD743;
+      background-color: #bcd743;
       color: #005a29;
       border: none;
       padding: 10px 25px;
@@ -324,4 +326,73 @@ footer {
 .page-title-overlay {
   position: relative;
   z-index: 10; /* Higher z-index ensures it's on top of the map */
+}
+
+.app-container {
+  display: flex;
+  height: 100vh;
+  position: relative;
+
+  &.landscape {
+    header,
+    footer {
+      width: 50%;
+      flex-direction: column;
+      // border-right: 1px solid #ddd;
+    }
+
+    main {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 48%;
+      height: 100%;
+      flex-grow: 0;
+      padding: 20px 0 0 0 !important;
+      z-index: 101;
+    }
+
+    footer .circle-background {
+      left: 45%;
+    }
+
+    #main-container {
+      margin-bottom: -30px;
+    }
+
+    .exploring-header {
+      top: -10px;
+    }
+
+    .main-content {
+      box-shadow: none;
+    }
+
+    .square-button-link {
+      order: 3;
+    }
+
+    .centerWrap {
+      order: 1;
+      padding-top: 60px;
+      width: 60%;
+    }
+    .centered-image {
+      max-height: 150px;
+    }
+
+    .search-container {
+      margin-top: -30px;
+    }
+
+    .footer-circles {
+      width: 90%;
+    }
+
+    .sort-menu {
+      width: 25%;
+      z-index: 1001;
+      border-bottom-right-radius: 12px;
+    }
+  }
 }
