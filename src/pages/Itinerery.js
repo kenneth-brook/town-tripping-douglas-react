@@ -3,8 +3,6 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import { ReactComponent as Intinerery } from '../assets/icos/intinerery.svg'
 import { ReactComponent as Share } from '../assets/icos/share-icon.svg'
-//import '../sass/componentsass/Itinerery.scss'
-import MapBox from './components/MapBox'
 
 const Itinerery = ({ pageTitle }) => {
   return (
@@ -23,7 +21,6 @@ const Itinerery = ({ pageTitle }) => {
             </button>
           </div>
         </div>
-        <MapBox />
       </main>
       <Footer showCircles={true} />
     </>

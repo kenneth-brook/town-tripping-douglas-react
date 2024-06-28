@@ -469,3 +469,33 @@ main {
 .text-box p {
   margin: 5px 0;
 }
+
+/* src/styles/markers.css */
+.marker {
+  width: 30px;
+  height: 30px;
+  background-size: cover;
+  border-radius: 50%;
+  cursor: pointer;
+  transform: translate(-50%, -100%);
+}
+
+.marker.eat {
+  background-color: red;
+}
+
+.marker.play {
+  background-color: blue;
+}
+
+.marker.stay {
+  background-color: green;
+}
+
+.marker.shop {
+  background-color: yellow;
+}
+
+.marker.events {
+  background-color: purple;
+}

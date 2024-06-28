@@ -29,7 +29,6 @@ function App() {
     window.addEventListener('resize', adjustViewportHeight)
     window.addEventListener('orientationchange', adjustViewportHeight)
 
-    // Cleanup the event listeners on component unmount
     return () => {
       window.removeEventListener('resize', adjustViewportHeight)
       window.removeEventListener('orientationchange', adjustViewportHeight)
@@ -55,7 +54,6 @@ function App() {
                   path="/itinerery"
                   element={<Itinerary pageTitle="Itinerery" />}
                 />
-                <Route path="/:category/:id" element={<DetailView />} />
               </Routes>
             </div>
           </DataProvider>
