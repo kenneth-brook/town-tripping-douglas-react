@@ -1,21 +1,23 @@
 // src/pages/Shop.js
-import React from 'react';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import { ReactComponent as DineIcon } from '../assets/icos/dine.svg';
-import { useHeightContext } from '../hooks/HeightContext';
-import { useOrientation } from '../hooks/OrientationContext';
-import { useDataContext } from '../hooks/DataContext';
+import React from 'react'
+import Header from './components/Header'
+import Footer from './components/Footer'
+import { ReactComponent as DineIcon } from '../assets/icos/dine.svg'
+import { useHeightContext } from '../hooks/HeightContext'
+import { useOrientation } from '../hooks/OrientationContext'
+import { useDataContext } from '../hooks/DataContext'
+import { useNavigate } from 'react-router-dom'
 
 const Shop = ({ pageTitle }) => {
-  const { headerHeight, footerHeight, footerRef } = useHeightContext();
-  const { data, loading, error } = useDataContext();
-  const shopData = data.shop;
+  const { headerHeight, footerHeight, footerRef } = useHeightContext()
+  const { data, loading, error } = useDataContext()
+  const shopData = data.shop
+  const navigate = useNavigate()
 
   const renderStars = (rating) => {
-    const fullStars = Math.floor(rating);
-    const halfStar = rating % 1 !== 0 ? 1 : 0;
-    const emptyStars = 5 - fullStars - halfStar;
+    const fullStars = Math.floor(rating)
+    const halfStar = rating % 1 !== 0 ? 1 : 0
+    const emptyStars = 5 - fullStars - halfStar
 
     return (
       <>
@@ -31,10 +33,10 @@ const Shop = ({ pageTitle }) => {
           </span>
         ))}
       </>
-    );
-  };
+    )
+  }
 
-  const orientation = useOrientation();
+  const orientation = useOrientation()
 
   return (
     <div
@@ -90,7 +92,12 @@ const Shop = ({ pageTitle }) => {
                           </p>
                         </div>
                       )}
-                      <button className="more-button">more</button>
+                      <button
+                        className="more-button"
+                        onClick={() => navigate(`/shop/${item.id}`)}
+                      >
+                        more
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -102,7 +109,7 @@ const Shop = ({ pageTitle }) => {
 
       <Footer ref={footerRef} showCircles={true} />
     </div>
-  );
-};
+  )
+}
 
-export default Shop;
+export default Shop
