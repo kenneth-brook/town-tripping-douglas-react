@@ -239,8 +239,8 @@ footer {
 
 .content-item {
   text-align: center;
-  padding: 15px;
-  margin-top: 10px;
+  padding: 5px;
+  margin-top: 5px;
 
   h2 {
     color: #007037;
@@ -310,7 +310,7 @@ footer {
       border: none;
       padding: 10px 25px;
       cursor: pointer;
-      font-size: 1.8rem;
+      font-size: 1.1rem;
       font-weight: bold;
       border-radius: 10px;
       margin-left: 10px;
@@ -333,6 +333,10 @@ footer {
 .page-title-overlay {
   position: relative;
   z-index: 10; /* Higher z-index ensures it's on top of the map */
+}
+
+main {
+  width: 100%;
 }
 
 .app-container {
@@ -407,7 +411,7 @@ footer {
 .loader {
   border: 16px solid #f3f3f3;
   border-radius: 50%;
-  border-top: 16px solid #006837;
+  border-top: 16px solid #005a29;
   width: 40px;
   height: 40px;
   animation: spin 2s linear infinite;
@@ -423,20 +427,38 @@ footer {
   }
 }
 
+.content-box {
+  display: flex;
+  align-items: flex-start; /* Align items to the start */
+  margin: 5px 0;
+}
+
 .content-image {
-  width: 150px; /* Set fixed width */
-  height: 150px; /* Set fixed height */
-  object-fit: cover; /* Cover to maintain aspect ratio */
-  margin-right: 20px; /* Space between image and text */
+  width: 139px;
+  height: 106px;
+  object-fit: cover;
+  margin-right: 10px;
+}
+
+.text-box {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.text-box p {
+  padding-bottom: 5px;
+  border-bottom: 1px solid #aaaaaa;
 }
 
 .descriptBox {
-  flex-grow: 1; /* Take remaining space */
+  margin-bottom: 10px;
 }
 
 .reviews-container {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .reviews-block {
@@ -444,16 +466,6 @@ footer {
   align-items: center;
 }
 
-.stars {
-  display: flex;
-  margin-right: 10px;
-}
-
-.reviews-text {
-  margin-right: auto;
-}
-
-.more-button {
-  align-self: flex-end;
-  margin-top: 10px;
+.text-box p {
+  margin: 5px 0;
 }
