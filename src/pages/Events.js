@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import { ReactComponent as EventsIcon } from '../assets/icos/events.svg'
-import { useHeightContext } from '../hooks/HeightContext';
+import { useHeightContext } from '../hooks/HeightContext'
+import { useOrientation } from '../hooks/OrientationContext'
 
 const Events = ({ pageTitle }) => {
   const { headerHeight, footerHeight, footerRef } = useHeightContext()
@@ -22,7 +23,6 @@ const Events = ({ pageTitle }) => {
         const result = await response.json()
         console.log('API response:', result)
         setData(result)
-
       } catch (error) {
         setError(`Failed to fetch data: ${error.message}`)
         console.error(error)
@@ -34,8 +34,17 @@ const Events = ({ pageTitle }) => {
     fetchData()
   }, [])
 
+  const orientation = useOrientation()
+
   return (
-    <>
+    <div
+      className={`app-container ${
+        orientation === 'landscape-primary' ||
+        orientation === 'landscape-secondary'
+          ? 'landscape'
+          : 'portrait'
+      }`}
+    >
       <Header />
       <main
         className="internal-content"
@@ -45,7 +54,7 @@ const Events = ({ pageTitle }) => {
         }}
       >
         <div className="page-title">
-        <EventsIcon />
+          <EventsIcon />
           <h1>{pageTitle}</h1>
         </div>
         {loading && <p>Loading...</p>}
@@ -67,7 +76,7 @@ const Events = ({ pageTitle }) => {
         )}
       </main>
       <Footer showCircles={true} />
-    </>
+    </div>
   )
 }
 
