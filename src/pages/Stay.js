@@ -104,21 +104,35 @@ const Stay = ({ pageTitle }) => {
             {data.map((item) => (
               <div key={item.id} className="content-item">
                 <h2>{item.name}</h2>
-                <div className="descriptBox">
-                  <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
-                </div>
-                <div className="reviews-container">
-                  <div className="reviews-block">
-                    {item.rating && (
-                      <>
-                        <div className="stars">{renderStars(item.rating)}</div>
-                        <p className="reviews-text">
-                          {item.rating.toFixed(1)} Google reviews
-                        </p>
-                      </>
-                    )}
+
+                <div className="content-box">
+                  {item.images && item.images.length > 0 && (
+                    <img
+                      src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
+                      alt={item.name}
+                      className="content-image"
+                    />
+                  )}
+
+                  <div className="text-box">
+                    <p
+                      dangerouslySetInnerHTML={{ __html: item.description }}
+                    ></p>
+
+                    <div className="reviews-container">
+                      {item.rating && (
+                        <div className="reviews-block">
+                          <div className="stars">
+                            {renderStars(item.rating)}
+                          </div>
+                          <p className="reviews-text">
+                            {item.rating.toFixed(1)} Google reviews
+                          </p>
+                        </div>
+                      )}
+                      <button className="more-button">more</button>
+                    </div>
                   </div>
-                  <button className="more-button">more</button>
                 </div>
               </div>
             ))}

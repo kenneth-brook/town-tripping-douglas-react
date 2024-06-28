@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Header from './components/Header'
 import Footer from './components/Footer'
-import { ReactComponent as DineIcon } from '../assets/icos/dine.svg'
+import { ReactComponent as PlayIcon } from '../assets/icos/play.svg'
 import { useHeightContext } from '../hooks/HeightContext'
 import { getGoogleReviews } from './components/googleReviews' // Adjust the path as necessary
 import { useOrientation } from '../hooks/OrientationContext'
@@ -94,7 +94,7 @@ const Play = ({ pageTitle }) => {
         }}
       >
         <div className="page-title">
-          <DineIcon className="dine-icon" />
+          <PlayIcon className="play-icon" />
           <h1>{pageTitle}</h1>
         </div>
         {loading && <div className="loader"></div>}
@@ -104,27 +104,42 @@ const Play = ({ pageTitle }) => {
             {data.map((item) => (
               <div key={item.id} className="content-item">
                 <h2>{item.name}</h2>
-                <div className="descriptBox">
-                  <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
-                </div>
-                <div className="reviews-container">
-                  <div className="reviews-block">
-                    {item.rating && (
-                      <>
-                        <div className="stars">{renderStars(item.rating)}</div>
-                        <p className="reviews-text">
-                          {item.rating.toFixed(1)} Google reviews
-                        </p>
-                      </>
-                    )}
+
+                <div className="content-box">
+                  {item.images && item.images.length > 0 && (
+                    <img
+                      src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
+                      alt={item.name}
+                      className="content-image"
+                    />
+                  )}
+
+                  <div className="text-box">
+                    <div
+                      dangerouslySetInnerHTML={{ __html: item.description }}
+                    ></div>
+
+                    <div className="reviews-container">
+                      {item.rating && (
+                        <div className="reviews-block">
+                          <div className="stars">
+                            {renderStars(item.rating)}
+                          </div>
+                          <p className="reviews-text">
+                            {item.rating.toFixed(1)} Google reviews
+                          </p>
+                        </div>
+                      )}
+                      <button className="more-button">more</button>
+                    </div>
                   </div>
-                  <button className="more-button">more</button>
                 </div>
               </div>
             ))}
           </div>
         )}
       </main>
+
       <Footer ref={footerRef} showCircles={true} />
     </div>
   )

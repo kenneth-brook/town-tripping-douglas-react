@@ -74,27 +74,22 @@ const Dine = ({ pageTitle }) => {
                     />
                   )}
 
-                  <div className="descriptBox">
+                  <div className="text-box">
                     <p
                       dangerouslySetInnerHTML={{ __html: item.description }}
                     ></p>
 
                     <div className="reviews-container">
-                      <div
-                        className="reviews-block"
-                        style={{ display: item.rating ? 'block' : 'none' }}
-                      >
-                        {item.rating && (
-                          <>
-                            <div className="stars">
-                              {renderStars(item.rating)}
-                            </div>
-                            <p className="reviews-text">
-                              {item.rating.toFixed(1)} Google reviews
-                            </p>
-                          </>
-                        )}
-                      </div>
+                      {item.rating && (
+                        <div className="reviews-block">
+                          <div className="stars">
+                            {renderStars(item.rating)}
+                          </div>
+                          <p className="reviews-text">
+                            {item.rating.toFixed(1)} Google reviews
+                          </p>
+                        </div>
+                      )}
                       <button className="more-button">more</button>
                     </div>
                   </div>
