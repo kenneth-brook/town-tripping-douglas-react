@@ -1,61 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import Header from './components/Header'
-import Footer from './components/Footer'
-import { ReactComponent as PlayIcon } from '../assets/icos/play.svg'
-import { useHeightContext } from '../hooks/HeightContext'
-import { getGoogleReviews } from './components/googleReviews' // Adjust the path as necessary
-import { useOrientation } from '../hooks/OrientationContext'
+// src/pages/Play.js
+import React from 'react';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import { ReactComponent as PlayIcon } from '../assets/icos/play.svg';
+import { useHeightContext } from '../hooks/HeightContext';
+import { useOrientation } from '../hooks/OrientationContext';
+import { useDataContext } from '../hooks/DataContext';
 
 const Play = ({ pageTitle }) => {
-  const { headerHeight, footerHeight, footerRef } = useHeightContext()
-  const [data, setData] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/Prod/data/play'
-        )
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        const result = await response.json()
-        console.log('API response:', result)
-
-        // Fetch Google reviews for each item
-        const updatedData = await Promise.all(
-          result.map(async (item) => {
-            console.log(
-              `Fetching reviews for ${item.name} at (${item.lat}, ${item.long})`
-            )
-            const details = await getGoogleReviews(
-              item.lat,
-              item.long,
-              item.name
-            )
-            console.log(`Details for ${item.name}:`, details)
-            return { ...item, ...details }
-          })
-        )
-
-        setData(updatedData)
-      } catch (error) {
-        setError(`Failed to fetch data: ${error.message}`)
-        console.error(error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [])
+  const { headerHeight, footerHeight, footerRef } = useHeightContext();
+  const { data, loading, error } = useDataContext();
+  const playData = data.play;
 
   const renderStars = (rating) => {
-    const fullStars = Math.floor(rating)
-    const halfStar = rating % 1 !== 0 ? 1 : 0
-    const emptyStars = 5 - fullStars - halfStar
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 !== 0 ? 1 : 0;
+    const emptyStars = 5 - fullStars - halfStar;
 
     return (
       <>
@@ -71,10 +31,10 @@ const Play = ({ pageTitle }) => {
           </span>
         ))}
       </>
-    )
-  }
+    );
+  };
 
-  const orientation = useOrientation()
+  const orientation = useOrientation();
 
   return (
     <div
@@ -101,7 +61,7 @@ const Play = ({ pageTitle }) => {
         {error && <p>{error}</p>}
         {!loading && !error && (
           <div className="content">
-            {data.map((item) => (
+            {playData.map((item) => (
               <div key={item.id} className="content-item">
                 <h2>{item.name}</h2>
 
@@ -142,7 +102,7 @@ const Play = ({ pageTitle }) => {
 
       <Footer ref={footerRef} showCircles={true} />
     </div>
-  )
-}
+  );
+};
 
-export default Play
+export default Play;

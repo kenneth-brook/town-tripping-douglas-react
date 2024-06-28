@@ -1,40 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import Header from './components/Header'
-import Footer from './components/Footer'
-import { ReactComponent as EventsIcon } from '../assets/icos/events.svg'
-import { useHeightContext } from '../hooks/HeightContext'
-import { useOrientation } from '../hooks/OrientationContext'
+// src/pages/Events.js
+import React from 'react';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import { ReactComponent as EventsIcon } from '../assets/icos/events.svg';
+import { useHeightContext } from '../hooks/HeightContext';
+import { useOrientation } from '../hooks/OrientationContext';
+import { useDataContext } from '../hooks/DataContext';
 
 const Events = ({ pageTitle }) => {
-  const { headerHeight, footerHeight, footerRef } = useHeightContext()
-  const [data, setData] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const { headerHeight, footerHeight, footerRef } = useHeightContext();
+  const { data, loading, error } = useDataContext();
+  const eventsData = data.events;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/Prod/get-events'
-        )
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        const result = await response.json()
-        console.log('API response:', result)
-        setData(result)
-      } catch (error) {
-        setError(`Failed to fetch data: ${error.message}`)
-        console.error(error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [])
-
-  const orientation = useOrientation()
+  const orientation = useOrientation();
 
   return (
     <div
@@ -61,7 +39,7 @@ const Events = ({ pageTitle }) => {
         {error && <p>{error}</p>}
         {!loading && !error && (
           <div className="content">
-            {data.map((item) => (
+            {eventsData.map((item) => (
               <div key={item.id} className="content-item">
                 <h2>{item.name}</h2>
                 <div className="descriptBox">
@@ -75,9 +53,9 @@ const Events = ({ pageTitle }) => {
           </div>
         )}
       </main>
-      <Footer showCircles={true} />
+      <Footer showCircles={true} ref={footerRef} />
     </div>
-  )
-}
+  );
+};
 
-export default Events
+export default Events;
