@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import './sass/componentsass/App.scss'
@@ -14,6 +15,21 @@ import Itinerary from './pages/Itinerery'
 import { HeightProvider } from './hooks/HeightContext'
 import { OrientationProvider } from './hooks/OrientationContext'
 import DataProvider from './hooks/DataContext'
+=========
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './sass/componentsass/App.scss';
+import HomePage from './pages/HomePage';
+import Stay from './pages/Stay';
+import Play from './pages/Play';
+import Dine from './pages/Dine';
+import Shop from './pages/Shop';
+import Events from './pages/Events';
+import { HeightProvider } from './hooks/HeightContext';
+import { OrientationProvider } from './hooks/OrientationContext';
+import DataProvider from './hooks/DataContext';
+import { ViewModeProvider } from './hooks/ViewModeContext';
+>>>>>>>>> Temporary merge branch 2
 
 function App() {
   useEffect(() => {
@@ -22,12 +38,10 @@ function App() {
       document.documentElement.style.setProperty('--vh', `${vh}px`)
     }
 
-    // Set the viewport height on initial load
-    adjustViewportHeight()
+    adjustViewportHeight();
+    window.addEventListener('resize', adjustViewportHeight);
+    window.addEventListener('orientationchange', adjustViewportHeight);
 
-    // Add event listeners
-    window.addEventListener('resize', adjustViewportHeight)
-    window.addEventListener('orientationchange', adjustViewportHeight)
 
     return () => {
       window.removeEventListener('resize', adjustViewportHeight)
@@ -40,6 +54,7 @@ function App() {
       <OrientationProvider>
         <HeightProvider>
           <DataProvider>
+            <ViewModeProvider>
             <div className="mainWrap">
               <Routes>
                 <Route path="/" element={<LandingPage />} />
@@ -54,8 +69,10 @@ function App() {
                   path="/itinerery"
                   element={<Itinerary pageTitle="Itinerery" />}
                 />
+                <Route path="/:category/:id" element={<DetailView />} />
               </Routes>
             </div>
+            </ViewModeProvider>
           </DataProvider>
         </HeightProvider>
       </OrientationProvider>
