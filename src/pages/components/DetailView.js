@@ -3,6 +3,9 @@ import { useParams } from 'react-router-dom'
 import { useOrientation } from '../../hooks/OrientationContext'
 import { useHeightContext } from '../../hooks/HeightContext'
 import { useDataContext } from '../../hooks/DataContext'
+import { ReactComponent as Location } from '../../assets/icos/location.svg'
+import { ReactComponent as DateIcon } from '../../assets/icos/date.svg'
+import { ReactComponent as TimeIcon } from '../../assets/icos/time.svg'
 import { ReactComponent as Phone } from '../../assets/icos/phone.svg'
 import { ReactComponent as MapIcon } from '../../assets/icos/map-icon.svg'
 import { ReactComponent as Share } from '../../assets/icos/share-icon.svg'
@@ -53,6 +56,17 @@ const DetailView = () => {
     )
   }
 
+  const googleMapsLink = `https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.long}`
+
+  const formatDate = (dateTime) => {
+    if (!dateTime) return { date: 'N/A', time: 'N/A' }
+    const [date, time] = dateTime.split('T')
+    const [hours, minutes] = time.split(':')
+    return { date, time: `${hours}:${minutes}` }
+  }
+
+  const { date, time } = formatDate(item.start_date)
+
   return (
     <div
       className={`app-container ${
@@ -83,19 +97,29 @@ const DetailView = () => {
             {orientation === 'landscape-primary' ? (
               <div className="contact-container">
                 {item.web && item.web.length > 0 && (
-                  <a href={item.web} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={item.web}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="web-button"
+                  >
                     Website
                   </a>
                 )}
                 <div className="contact-btn">
                   {item.phone && item.phone.length > 0 && (
-                    <button>
+                    <a href={`tel:${item.phone}`} className="phone-button">
                       <Phone /> {item.phone}
-                    </button>
+                    </a>
                   )}
-                  <button>
+                  <a
+                    href={googleMapsLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="map-button"
+                  >
                     <MapIcon /> Get Direction
-                  </button>
+                  </a>
                 </div>
               </div>
             ) : (
@@ -105,26 +129,61 @@ const DetailView = () => {
 
           <div className="text-container">
             <h2>{item.name}</h2>
-            <p>{`${item.street_address}, ${item.city}, ${item.state} ${item.zip}`}</p>
+            <p className={category === 'events' ? 'events-text' : ''}>
+              {category === 'events' && <Location />}
+              {`${item.street_address}, ${item.city}, ${item.state} ${item.zip}`}
+            </p>
+            {item.start_date && item.start_time && (
+              <div className="date-container ">
+                <p>
+                  <DateIcon />
+                  {date}
+                </p>
+                {time === '00:00' ? (
+                  ''
+                ) : (
+                  <p>
+                    <TimeIcon />
+                    {time}
+                  </p>
+                )}
+              </div>
+            )}
             <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
           </div>
-          <div className="contact-container">
-            {item.web && item.web.length > 0 && (
-              <a href={item.web} target="_blank" rel="noopener noreferrer">
-                Website
-              </a>
-            )}
-            <div className="contact-btn">
-              {item.phone && item.phone.length > 0 && (
-                <button>
-                  <Phone /> {item.phone}
-                </button>
+
+          {orientation === 'landscape-primary' ? (
+            ''
+          ) : (
+            <div className="contact-container">
+              {item.web && item.web.length > 0 && (
+                <a
+                  href={item.web}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="web-button"
+                >
+                  Website
+                </a>
               )}
-              <button>
-                <MapIcon /> Get Direction
-              </button>
+              <div className="contact-btn">
+                {item.phone && item.phone.length > 0 && (
+                  <a href={`tel:${item.phone}`} className="phone-button">
+                    <Phone /> {item.phone}
+                  </a>
+                )}
+                <a
+                  href={googleMapsLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="map-button"
+                >
+                  <MapIcon /> Get Direction
+                </a>
+              </div>
             </div>
-          </div>
+          )}
+
           {item.rating && (
             <div className="reviews-block">
               <div className="stars">{renderStars(item.rating)}</div>
