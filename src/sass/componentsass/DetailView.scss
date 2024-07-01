@@ -106,3 +106,29 @@
   fill: #fff;
   padding-bottom: 5px;
 }
+
+.app-container {
+  display: flex;
+  height: 100vh;
+  position: relative;
+
+  &.landscape {
+    .contact-container {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .contact-container a {
+      max-width: 100%;
+      text-align: center;
+    }
+
+    .contact-btn {
+      width: 100%;
+    }
+
+    .top-image {
+      display: flex;
+    }
+  }
+}

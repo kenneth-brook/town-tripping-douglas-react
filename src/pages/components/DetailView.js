@@ -71,14 +71,38 @@ const DetailView = () => {
         }}
       >
         <div className="view-card">
-          {item.images && item.images.length > 0 && (
-            <div className="image-container">
-              <img
-                src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
-                alt={item.name}
-              />
-            </div>
-          )}
+          <div className="top-image">
+            {item.images && item.images.length > 0 && (
+              <div className="image-container">
+                <img
+                  src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
+                  alt={item.name}
+                />
+              </div>
+            )}
+            {orientation === 'landscape-primary' ? (
+              <div className="contact-container">
+                {item.web && item.web.length > 0 && (
+                  <a href={item.web} target="_blank" rel="noopener noreferrer">
+                    Website
+                  </a>
+                )}
+                <div className="contact-btn">
+                  {item.phone && item.phone.length > 0 && (
+                    <button>
+                      <Phone /> {item.phone}
+                    </button>
+                  )}
+                  <button>
+                    <MapIcon /> Get Direction
+                  </button>
+                </div>
+              </div>
+            ) : (
+              ''
+            )}
+          </div>
+
           <div className="text-container">
             <h2>{item.name}</h2>
             <p>{`${item.street_address}, ${item.city}, ${item.state} ${item.zip}`}</p>
