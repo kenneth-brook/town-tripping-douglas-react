@@ -15,6 +15,7 @@ import { HeightProvider } from './hooks/HeightContext'
 import { OrientationProvider } from './hooks/OrientationContext'
 import DataProvider from './hooks/DataContext'
 import { ViewModeProvider } from './hooks/ViewModeContext'
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 function App() {
   useEffect(() => {

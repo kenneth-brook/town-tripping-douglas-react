@@ -1,28 +1,86 @@
-// src/pages/Maps.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg';
 import { useHeightContext } from '../hooks/HeightContext';
 import Map, { Marker, Popup } from 'react-map-gl';
 import { useOrientation } from '../hooks/OrientationContext';
-import { useDataContext } from '../hooks/DataContext';
+import mapboxgl from 'mapbox-gl';
 
-const Maps = ({ pageTitle, selectedType }) => {
+// Import PNG markers
+import eatPin from '../assets/icos/eatPin.png';
+import shopPin from '../assets/icos/shopPin.png';
+import stayPin from '../assets/icos/stayPin.png';
+import playPin from '../assets/icos/playPin.png';
+import eventPin from '../assets/icos/eventPin.png';
+
+// Import SVG icons
+import { ReactComponent as DineIcon } from '../assets/icos/dine.svg';
+import { ReactComponent as PlayIcon } from '../assets/icos/play.svg';
+import { ReactComponent as StayIcon } from '../assets/icos/stay.svg';
+import { ReactComponent as EventsIcon } from '../assets/icos/events.svg';
+import { ReactComponent as ShopIcon } from '../assets/icos/shop.svg';
+import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg';
+
+const markerIcons = {
+  eat: eatPin,
+  shop: shopPin,
+  stay: stayPin,
+  play: playPin,
+  events: eventPin,
+};
+
+const typeIcons = {
+  eat: DineIcon,
+  play: PlayIcon,
+  stay: StayIcon,
+  shop: ShopIcon,
+  events: EventsIcon,
+};
+
+const Maps = () => {
   const { headerHeight, footerHeight, footerRef } = useHeightContext();
-  const { data, loading, error } = useDataContext();
   const orientation = useOrientation();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { currentType, data, previousPath } = location.state || {};
   const [selectedPlace, setSelectedPlace] = useState(null);
+  const mapRef = useRef();
 
-  const filteredData = selectedType
-    ? selectedType === 'events'
-      ? data.events
-      : data[selectedType]
-    : [].concat(data.eat, data.play, data.stay, data.shop);
+  const typeToTitle = {
+    eat: 'Dine Map',
+    play: 'Play Map',
+    stay: 'Stay Map',
+    shop: 'Shop Map',
+    events: 'Events Map',
+  };
+
+  const TypeIcon = typeIcons[currentType] || null;
+  const currentTitle = typeToTitle[currentType] || 'Map';
 
   useEffect(() => {
-    // Ensure the markers are correctly placed by re-rendering when the data changes
-  }, [data, selectedType]);
+    if (!currentType) {
+      navigate('/home'); // Redirect to home if no type is passed
+    }
+  }, [currentType, navigate]);
+
+  useEffect(() => {
+    if (data && data.length > 0 && mapRef.current) {
+      const bounds = new mapboxgl.LngLatBounds();
+      data.forEach(item => {
+        bounds.extend([item.long, item.lat]);
+      });
+
+      const map = mapRef.current.getMap();
+      map.fitBounds(bounds, {
+        padding: { top: 50, bottom: 50, left: 50, right: 50 },
+        maxZoom: 15,
+        duration: 1000,
+      });
+    }
+  }, [data]);
+
+  const MarkerIcon = markerIcons[currentType];
 
   return (
     <div
@@ -47,34 +105,50 @@ const Maps = ({ pageTitle, selectedType }) => {
             top: '165px',
           }}
         >
-          <MapsIcon />
-          <h1>{pageTitle}</h1>
+          {TypeIcon && <TypeIcon className="icon-svg" />}
+          <h1>{currentTitle}</h1>
+          <MapsIcon className="icon-svg" />
         </div>
         <div
           className="internal-content"
           style={{
-            height: '100vh',
+            height: 'calc(100vh - 165px)', // Adjust height calculation
+            width: '100%',
             position: 'relative',
-            overflow: 'hidden',
           }}
         >
-          {loading && <p>Loading...</p>}
-          {error && <p>{error}</p>}
-          {!loading && !error && (
+          {data ? (
             <Map
+              ref={mapRef}
               initialViewState={{
                 longitude: -100,
                 latitude: 40,
                 zoom: 3.5,
               }}
               style={{
+                width: '100%',
+                height: '100%',
                 position: 'relative',
                 objectFit: 'contain',
               }}
               mapStyle="mapbox://styles/mapbox/streets-v11"
               mapboxAccessToken="pk.eyJ1Ijoid29tYmF0MTk3MiIsImEiOiJjbDN1bmdqM2MyZHF2M2J1djg4bzRncWZpIn0.dXd3qQMnwuob5XB9HKXgkw"
+              onLoad={() => {
+                if (data && data.length > 0) {
+                  const bounds = new mapboxgl.LngLatBounds();
+                  data.forEach(item => {
+                    bounds.extend([item.long, item.lat]);
+                  });
+                  const map = mapRef.current.getMap();
+                  map.fitBounds(bounds, {
+                    padding: { top: 50, bottom: 50, left: 50, right: 50 },
+                    maxZoom: 15,
+                    duration: 1000,
+                  });
+                }
+              }}
             >
-              {filteredData.map((item) => (
+              {data.map((item) => (
                 <Marker
                   key={item.id}
                   longitude={item.long}
@@ -82,7 +156,7 @@ const Maps = ({ pageTitle, selectedType }) => {
                   anchor="bottom"
                   onClick={() => setSelectedPlace(item)}
                 >
-                  <div className={`marker ${item.type}`} />
+                  <img src={MarkerIcon} alt={`${currentType} marker`} className="marker-icon" />
                 </Marker>
               ))}
               {selectedPlace && (
@@ -103,6 +177,8 @@ const Maps = ({ pageTitle, selectedType }) => {
                 </Popup>
               )}
             </Map>
+          ) : (
+            <p>Loading...</p>
           )}
         </div>
       </main>

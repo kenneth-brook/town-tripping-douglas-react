@@ -1,23 +1,21 @@
-// src/pages/Dine.js
-import React from 'react'
-import { useNavigate } from 'react-router-dom'
-import Header from './components/Header'
-import Footer from './components/Footer'
-import { ReactComponent as DineIcon } from '../assets/icos/dine.svg'
-import { useHeightContext } from '../hooks/HeightContext'
-import { useOrientation } from '../hooks/OrientationContext'
-import { useDataContext } from '../hooks/DataContext'
+import React from 'react';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import { ReactComponent as DineIcon } from '../assets/icos/dine.svg';
+import { useHeightContext } from '../hooks/HeightContext';
+import { getGoogleReviews } from './components/googleReviews'; // Adjust the path as necessary
+import { useOrientation } from '../hooks/OrientationContext';
+import { useDataContext } from '../hooks/DataContext';
 
 const Dine = ({ pageTitle }) => {
-  const { headerHeight, footerHeight, footerRef } = useHeightContext()
-  const { data, loading, error } = useDataContext()
-  const dineData = data.eat
-  const navigate = useNavigate()
+  const { headerHeight, footerHeight, footerRef } = useHeightContext();
+  const { data, loading, error } = useDataContext();
+  const dineData = data.eat;
 
   const renderStars = (rating) => {
-    const fullStars = Math.floor(rating)
-    const halfStar = rating % 1 !== 0 ? 1 : 0
-    const emptyStars = 5 - fullStars - halfStar
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 !== 0 ? 1 : 0;
+    const emptyStars = 5 - fullStars - halfStar;
 
     return (
       <>
@@ -33,16 +31,15 @@ const Dine = ({ pageTitle }) => {
           </span>
         ))}
       </>
-    )
-  }
+    );
+  };
 
-  const orientation = useOrientation()
+  const orientation = useOrientation();
 
   return (
     <div
       className={`app-container ${
-        orientation === 'landscape-primary' ||
-        orientation === 'landscape-secondary'
+        orientation === 'landscape-primary' || orientation === 'landscape-secondary'
           ? 'landscape'
           : 'portrait'
       }`}
@@ -77,27 +74,18 @@ const Dine = ({ pageTitle }) => {
                   )}
 
                   <div className="text-box">
-                    <p
-                      dangerouslySetInnerHTML={{ __html: item.description }}
-                    ></p>
+                    <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
 
                     <div className="reviews-container">
                       {item.rating && (
                         <div className="reviews-block">
-                          <div className="stars">
-                            {renderStars(item.rating)}
-                          </div>
+                          <div className="stars">{renderStars(item.rating)}</div>
                           <p className="reviews-text">
                             {item.rating.toFixed(1)} Google reviews
                           </p>
                         </div>
                       )}
-                      <button
-                        className="more-button"
-                        onClick={() => navigate(`/eat/${item.id}`)}
-                      >
-                        more
-                      </button>
+                      <button className="more-button">more</button>
                     </div>
                   </div>
                 </div>
@@ -106,10 +94,9 @@ const Dine = ({ pageTitle }) => {
           </div>
         )}
       </main>
-
       <Footer ref={footerRef} showCircles={true} />
     </div>
-  )
-}
+  );
+};
 
-export default Dine
+export default Dine;

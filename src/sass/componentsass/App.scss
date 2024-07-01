@@ -471,13 +471,9 @@ main {
 }
 
 /* src/styles/markers.css */
-.marker {
-  width: 30px;
-  height: 30px;
-  background-size: cover;
-  border-radius: 50%;
-  cursor: pointer;
-  transform: translate(-50%, -100%);
+.marker-icon {
+  transform: translate(-50%, -50%); /* Center the marker */
+  position: absolute;
 }
 
 .marker.eat {
