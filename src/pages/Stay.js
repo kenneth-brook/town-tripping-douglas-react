@@ -1,21 +1,23 @@
 // src/pages/Stay.js
-import React from 'react';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import { ReactComponent as StayIcon } from '../assets/icos/stay.svg';
-import { useHeightContext } from '../hooks/HeightContext';
-import { useOrientation } from '../hooks/OrientationContext';
-import { useDataContext } from '../hooks/DataContext';
+import React from 'react'
+import Header from './components/Header'
+import Footer from './components/Footer'
+import { ReactComponent as StayIcon } from '../assets/icos/stay.svg'
+import { useHeightContext } from '../hooks/HeightContext'
+import { useOrientation } from '../hooks/OrientationContext'
+import { useDataContext } from '../hooks/DataContext'
+import { useNavigate } from 'react-router-dom'
 
 const Stay = ({ pageTitle }) => {
-  const { headerHeight, footerHeight, footerRef } = useHeightContext();
-  const { data, loading, error } = useDataContext();
-  const stayData = data.stay;
+  const { headerHeight, footerHeight, footerRef } = useHeightContext()
+  const { data, loading, error } = useDataContext()
+  const stayData = data.stay
+  const navigate = useNavigate()
 
   const renderStars = (rating) => {
-    const fullStars = Math.floor(rating);
-    const halfStar = rating % 1 !== 0 ? 1 : 0;
-    const emptyStars = 5 - fullStars - halfStar;
+    const fullStars = Math.floor(rating)
+    const halfStar = rating % 1 !== 0 ? 1 : 0
+    const emptyStars = 5 - fullStars - halfStar
 
     return (
       <>
@@ -31,10 +33,10 @@ const Stay = ({ pageTitle }) => {
           </span>
         ))}
       </>
-    );
-  };
+    )
+  }
 
-  const orientation = useOrientation();
+  const orientation = useOrientation()
 
   return (
     <div
@@ -90,7 +92,12 @@ const Stay = ({ pageTitle }) => {
                           </p>
                         </div>
                       )}
-                      <button className="more-button">more</button>
+                      <button
+                        className="more-button"
+                        onClick={() => navigate(`/stay/${item.id}`)}
+                      >
+                        more
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -101,7 +108,7 @@ const Stay = ({ pageTitle }) => {
       </main>
       <Footer ref={footerRef} showCircles={true} />
     </div>
-  );
-};
+  )
+}
 
-export default Stay;
+export default Stay
