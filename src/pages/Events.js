@@ -1,18 +1,20 @@
 // src/pages/Events.js
-import React from 'react';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import { ReactComponent as EventsIcon } from '../assets/icos/events.svg';
-import { useHeightContext } from '../hooks/HeightContext';
-import { useOrientation } from '../hooks/OrientationContext';
-import { useDataContext } from '../hooks/DataContext';
+import React from 'react'
+import Header from './components/Header'
+import Footer from './components/Footer'
+import { ReactComponent as EventsIcon } from '../assets/icos/events.svg'
+import { useHeightContext } from '../hooks/HeightContext'
+import { useOrientation } from '../hooks/OrientationContext'
+import { useDataContext } from '../hooks/DataContext'
+import { useNavigate } from 'react-router-dom'
 
 const Events = ({ pageTitle }) => {
-  const { headerHeight, footerHeight, footerRef } = useHeightContext();
-  const { data, loading, error } = useDataContext();
-  const eventsData = data.events;
+  const { headerHeight, footerHeight, footerRef } = useHeightContext()
+  const { data, loading, error } = useDataContext()
+  const eventsData = data.events
+  const navigate = useNavigate()
 
-  const orientation = useOrientation();
+  const orientation = useOrientation()
 
   return (
     <div
@@ -46,7 +48,12 @@ const Events = ({ pageTitle }) => {
                   <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
                 </div>
                 <div className="reviews-container">
-                  <button className="more-button">more</button>
+                  <button
+                    className="more-button"
+                    onClick={() => navigate(`/events/${item.id}`)}
+                  >
+                    more
+                  </button>
                 </div>
               </div>
             ))}
@@ -55,7 +62,7 @@ const Events = ({ pageTitle }) => {
       </main>
       <Footer showCircles={true} ref={footerRef} />
     </div>
-  );
-};
+  )
+}
 
-export default Events;
+export default Events

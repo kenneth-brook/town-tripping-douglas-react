@@ -36,9 +36,9 @@
   gap: 20px;
 }
 
-.contact-container a {
+.web-button {
   max-width: 30%;
-  height: 100%;
+  height: 26px;
   padding: 10px;
   background-color: #007037;
   border-radius: 10px;
@@ -54,10 +54,31 @@
   width: 70%;
 }
 
-.contact-btn button {
+.contact-btn a {
   margin-bottom: 10px;
-  width: 100%;
-  height: 100%;
+  padding: 10px;
+  background-color: #bcd743;
+  border: none;
+  border-radius: 10px;
+  color: #007037;
+  font-weight: 700;
+  font-size: 19px;
+  display: flex;
+  align-self: center;
+  justify-content: center;
+  text-decoration: none;
+  width: 90%;
+}
+
+.contact-btn svg {
+  width: 21px;
+  height: 21px;
+  fill: #007037;
+  padding-top: 3px;
+}
+
+.phone-button {
+  margin-bottom: 10px;
   padding: 10px;
   background-color: #bcd743;
   border: none;
@@ -67,9 +88,10 @@
   font-size: 19px;
   display: flex;
   justify-content: center;
+  text-decoration: none;
 }
 
-.contact-btn button svg {
+.phone-button svg {
   width: 21px;
   height: 21px;
   fill: #007037;
@@ -118,8 +140,16 @@
       gap: 10px;
     }
 
-    .contact-container a {
+    .web-button {
       max-width: 100%;
+      height: 23px;
+      padding: 10px;
+      background-color: #007037;
+      border-radius: 10px;
+      font-size: 16px;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 700;
       text-align: center;
     }
 
@@ -129,6 +159,45 @@
 
     .top-image {
       display: flex;
+      gap: 10px;
+    }
+
+    .image-container {
+      width: 50%;
+    }
+
+    .contact-container {
+      width: 50%;
+    }
+
+    .text-container h2 {
+      margin-top: 5px;
     }
   }
+}
+
+.date-container {
+  border-bottom: 1px solid #707070;
+  margin-bottom: 5px;
+  text-align: center;
+  color: #007037;
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.date-container p {
+  margin: 5px;
+}
+
+.date-container svg,
+.text-container svg {
+  width: 15px;
+  height: 15px;
+  fill: #bf772f;
+  padding-right: 10px;
+}
+
+.events-text {
+  color: #007037;
+  font-size: 19px !important;
 }
