@@ -3,14 +3,15 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import { ReactComponent as DineIcon } from '../assets/icos/dine.svg';
 import { useHeightContext } from '../hooks/HeightContext';
-import { getGoogleReviews } from './components/googleReviews'; // Adjust the path as necessary
 import { useOrientation } from '../hooks/OrientationContext';
 import { useDataContext } from '../hooks/DataContext';
+import { useNavigate } from 'react-router-dom';
 
 const Dine = ({ pageTitle }) => {
   const { headerHeight, footerHeight, footerRef } = useHeightContext();
   const { data, loading, error } = useDataContext();
   const dineData = data.eat;
+  const navigate = useNavigate()
 
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
@@ -85,7 +86,12 @@ const Dine = ({ pageTitle }) => {
                           </p>
                         </div>
                       )}
-                      <button className="more-button">more</button>
+                      <button
+                        className="more-button"
+                        onClick={() => navigate(`/dine/${item.id}`)}
+                      >
+                        more
+                      </button>
                     </div>
                   </div>
                 </div>

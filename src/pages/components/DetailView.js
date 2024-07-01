@@ -22,13 +22,16 @@ const DetailView = () => {
   const [item, setItem] = useState(null)
 
   useEffect(() => {
-    if (data && data[category]) {
-      const selectedItem = data[category].find(
-        (item) => item.id.toString() === id
-      )
-      setItem(selectedItem)
+    if (data) {
+      const actualCategory = category === 'dine' ? 'eat' : category;
+      if (data[actualCategory]) {
+        const selectedItem = data[actualCategory].find(
+          (item) => item.id.toString() === id
+        );
+        setItem(selectedItem);
+      }
     }
-  }, [data, category, id])
+  }, [data, category, id]);
 
   if (loading) return <div className="loader"></div>
   if (error) return <p>{error}</p>
