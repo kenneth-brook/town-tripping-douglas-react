@@ -19,4 +19,23 @@
       transform: translate(-50%, -50%);
     }
   }
+
+  &.desktop {
+    background: white url('../assets/images/port-splash-desktop.png') no-repeat
+      center center;
+    background-size: contain;
+    background-position: center;
+
+    .round-button {
+      width: 200px;
+      height: 200px;
+      top: 65%;
+      left: 70%;
+      transform: translate(-50%, -50%);
+    }
+
+    .round-button span {
+      font-size: 35px;
+    }
+  }
 }

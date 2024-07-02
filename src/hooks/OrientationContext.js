@@ -4,17 +4,35 @@ const OrientationContext = createContext(null)
 
 export const OrientationProvider = ({ children }) => {
   const [orientation, setOrientation] = useState(
-    window.screen.orientation?.type
+    getInitialOrientation(window.innerWidth)
   )
+
+  function getInitialOrientation(width) {
+    if (width > 1000) {
+      return 'desktop'
+    } else {
+      return window.screen.orientation?.type
+    }
+  }
 
   useEffect(() => {
     const handleOrientationChange = () => {
-      setOrientation(window.screen.orientation?.type)
+      setOrientation(getInitialOrientation(window.innerWidth))
+    }
+
+    const handleResize = () => {
+      const isDesktop = window.innerWidth > 1000
+      setOrientation(
+        isDesktop ? 'desktop' : getInitialOrientation(window.innerWidth)
+      )
     }
 
     window.addEventListener('orientationchange', handleOrientationChange)
+    window.addEventListener('resize', handleResize)
+
     return () => {
       window.removeEventListener('orientationchange', handleOrientationChange)
+      window.removeEventListener('resize', handleResize)
     }
   }, [])
 

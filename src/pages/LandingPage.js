@@ -12,6 +12,8 @@ const LandingPage = () => {
         orientation === 'landscape-primary' ||
         orientation === 'landscape-secondary'
           ? 'landscape'
+          : orientation === 'desktop'
+          ? 'desktop'
           : 'portrait'
       }`}
     >
