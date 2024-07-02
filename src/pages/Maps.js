@@ -6,6 +6,9 @@ import { useHeightContext } from '../hooks/HeightContext';
 import Map, { Marker, Popup } from 'react-map-gl';
 import { useOrientation } from '../hooks/OrientationContext';
 import mapboxgl from 'mapbox-gl';
+import { ReactComponent as Phone } from '../assets/icos/phone2.svg'
+import { ReactComponent as Share } from '../assets/icos/share-icon2.svg'
+import { ReactComponent as AddItinerary } from '../assets/icos/add-itinerary2.svg'
 
 // Import PNG markers
 import eatPin from '../assets/icos/eatPin.png';
@@ -82,6 +85,19 @@ const Maps = () => {
 
   const MarkerIcon = markerIcons[currentType];
 
+  const handleMarkerClick = (item) => {
+    console.log('Marker clicked:', item);
+    setSelectedPlace(item);
+    if (mapRef.current) {
+      const map = mapRef.current.getMap();
+      map.flyTo({
+        center: [item.long, item.lat],
+        zoom: 14, // Adjust the zoom level as needed
+        speed: 1, // Adjust the animation speed as needed
+      });
+    }
+  };
+
   return (
     <div
       className={`app-container ${
@@ -112,8 +128,7 @@ const Maps = () => {
         <div
           className="internal-content"
           style={{
-            height: 'calc(100vh - 165px)', // Adjust height calculation
-            width: '100%',
+            height: 'calc(100vh - 165px)',
             position: 'relative',
           }}
         >
@@ -123,11 +138,9 @@ const Maps = () => {
               initialViewState={{
                 longitude: -100,
                 latitude: 40,
-                zoom: 3.5,
+                zoom: 5,
               }}
               style={{
-                width: '100%',
-                height: '100%',
                 position: 'relative',
                 objectFit: 'contain',
               }}
@@ -154,25 +167,51 @@ const Maps = () => {
                   longitude={item.long}
                   latitude={item.lat}
                   anchor="bottom"
-                  onClick={() => setSelectedPlace(item)}
+                  onClick={() => handleMarkerClick(item)}
                 >
                   <img src={MarkerIcon} alt={`${currentType} marker`} className="marker-icon" />
                 </Marker>
               ))}
               {selectedPlace && (
-                <Popup
+                <Popup className='popCard'
                   longitude={selectedPlace.long}
                   latitude={selectedPlace.lat}
-                  onClose={() => setSelectedPlace(null)}
+                  onClose={() => {
+                    console.log('Popup closed');
+                    setSelectedPlace(null);
+                  }}
+                  closeOnClick={false} // Prevents the popup from closing when clicking inside it
+                  anchor="top"
                 >
-                  <div>
-                    <h2>{selectedPlace.name}</h2>
-                    <p dangerouslySetInnerHTML={{ __html: selectedPlace.description }}></p>
-                    {selectedPlace.rating && (
-                      <div className="reviews-block">
-                        <p>{selectedPlace.rating.toFixed(1)} Google reviews</p>
+                  <div className='popWrap'>
+                    <div className='popTop'>
+                      {selectedPlace.images && selectedPlace.images.length > 0 && (
+                        <img
+                        src={`https://douglas.365easyflow.com/easyflow-images/${selectedPlace.images[0]}`}
+                        alt={selectedPlace.name}
+                        />
+                      )}
+                      <h2>{selectedPlace.name}</h2>
+                    </div>
+                    <div className='addyText'>
+                      <p>{selectedPlace.street_address}</p>
+                      <p>{selectedPlace.city}, {selectedPlace.state} {selectedPlace.zip}</p>
+                    </div>
+                    <div className='popButtonsWrap'>
+                      <div className='popButtonDevide'>
+                        <div className='popButton'><Phone /></div>
+                        <p>CALL</p>
                       </div>
-                    )}
+                      <div className='popButtonDevide'>
+                        <div className='popButton'><Share /></div>
+                        <p>SHARE</p>
+                      </div>
+                      <div className='popButtonDevide'>
+                        <div className='popButton'><AddItinerary /></div>
+                        <p>ITINERARY</p>
+                      </div>
+                    </div>
+                    
                   </div>
                 </Popup>
               )}
