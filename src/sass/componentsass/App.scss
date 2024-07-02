@@ -406,6 +406,51 @@ main {
       border-bottom-right-radius: 12px;
     }
   }
+
+  &.desktop {
+    header,
+    footer {
+      width: 50%;
+      flex-direction: column;
+    }
+
+    main {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 50%;
+      height: 100%;
+      flex-grow: 0;
+      padding: 0 !important;
+      z-index: 101;
+    }
+
+    footer .circle-background {
+      left: 45%;
+    }
+
+    #main-container {
+      margin-bottom: -30px;
+    }
+
+    .exploring-header {
+      top: -10px;
+    }
+
+    .main-content {
+      box-shadow: none;
+    }
+
+    .square-button-link {
+      order: 3;
+    }
+
+    .centerWrap {
+      order: 1;
+      padding-top: 60px;
+      width: 60%;
+    }
+  }
 }
 
 .loader {
@@ -524,8 +569,8 @@ main {
     .addyText {
       width: 100%;
       padding: 5px 0;
-      border-top: 1px solid #AAAAAA;
-      border-bottom: 1px solid #AAAAAA;
+      border-top: 1px solid #aaaaaa;
+      border-bottom: 1px solid #aaaaaa;
 
       p {
         width: 100%;
@@ -547,7 +592,7 @@ main {
         .popButton {
           width: 100%;
           aspect-ratio: 1 / 1;
-          background-color: #8BC43E;
+          background-color: #8bc43e;
           border-radius: 90%;
           margin-top: 20px;
           display: flex;
