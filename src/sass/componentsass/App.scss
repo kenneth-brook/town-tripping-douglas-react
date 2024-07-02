@@ -131,7 +131,7 @@ footer {
 
 .background-circle {
   width: calc(2 * 1.5 * 125px * 0.75); /* 75% of the full diameter */
-  height: calc(2 * 1.5 * 125px * 0.75); /* Same as width */
+  height: calc(2 * 1.5 * 125px * 0.75);
   background-color: rgba(139, 196, 62, 0.3); /* #8BC43E with 50% transparency */
   border-radius: 50%; /* Makes it a circle */
   position: absolute;
@@ -139,7 +139,7 @@ footer {
 
 .background-circle2 {
   width: calc(2 * 1.5 * 135px * 0.75); /* 75% of the full diameter */
-  height: calc(2 * 1.5 * 135px * 0.75); /* Same as width */
+  height: calc(2 * 1.5 * 135px * 0.75);
   background-color: transparent;
   border-radius: 50%; /* Makes it a circle */
   position: absolute;
@@ -402,7 +402,7 @@ main {
 
     .sort-menu {
       width: 25%;
-      z-index: 1001;
+
       border-bottom-right-radius: 12px;
     }
   }
@@ -434,7 +434,8 @@ main {
     }
 
     .exploring-header {
-      top: -10px;
+      top: 100px;
+      font-size: 46px;
     }
 
     .main-content {
@@ -447,8 +448,94 @@ main {
 
     .centerWrap {
       order: 1;
-      padding-top: 60px;
+      padding-top: 150px;
       width: 60%;
+    }
+
+    .centered-image {
+      max-height: 350px;
+    }
+
+    .background-circle {
+      width: calc(2 * 1.5 * 125px * 0.75 * 1.4);
+      height: calc(2 * 1.5 * 125px * 0.75 * 1.4);
+      background-color: rgba(
+        139,
+        196,
+        62,
+        0.3
+      ); /* #8BC43E with 50% transparency */
+      border-radius: 50%; /* Makes it a circle */
+      position: absolute;
+    }
+
+    .background-circle2 {
+      width: calc(2 * 1.5 * 135px * 0.75 * 1.4);
+      height: calc(2 * 1.5 * 135px * 0.75 * 1.4);
+      background-color: transparent;
+      border-radius: 50%; /* Makes it a circle */
+      position: absolute;
+      outline: 4px solid white;
+    }
+
+    #circle-container {
+      width: calc(120px * 1.4);
+      height: calc(120px * 1.4);
+      padding: calc(10px * 1.4);
+      position: relative; /* Important for stacking */
+    }
+
+    #circle-container::after {
+      top: calc(5px * 1.4);
+      left: calc(5px * 1.4);
+      right: calc(5px * 1.4);
+      bottom: calc(5px * 1.4);
+    }
+
+    .centered-img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: calc(65% * 1.4);
+      max-height: calc(65% * 1.4);
+      z-index: 1;
+    }
+
+    .white-circle {
+      width: calc(105px * 1.4);
+      height: calc(105px * 1.4);
+      border: calc(5px * 1.4) solid #8bc43e;
+      box-shadow: inset 0 calc(8px * 1.4) calc(16px * 1.4) rgba(0, 0, 0, 0.7);
+    }
+
+    .homePage .icon-svg {
+      width: calc(67% * 1.2);
+      height: calc(67% * 1.2);
+    }
+
+    .circle-text {
+      font-size: calc(26px * 1.4);
+    }
+
+    .sliding-menu {
+      top: 0;
+      left: 0;
+      height: -moz-fit-content;
+      height: fit-content;
+      width: 48%;
+      transform: translateX(-110%);
+      z-index: 1000;
+      border-bottom-right-radius: 12px;
+    }
+    .sort-menu {
+      width: 15%;
+      z-index: 1001;
+      border-bottom-right-radius: 12px;
+    }
+
+    .desktop-circle {
+      margin-top: -20px;
     }
   }
 }

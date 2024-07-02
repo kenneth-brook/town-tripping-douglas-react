@@ -55,6 +55,8 @@ const Stay = ({ pageTitle }) => {
         orientation === 'landscape-primary' ||
         orientation === 'landscape-secondary'
           ? 'landscape'
+          : orientation === 'desktop'
+          ? 'desktop'
           : 'portrait'
       }`}
     >
