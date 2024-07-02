@@ -1,22 +1,22 @@
-import React from 'react';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import { ReactComponent as DineIcon } from '../assets/icos/dine.svg';
-import { useHeightContext } from '../hooks/HeightContext';
-import { useOrientation } from '../hooks/OrientationContext';
-import { useDataContext } from '../hooks/DataContext';
-import { useNavigate } from 'react-router-dom';
+import React from 'react'
+import Header from './components/Header'
+import Footer from './components/Footer'
+import { ReactComponent as DineIcon } from '../assets/icos/dine.svg'
+import { useHeightContext } from '../hooks/HeightContext'
+import { useOrientation } from '../hooks/OrientationContext'
+import { useDataContext } from '../hooks/DataContext'
+import { useNavigate } from 'react-router-dom'
 
 const Dine = ({ pageTitle }) => {
-  const { headerHeight, footerHeight, footerRef } = useHeightContext();
-  const { data, loading, error } = useDataContext();
-  const dineData = data.eat;
+  const { headerHeight, footerHeight, footerRef } = useHeightContext()
+  const { data, loading, error } = useDataContext()
+  const dineData = data.eat
   const navigate = useNavigate()
 
   const renderStars = (rating) => {
-    const fullStars = Math.floor(rating);
-    const halfStar = rating % 1 !== 0 ? 1 : 0;
-    const emptyStars = 5 - fullStars - halfStar;
+    const fullStars = Math.floor(rating)
+    const halfStar = rating % 1 !== 0 ? 1 : 0
+    const emptyStars = 5 - fullStars - halfStar
 
     return (
       <>
@@ -32,16 +32,19 @@ const Dine = ({ pageTitle }) => {
           </span>
         ))}
       </>
-    );
-  };
+    )
+  }
 
-  const orientation = useOrientation();
+  const orientation = useOrientation()
 
   return (
     <div
       className={`app-container ${
-        orientation === 'landscape-primary' || orientation === 'landscape-secondary'
+        orientation === 'landscape-primary' ||
+        orientation === 'landscape-secondary'
           ? 'landscape'
+          : orientation === 'desktop'
+          ? 'desktop'
           : 'portrait'
       }`}
     >
@@ -75,12 +78,16 @@ const Dine = ({ pageTitle }) => {
                   )}
 
                   <div className="text-box">
-                    <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
+                    <p
+                      dangerouslySetInnerHTML={{ __html: item.description }}
+                    ></p>
 
                     <div className="reviews-container">
                       {item.rating && (
                         <div className="reviews-block">
-                          <div className="stars">{renderStars(item.rating)}</div>
+                          <div className="stars">
+                            {renderStars(item.rating)}
+                          </div>
                           <p className="reviews-text">
                             {item.rating.toFixed(1)} Google reviews
                           </p>
@@ -102,7 +109,7 @@ const Dine = ({ pageTitle }) => {
       </main>
       <Footer ref={footerRef} showCircles={true} />
     </div>
-  );
-};
+  )
+}
 
-export default Dine;
+export default Dine

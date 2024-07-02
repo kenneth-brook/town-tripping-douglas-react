@@ -5,7 +5,9 @@ import { ReactComponent as Cross } from '../../assets/icos/cross.svg'
 
 function SlidingMenu({ isOpen, top, menuContent, orientation, toggleMenu }) {
   const menuStyle =
-    orientation === 'landscape-primary' || orientation === 'landscape-secondary'
+    orientation === 'landscape-primary' ||
+    orientation === 'landscape-secondary' ||
+    orientation === 'desktop'
       ? {
           left: '0px',
           transform: isOpen ? 'translateX(0)' : 'translateX(-110%)',
@@ -17,16 +19,18 @@ function SlidingMenu({ isOpen, top, menuContent, orientation, toggleMenu }) {
 
   return (
     <div className={`sliding-menu ${orientation}`} style={menuStyle}>
-      {(orientation === 'landscape-primary' ||
-        orientation === 'landscape-secondary') && (
-        <button onClick={toggleMenu} className="menu-close-button">
-          <Cross />
-        </button>
-      )}
+      {orientation === 'landscape-primary' ||
+        orientation === 'landscape-secondary' ||
+        (orientation === 'desktop' && (
+          <button onClick={toggleMenu} className="menu-close-button">
+            <Cross />
+          </button>
+        ))}
 
       <div className="menu-content">
         {orientation === 'landscape-primary' ||
-        orientation === 'landscape-secondary' ? (
+        orientation === 'landscape-secondary' ||
+        orientation === 'desktop' ? (
           <>
             <div className="column">
               {menuContent

@@ -7,6 +7,7 @@ import { ReactComponent as EyeIcon } from '../../assets/icos/eye.svg'
 import { ReactComponent as Search } from '../../assets/icos/search.svg'
 import logo from '../../assets/images/logo.png'
 import logoHor from '../../assets/images/logo-horizontal.png'
+import logoDesk from '../../assets/images/logo-desktop.png'
 import { useHeightContext } from '../../hooks/HeightContext.js'
 import { useOrientation } from '../../hooks/OrientationContext'
 
@@ -63,6 +64,12 @@ function Header() {
             orientation === 'landscape-secondary' ? (
               <img
                 src={logoHor}
+                alt="Header Image"
+                className="centered-image"
+              />
+            ) : orientation === 'desktop' ? (
+              <img
+                src={logoDesk}
                 alt="Header Image"
                 className="centered-image"
               />

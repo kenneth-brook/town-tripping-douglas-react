@@ -9,7 +9,9 @@ import styles from '../../sass/componentsass/SortMenu.scss'
 
 function SortMenu({ isOpen, top, menuList, orientation, toggleMenu2 }) {
   const menuStyle2 =
-    orientation === 'landscape-primary' || orientation === 'landscape-secondary'
+    orientation === 'landscape-primary' ||
+    orientation === 'landscape-secondary' ||
+    orientation === 'desktop'
       ? {
           left: '0px',
           transform: isOpen ? 'translateX(0)' : 'translateX(-110%)',
