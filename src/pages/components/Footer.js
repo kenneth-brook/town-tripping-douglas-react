@@ -10,6 +10,7 @@ import { ReactComponent as ShopIcon } from '../../assets/icos/shop.svg';
 import '../../sass/componentsass/Footer.scss';
 import { useHeightContext } from '../../hooks/HeightContext';
 import { useDataContext } from '../../hooks/DataContext';
+import { useViewMode } from '../../hooks/ViewModeContext';
 
 const icons = {
   dine: DineIcon,
@@ -34,34 +35,23 @@ const Footer = forwardRef(({ showCircles = false }, ref) => {
   const location = useLocation();
   const { setFooterHeight } = useHeightContext();
   const { data } = useDataContext();
+  const { isMapView, setIsMapView } = useViewMode();
 
   const handleNavigate = (path) => {
     const currentRoute = location.pathname.substring(1); // Get current path without leading slash
+    const currentType = routeToDataType[currentRoute];
     if (path === 'maps') {
-      const currentType = routeToDataType[currentRoute];
-      const currentData = data[currentType] || [];
-      navigate(`/${path}`, { state: { currentType, data: currentData, previousPath: currentRoute } });
+      setIsMapView(!isMapView);
     } else {
       navigate(`/${path}`);
     }
   };
 
   const isHomePage = location.pathname === '/home';
-  const isMapPage = location.pathname === '/maps';
-  const currentRoute = location.state?.previousPath || location.pathname.substring(1).split('/')[0];
-  const isActive = (key) => {
-    if (isMapPage && key === 'maps') return false;
-    return location.pathname === `/${key}` || (isMapPage && routeToDataType[currentRoute] === key);
-  };
+  const currentRoute = location.pathname.substring(1).split('/')[0];
+  const isActive = (key) => location.pathname === `/${key}`;
 
-  const mapButtonLabel = isMapPage ? 'List' : 'Map';
-  const mapButtonHandler = () => {
-    if (isMapPage) {
-      navigate(`/${currentRoute}`);
-    } else {
-      handleNavigate('maps');
-    }
-  };
+  const mapButtonLabel = isMapView ? 'List' : 'Map';
 
   useEffect(() => {
     if (ref && ref.current) {
@@ -79,11 +69,11 @@ const Footer = forwardRef(({ showCircles = false }, ref) => {
               return (
                 <div
                   key={index}
-                  className={`footer-icon ${isActive(key) ? 'active' : ''}`}
-                  onClick={mapButtonHandler}
+                  className={`footer-icon ${isMapView ? 'active' : ''}`}
+                  onClick={() => handleNavigate('maps')}
                 >
-                  <Icon className={`icon-svg ${isActive(key) ? 'active-icon' : ''}`} />
-                  <span className={`icon-label ${isActive(key) ? 'active-text' : ''}`}>
+                  <Icon className={`icon-svg ${isMapView ? 'active-icon' : ''}`} />
+                  <span className={`icon-label ${isMapView ? 'active-text' : ''}`}>
                     {mapButtonLabel}
                   </span>
                 </div>
