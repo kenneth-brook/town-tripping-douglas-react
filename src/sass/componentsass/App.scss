@@ -495,3 +495,75 @@ main {
 .marker.events {
   background-color: purple;
 }
+
+.popCard {
+  max-width: unset !important;
+  width: 90% !important;
+  border-radius: 10px;
+
+  .popWrap {
+    width: 100%;
+    background-color: white;
+
+    .popTop {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+
+      img {
+        max-width: 45%;
+      }
+
+      h2 {
+        color: #007037;
+        font-size: 1.4rem;
+        text-align: center;
+      }
+    }
+
+    .addyText {
+      width: 100%;
+      padding: 5px 0;
+      border-top: 1px solid #AAAAAA;
+      border-bottom: 1px solid #AAAAAA;
+
+      p {
+        width: 100%;
+        text-align: center;
+        font-size: 1.1rem;
+        line-height: 0.3;
+      }
+    }
+
+    .popButtonsWrap {
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+
+      .popButtonDevide {
+        width: 20%;
+        text-align: center;
+
+        .popButton {
+          width: 100%;
+          aspect-ratio: 1 / 1;
+          background-color: #8BC43E;
+          border-radius: 90%;
+          margin-top: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          svg {
+            width: 60%;
+            fill: white;
+          }
+        }
+      }
+    }
+  }
+}
+
+.mapboxgl-popup-close-button {
+  font-size: 16px !important;
+}
