@@ -1,9 +1,27 @@
-import React from 'react'
-import '../../sass/componentsass/SlidingMenu.scss'
-import { ReactComponent as Triangle } from '../../assets/icos/triangle.svg'
-import { ReactComponent as Cross } from '../../assets/icos/cross.svg'
+// SlidingMenu.js
+import React from 'react';
+import '../../sass/componentsass/SlidingMenu.scss';
+import { ReactComponent as Triangle } from '../../assets/icos/triangle.svg';
+import { ReactComponent as Cross } from '../../assets/icos/cross.svg';
+import { useViewMode } from '../../hooks/ViewModeContext';
+import { useNavigate } from 'react-router-dom';
 
 function SlidingMenu({ isOpen, top, menuContent, orientation, toggleMenu }) {
+  const { setIsMapView } = useViewMode();
+  const navigate = useNavigate();
+
+  const handleNavigation = (link) => {
+    if (link === '/all') {
+      setIsMapView(true);
+      navigate(link);
+    } else if (link.startsWith('http')) {
+      window.open(link, '_blank', 'noopener,noreferrer');
+    } else {
+      navigate(link);
+    }
+    toggleMenu();
+  };
+
   const menuStyle =
     orientation === 'landscape-primary' ||
     orientation === 'landscape-secondary' ||
@@ -15,7 +33,7 @@ function SlidingMenu({ isOpen, top, menuContent, orientation, toggleMenu }) {
       : {
           top: `${top}px`,
           transform: isOpen ? 'translateY(0)' : 'translateY(-110%)',
-        }
+        };
 
   return (
     <div className={`sliding-menu ${orientation}`} style={menuStyle}>
@@ -36,38 +54,46 @@ function SlidingMenu({ isOpen, top, menuContent, orientation, toggleMenu }) {
               {menuContent
                 .slice(0, Math.ceil(menuContent.length / 2))
                 .map((item, index) => (
-                  <a key={index} href={item.link} className="menu-item">
+                  <div
+                    key={index}
+                    className="menu-item"
+                    onClick={() => handleNavigation(item.link)}
+                  >
                     <Triangle />
                     {item.label}
-                  </a>
+                  </div>
                 ))}
             </div>
             <div className="column">
               {menuContent
                 .slice(Math.ceil(menuContent.length / 2))
                 .map((item, index) => (
-                  <a
+                  <div
                     key={index + Math.ceil(menuContent.length / 2)}
-                    href={item.link}
                     className="menu-item"
+                    onClick={() => handleNavigation(item.link)}
                   >
                     <Triangle />
                     {item.label}
-                  </a>
+                  </div>
                 ))}
             </div>
           </>
         ) : (
           menuContent.map((item, index) => (
-            <a key={index} href={item.link} className="menu-item">
+            <div
+              key={index}
+              className="menu-item"
+              onClick={() => handleNavigation(item.link)}
+            >
               <Triangle />
               {item.label}
-            </a>
+            </div>
           ))
         )}
       </div>
     </div>
-  )
+  );
 }
 
-export default SlidingMenu
+export default SlidingMenu;

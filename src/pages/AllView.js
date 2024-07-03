@@ -1,5 +1,5 @@
 // src/pages/AllView.js
-import React, { useState } from 'react';
+import React from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { useHeightContext } from '../hooks/HeightContext';
@@ -11,7 +11,6 @@ import { ReactComponent as DineIcon } from '../assets/icos/dine.svg';
 import { ReactComponent as PlayIcon } from '../assets/icos/play.svg';
 import { ReactComponent as StayIcon } from '../assets/icos/stay.svg';
 import { ReactComponent as ShopIcon } from '../assets/icos/shop.svg';
-import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg';
 import { useNavigate } from 'react-router-dom';
 
 const AllView = () => {
@@ -21,10 +20,6 @@ const AllView = () => {
   const { isMapView, setIsMapView } = useViewMode();
   const combinedData = data.combined;
   const navigate = useNavigate();
-
-  const handleViewToggle = () => {
-    setIsMapView(!isMapView);
-  };
 
   const currentTitle = isMapView ? 'View All Map' : 'View All';
 

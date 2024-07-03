@@ -21,11 +21,10 @@ function Header() {
     { label: 'Dine', link: '/dine' },
     { label: 'Shop', link: '/shop' },
     { label: 'Events', link: '/events' },
-    { label: 'Maps', link: '/maps' },
-    { label: 'Follow Us', link: '/follow-us' },
-    { label: 'Visitors Guide', link: '/visitors-guide' },
-    { label: 'Website', link: '/website' },
-    { label: 'About', link: '/about' },
+    { label: 'View All Map', link: '/all' },
+    { label: 'Follow Us', link: 'https://www.facebook.com/VisitDouglasCoffeeCountyGA' },
+    { label: 'Visitors Guide', link: 'https://365publicationsonline.com/DouglasVG2024/#p=1' },
+    { label: 'Website', link: 'https://visitdouglasga.org/' },
   ]
 
   const menuList = [
