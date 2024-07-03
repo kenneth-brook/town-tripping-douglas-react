@@ -735,11 +735,13 @@ main {
     width: 50%;
 
     flex-direction: column;
+    background-color: #fff;
   }
 
   footer {
     height: 20%;
-    top: 20px;
+    top: 0;
+    padding-top: 22px;
     right: 0;
   }
 
@@ -865,6 +867,7 @@ main {
   .top-container {
     display: flex;
     margin-bottom: 20px;
+    align-items: flex-start;
   }
 
   .view-card {
