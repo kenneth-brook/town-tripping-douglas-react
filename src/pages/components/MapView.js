@@ -1,6 +1,5 @@
 // src/pages/components/MapView.js
 import React, { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
 import Map, { Marker, Popup } from 'react-map-gl';
 import mapboxgl from 'mapbox-gl';
 import { ReactComponent as Phone } from '../../assets/icos/phone2.svg';
@@ -25,15 +24,6 @@ const markerIcons = {
 const MapView = ({ data, type }) => {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const mapRef = useRef();
-  const location = useLocation();
-
-  const typeToTitle = {
-    eat: 'Dine Map',
-    play: 'Play Map',
-    stay: 'Stay Map',
-    shop: 'Shop Map',
-    events: 'Events Map',
-  };
 
   useEffect(() => {
     if (data && data.length > 0 && mapRef.current) {
@@ -51,10 +41,7 @@ const MapView = ({ data, type }) => {
     }
   }, [data]);
 
-  const MarkerIcon = markerIcons[type];
-
   const handleMarkerClick = (item) => {
-    console.log('Marker clicked:', item);
     setSelectedPlace(item);
     if (mapRef.current) {
       const map = mapRef.current.getMap();
@@ -62,6 +49,7 @@ const MapView = ({ data, type }) => {
         center: [item.long, item.lat],
         zoom: 14,
         speed: 1,
+        offset: [0, -200],
       });
     }
   };
@@ -104,7 +92,7 @@ const MapView = ({ data, type }) => {
             anchor="bottom"
             onClick={() => handleMarkerClick(item)}
           >
-            <img src={MarkerIcon} alt={`${type} marker`} className="marker-icon" />
+            <img src={markerIcons[item.type]} alt={`${item.type} marker`} className="marker-icon" />
           </Marker>
         ))}
         {selectedPlace && (
@@ -113,7 +101,6 @@ const MapView = ({ data, type }) => {
             longitude={selectedPlace.long}
             latitude={selectedPlace.lat}
             onClose={() => {
-              console.log('Popup closed');
               setSelectedPlace(null);
             }}
             closeOnClick={false}

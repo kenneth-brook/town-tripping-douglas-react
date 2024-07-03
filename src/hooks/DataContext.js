@@ -7,7 +7,14 @@ const DataContext = createContext();
 export const useDataContext = () => useContext(DataContext);
 
 const DataProvider = ({ children }) => {
-  const [data, setData] = useState({ eat: [], stay: [], play: [], shop: [], events: [] });
+  const [data, setData] = useState({
+    eat: [],
+    stay: [],
+    play: [],
+    shop: [],
+    events: [],
+    combined: [], // Add a combined key
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -35,21 +42,23 @@ const DataProvider = ({ children }) => {
             try {
               const result = await fetchEndpointData(endpoints[key]);
               if (key !== 'events') {
-                // Fetch Google reviews for each item except events
                 const updatedData = await Promise.all(
                   result.map(async (item) => {
                     try {
                       const details = await getGoogleReviews(item.lat, item.long, item.name);
-                      return { ...item, ...details };
+                      return { ...item, ...details, type: key }; // Add type attribute here
                     } catch (error) {
                       console.error(`Failed to fetch Google reviews for ${item.name}`, error);
-                      return { ...item };
+                      return { ...item, type: key }; // Add type attribute here
                     }
                   })
                 );
                 return { key, data: updatedData };
+              } else {
+                // Add type attribute for events data
+                const updatedEventsData = result.map(item => ({ ...item, type: 'events' }));
+                return { key, data: updatedEventsData };
               }
-              return { key, data: result };
             } catch (error) {
               console.error(`Failed to fetch data from ${endpoints[key]}`, error);
               throw error;
@@ -61,6 +70,14 @@ const DataProvider = ({ children }) => {
           acc[key] = data;
           return acc;
         }, {});
+
+        // Combine the data for eat, stay, play, and shop and sort alphabetically by name
+        dataMap.combined = [
+          ...dataMap.eat,
+          ...dataMap.stay,
+          ...dataMap.play,
+          ...dataMap.shop,
+        ].sort((a, b) => a.name.localeCompare(b.name));
 
         setData(dataMap);
       } catch (error) {
