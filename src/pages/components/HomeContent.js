@@ -11,15 +11,23 @@ const HomeContent = () => {
     const iconsKeys = ['dine', 'play', 'stay', 'maps', 'events', 'shop']
     const texts = ['Dine', 'Play', 'Stay', 'Maps', 'Events', 'Shop']
 
+    const calculateDistance = () => {
+      if (orientation === 'desktop') {
+        return 200 // Дистанция для десктопа
+      } else {
+        return 128 // Дистанция для мобильной версии
+      }
+    }
+
     // Calculate positions and create circle data
     const newCircles = texts.map((text, index) => {
       const angle = index * 60
-      const distance = orientation === 'desktop' ? 200 : 128
+      const distance = calculateDistance()
       return { icon: iconsKeys[index], text, angle, distance }
     })
 
     setCircles(newCircles)
-  }, [])
+  }, [orientation])
 
   return (
     <main className="main-content homePage">

@@ -51,6 +51,13 @@ footer {
   bottom: 0;
 }
 
+// .main-logo {
+//   width: 100px;
+//   height: 100px;
+//   background-image: url(../../assets/images/logo.png) center no-repeat;
+//   background-size: contain;
+// }
+
 .mainContent {
   //flex-grow: 1; /* Takes up all available space */
   overflow-y: auto; /* Enables scrolling on the main content */
@@ -537,6 +544,28 @@ main {
     .desktop-circle {
       margin-top: -20px;
     }
+
+    .circle-background {
+      top: -250px;
+    }
+
+    .circle-background::before {
+      width: 840px;
+      height: 328px;
+    }
+
+    .circle-background::after {
+      width: 840px;
+      height: 328px;
+    }
+
+    .circle-background h3 {
+      font-size: 79px;
+    }
+
+    .circle-background p {
+      font-size: 36px;
+    }
   }
 }
 
@@ -698,4 +727,81 @@ main {
 
 .mapboxgl-popup-close-button {
   font-size: 16px !important;
+}
+
+.app-container.desktop.internal-desktop {
+  header,
+  footer {
+    width: 50%;
+
+    flex-direction: column;
+  }
+
+  footer {
+    height: 20%;
+    top: 20px;
+    right: 0;
+  }
+
+  .footer-icon {
+    width: 80px;
+    height: 80px;
+  }
+
+  .circle-background {
+    left: 50%;
+  }
+
+  .circle-background::after {
+    top: 25px;
+  }
+
+  .footer-circles {
+    gap: 50px;
+    justify-content: center;
+  }
+
+  main {
+    position: absolute;
+    top: 200px;
+    left: 0;
+    width: 99%;
+    height: 100%;
+    flex-grow: 0;
+    margin: 20px;
+    z-index: 101;
+  }
+
+  #main-container {
+    margin-bottom: -30px;
+  }
+
+  .exploring-header {
+    top: 100px;
+    font-size: 46px;
+  }
+
+  .main-content {
+    box-shadow: none;
+  }
+
+  .square-button-link {
+    order: 3;
+  }
+
+  .centerWrap {
+    order: 1;
+    padding-top: 0;
+    width: 60%;
+    height: 130px;
+  }
+
+  .centered-image {
+    max-height: 150px;
+  }
+
+  .page-title {
+    width: 95%;
+    margin: 0 auto;
+  }
 }

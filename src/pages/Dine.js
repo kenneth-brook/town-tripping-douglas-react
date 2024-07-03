@@ -58,7 +58,7 @@ const Dine = ({ pageTitle }) => {
         orientation === 'landscape-secondary'
           ? 'landscape'
           : orientation === 'desktop'
-          ? 'desktop'
+          ? 'desktop internal-desktop'
           : 'portrait'
       }`}
     >

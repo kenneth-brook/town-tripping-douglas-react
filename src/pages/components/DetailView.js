@@ -23,15 +23,15 @@ const DetailView = () => {
 
   useEffect(() => {
     if (data) {
-      const actualCategory = category === 'dine' ? 'eat' : category;
+      const actualCategory = category === 'dine' ? 'eat' : category
       if (data[actualCategory]) {
         const selectedItem = data[actualCategory].find(
           (item) => item.id.toString() === id
-        );
-        setItem(selectedItem);
+        )
+        setItem(selectedItem)
       }
     }
-  }, [data, category, id]);
+  }, [data, category, id])
 
   if (loading) return <div className="loader"></div>
   if (error) return <p>{error}</p>
@@ -76,6 +76,8 @@ const DetailView = () => {
         orientation === 'landscape-primary' ||
         orientation === 'landscape-secondary'
           ? 'landscape'
+          : orientation === 'desktop'
+          ? 'desktop internal-desktop'
           : 'portrait'
       }`}
     >
@@ -142,7 +144,7 @@ const DetailView = () => {
                   <DateIcon />
                   {date}
                 </p>
-                {time === '00:00' ? (
+                {time === '00:00:00' ? (
                   ''
                 ) : (
                   <p>
