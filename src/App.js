@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './sass/componentsass/App.scss';
@@ -10,6 +11,7 @@ import Play from './pages/Play';
 import Dine from './pages/Dine';
 import Shop from './pages/Shop';
 import Events from './pages/Events';
+import AllView from './pages/AllView'; // Import AllView
 import { HeightProvider } from './hooks/HeightContext';
 import { OrientationProvider } from './hooks/OrientationContext';
 import DataProvider from './hooks/DataContext';
@@ -49,6 +51,7 @@ function App() {
                   <Route path="/shop" element={<Shop pageTitle="Shop" />} />
                   <Route path="/events" element={<Events pageTitle="Events" />} />
                   <Route path="/itinerery" element={<Itinerary pageTitle="Itinerery" />} />
+                  <Route path="/all" element={<AllView pageTitle="All View" />} /> {/* Add AllView route */}
                   <Route path="/:category/:id" element={<DetailView />} />
                 </Routes>
               </div>
