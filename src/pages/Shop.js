@@ -2,12 +2,12 @@ import React from 'react'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import { ReactComponent as ShopIcon } from '../assets/icos/shop.svg'
-import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg';
+import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg'
 import { useHeightContext } from '../hooks/HeightContext'
 import { useOrientation } from '../hooks/OrientationContext'
 import { useDataContext } from '../hooks/DataContext'
 import { useViewMode } from '../hooks/ViewModeContext'
-import MapView from './components/MapView' // Import the MapView component
+import MapView from './components/MapView'
 import { useNavigate } from 'react-router-dom'
 
 const Shop = ({ pageTitle }) => {
@@ -44,10 +44,17 @@ const Shop = ({ pageTitle }) => {
   const pageTitleContent = (
     <div className="page-title">
       <ShopIcon className="shop-icon" />
-      <h1>{pageTitle} {isMapView && 'Map'}</h1>
+      <h1>
+        {pageTitle} {isMapView && 'Map'}
+      </h1>
       {isMapView && <MapsIcon className="icon-svg" />}
     </div>
-  );
+  )
+
+  // Split shopData into two halves
+  const halfLength = Math.ceil(shopData.length / 2)
+  const firstHalf = shopData.slice(0, halfLength)
+  const secondHalf = shopData.slice(halfLength)
 
   return (
     <div
@@ -56,7 +63,7 @@ const Shop = ({ pageTitle }) => {
         orientation === 'landscape-secondary'
           ? 'landscape'
           : orientation === 'desktop'
-          ? 'desktop'
+          ? 'desktop internal-desktop'
           : 'portrait'
       }`}
     >
@@ -68,52 +75,98 @@ const Shop = ({ pageTitle }) => {
           paddingBottom: `calc(${footerHeight}px + 50px)`,
         }}
       >
-        <div className="page-title">
-        {pageTitleContent}
-        </div>
+        <div className="page-title">{pageTitleContent}</div>
         {loading && <div className="loader"></div>}
         {error && <p>{error}</p>}
         {!loading && !error && (
           <div className="content">
-            {isMapView ? (
-              <MapView data={shopData} type="shop" />
-            ) : (
-              shopData.map((item) => (
-                <div key={item.id} className="content-item">
-                  <h2>{item.name}</h2>
-
-                  <div className="content-box">
-                    {item.images && item.images.length > 0 && (
-                      <img
-                        src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
-                        alt={item.name}
-                        className="content-image"
-                      />
-                    )}
-
-                    <div className="text-box">
-                      <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
-
-                      <div className="reviews-container">
-                        {item.rating && (
-                          <div className="reviews-block">
-                            <div className="stars">{renderStars(item.rating)}</div>
-                            <p className="reviews-text">
-                              {item.rating.toFixed(1)} Google reviews
-                            </p>
-                          </div>
+            {!isMapView ? (
+              <div className="two-column-layout">
+                <div className="column">
+                  {firstHalf.map((item) => (
+                    <div key={item.id} className="content-item">
+                      <h2>{item.name}</h2>
+                      <div className="content-box">
+                        {item.images && item.images.length > 0 && (
+                          <img
+                            src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
+                            alt={item.name}
+                            className="content-image"
+                          />
                         )}
-                        <button
-                          className="more-button"
-                          onClick={() => navigate(`/shop/${item.id}`)}
-                        >
-                          more
-                        </button>
+                        <div className="text-box">
+                          <p
+                            dangerouslySetInnerHTML={{
+                              __html: item.description,
+                            }}
+                          ></p>
+                          <div className="reviews-container">
+                            {item.rating && (
+                              <div className="reviews-block">
+                                <div className="stars">
+                                  {renderStars(item.rating)}
+                                </div>
+                                <p className="reviews-text">
+                                  {item.rating.toFixed(1)} Google reviews
+                                </p>
+                              </div>
+                            )}
+                            <button
+                              className="more-button"
+                              onClick={() => navigate(`/shop/${item.id}`)}
+                            >
+                              more
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
-              ))
+                <div className="column">
+                  {secondHalf.map((item) => (
+                    <div key={item.id} className="content-item">
+                      <h2>{item.name}</h2>
+                      <div className="content-box">
+                        {item.images && item.images.length > 0 && (
+                          <img
+                            src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
+                            alt={item.name}
+                            className="content-image"
+                          />
+                        )}
+                        <div className="text-box">
+                          <p
+                            dangerouslySetInnerHTML={{
+                              __html: item.description,
+                            }}
+                          ></p>
+                          <div className="reviews-container">
+                            {item.rating && (
+                              <div className="reviews-block">
+                                <div className="stars">
+                                  {renderStars(item.rating)}
+                                </div>
+                                <p className="reviews-text">
+                                  {item.rating.toFixed(1)} Google reviews
+                                </p>
+                              </div>
+                            )}
+                            <button
+                              className="more-button"
+                              onClick={() => navigate(`/shop/${item.id}`)}
+                            >
+                              more
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <MapView data={shopData} type="shop" />
             )}
           </div>
         )}
