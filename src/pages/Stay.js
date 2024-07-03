@@ -2,7 +2,7 @@ import React from 'react'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import { ReactComponent as StayIcon } from '../assets/icos/stay.svg'
-import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg';
+import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg'
 import { useHeightContext } from '../hooks/HeightContext'
 import { useOrientation } from '../hooks/OrientationContext'
 import { useDataContext } from '../hooks/DataContext'
@@ -44,10 +44,12 @@ const Stay = ({ pageTitle }) => {
   const pageTitleContent = (
     <div className="page-title">
       <StayIcon className="stay-icon" />
-      <h1>{pageTitle} {isMapView && 'Map'}</h1>
+      <h1>
+        {pageTitle} {isMapView && 'Map'}
+      </h1>
       {isMapView && <MapsIcon className="icon-svg" />}
     </div>
-  );
+  )
 
   return (
     <div
@@ -56,7 +58,7 @@ const Stay = ({ pageTitle }) => {
         orientation === 'landscape-secondary'
           ? 'landscape'
           : orientation === 'desktop'
-          ? 'desktop'
+          ? 'desktop internal-desktop'
           : 'portrait'
       }`}
     >
@@ -68,9 +70,7 @@ const Stay = ({ pageTitle }) => {
           paddingBottom: `calc(${footerHeight}px + 50px)`,
         }}
       >
-        <div className="page-title">
-        {pageTitleContent}
-        </div>
+        <div className="page-title">{pageTitleContent}</div>
         {loading && <div className="loader"></div>}
         {error && <p>{error}</p>}
         {!loading && !error && (
@@ -92,7 +92,9 @@ const Stay = ({ pageTitle }) => {
                     )}
 
                     <div className="text-box">
-                      <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
+                      <p
+                        dangerouslySetInnerHTML={{ __html: item.description }}
+                      ></p>
 
                       <div className="reviews-container">
                         {item.rating && (

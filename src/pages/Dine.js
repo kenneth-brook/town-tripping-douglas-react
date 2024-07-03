@@ -3,12 +3,17 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import { ReactComponent as DineIcon } from '../assets/icos/dine.svg'
 import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg'
+import { ReactComponent as Phone } from '../assets/icos/phone.svg'
+import { ReactComponent as MapIcon } from '../assets/icos/map-icon.svg'
+import { ReactComponent as Share } from '../assets/icos/share-icon.svg'
+import { ReactComponent as AddItinerary } from '../assets/icos/add-itinerary.svg'
 import { useHeightContext } from '../hooks/HeightContext'
 import { useOrientation } from '../hooks/OrientationContext'
 import { useDataContext } from '../hooks/DataContext'
 import { useViewMode } from '../hooks/ViewModeContext'
 import MapView from './components/MapView'
 import { useNavigate } from 'react-router-dom'
+import DetailViewCard from './components/DetailViewCard'
 
 const Dine = ({ pageTitle }) => {
   const { headerHeight, footerHeight, footerRef } = useHeightContext()
@@ -63,62 +68,81 @@ const Dine = ({ pageTitle }) => {
       }`}
     >
       <Header />
-      <main
-        className="internal-content"
-        style={{
-          paddingTop: `calc(${headerHeight}px)`,
-          paddingBottom: `calc(${footerHeight}px + 50px)`,
-        }}
-      >
-        {pageTitleContent}
-        {loading && <div className="loader"></div>}
-        {error && <p>{error}</p>}
-        {!loading && !error && (
-          <div className="content">
-            {!isMapView ? (
-              dineData.map((item) => (
-                <div key={item.id} className="content-item">
-                  <h2>{item.name}</h2>
-                  <div className="content-box">
-                    {item.images && item.images.length > 0 && (
-                      <img
-                        src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
-                        alt={item.name}
-                        className="content-image"
-                      />
-                    )}
-                    <div className="text-box">
-                      <p
-                        dangerouslySetInnerHTML={{ __html: item.description }}
-                      ></p>
-                      <div className="reviews-container">
-                        {item.rating && (
-                          <div className="reviews-block">
-                            <div className="stars">
-                              {renderStars(item.rating)}
-                            </div>
-                            <p className="reviews-text">
-                              {item.rating.toFixed(1)} Google reviews
-                            </p>
-                          </div>
+
+      {orientation === 'desktop' ? (
+        <div className="two-column-layout-desk">
+          {dineData.map((item) => (
+            <DetailViewCard
+              key={item.id}
+              item={item}
+              category="eat"
+              navigate={navigate}
+            />
+          ))}
+        </div>
+      ) : (
+        <main
+          className="internal-content"
+          style={{
+            paddingTop: `calc(${headerHeight}px)`,
+            paddingBottom: `calc(${footerHeight}px + 50px)`,
+          }}
+        >
+          {pageTitleContent}
+          {loading && <div className="loader"></div>}
+          {error && <p>{error}</p>}
+          {!loading && !error && (
+            <div className="content">
+              {!isMapView ? (
+                <div className="two-column-layout">
+                  {dineData.map((item) => (
+                    <div key={item.id} className="content-item">
+                      <h2>{item.name}</h2>
+                      <div className="content-box">
+                        {item.images && item.images.length > 0 && (
+                          <img
+                            src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
+                            alt={item.name}
+                            className="content-image"
+                          />
                         )}
-                        <button
-                          className="more-button"
-                          onClick={() => navigate(`/dine/${item.id}`)}
-                        >
-                          more
-                        </button>
+                        <div className="text-box">
+                          <p
+                            dangerouslySetInnerHTML={{
+                              __html: item.description,
+                            }}
+                          ></p>
+                          <div className="reviews-container">
+                            {item.rating && (
+                              <div className="reviews-block">
+                                <div className="stars">
+                                  {renderStars(item.rating)}
+                                </div>
+                                <p className="reviews-text">
+                                  {item.rating.toFixed(1)} Google reviews
+                                </p>
+                              </div>
+                            )}
+                            <button
+                              className="more-button"
+                              onClick={() => navigate(`/dine/${item.id}`)}
+                            >
+                              more
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ))}
                 </div>
-              ))
-            ) : (
-              <MapView data={dineData} type="eat" />
-            )}
-          </div>
-        )}
-      </main>
+              ) : (
+                <MapView data={dineData} type="eat" />
+              )}
+            </div>
+          )}
+        </main>
+      )}
+
       <Footer ref={footerRef} showCircles={true} />
     </div>
   )
