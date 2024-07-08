@@ -1,4 +1,3 @@
-// src/hooks/DataContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { getGoogleReviews } from '../pages/components/googleReviews'; // Adjust the path as necessary
 
@@ -15,8 +14,10 @@ const DataProvider = ({ children }) => {
     events: [],
     combined: [], // Add a combined key
   });
+  const [filteredData, setFilteredData] = useState(data);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [keyword, setKeyword] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,6 +38,8 @@ const DataProvider = ({ children }) => {
           return response.json();
         };
 
+        const removeQuotesFromName = (name) => name.replace(/['"]/g, '');
+
         const results = await Promise.all(
           Object.keys(endpoints).map(async (key) => {
             try {
@@ -46,17 +49,30 @@ const DataProvider = ({ children }) => {
                   result.map(async (item) => {
                     try {
                       const details = await getGoogleReviews(item.lat, item.long, item.name);
-                      return { ...item, ...details, type: key }; // Add type attribute here
+                      return { 
+                        ...item, 
+                        ...details, 
+                        type: key, 
+                        name: removeQuotesFromName(item.name) // Remove quotes from name here
+                      };
                     } catch (error) {
                       console.error(`Failed to fetch Google reviews for ${item.name}`, error);
-                      return { ...item, type: key }; // Add type attribute here
+                      return { 
+                        ...item, 
+                        type: key, 
+                        name: removeQuotesFromName(item.name) // Remove quotes from name here
+                      };
                     }
                   })
                 );
                 return { key, data: updatedData };
               } else {
-                // Add type attribute for events data
-                const updatedEventsData = result.map(item => ({ ...item, type: 'events' }));
+                // Add type attribute for events data and remove quotes from name
+                const updatedEventsData = result.map(item => ({
+                  ...item,
+                  type: 'events',
+                  name: removeQuotesFromName(item.name) // Remove quotes from name here
+                }));
                 return { key, data: updatedEventsData };
               }
             } catch (error) {
@@ -80,6 +96,7 @@ const DataProvider = ({ children }) => {
         ].sort((a, b) => a.name.localeCompare(b.name));
 
         setData(dataMap);
+        setFilteredData(dataMap);
       } catch (error) {
         setError(`Failed to fetch data: ${error.message}`);
         console.error(error);
@@ -91,8 +108,31 @@ const DataProvider = ({ children }) => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (keyword) {
+      const filterData = (data) => {
+        return data.filter(item => 
+          Object.values(item).some(value => 
+            typeof value === 'string' && value.toLowerCase().includes(keyword.toLowerCase())
+          )
+        );
+      };
+
+      setFilteredData({
+        eat: filterData(data.eat),
+        stay: filterData(data.stay),
+        play: filterData(data.play),
+        shop: filterData(data.shop),
+        events: filterData(data.events),
+        combined: filterData(data.combined),
+      });
+    } else {
+      setFilteredData(data);
+    }
+  }, [keyword, data]);
+
   return (
-    <DataContext.Provider value={{ data, loading, error }}>
+    <DataContext.Provider value={{ data: filteredData, loading, error, setKeyword }}>
       {children}
     </DataContext.Provider>
   );
