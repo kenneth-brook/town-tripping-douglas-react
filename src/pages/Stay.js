@@ -66,7 +66,7 @@ const Stay = ({ pageTitle }) => {
       <main
         className="internal-content"
         style={{
-          paddingTop: `calc(${headerHeight}px)`,
+          paddingTop: `calc(${headerHeight}px + 30px)`,
           paddingBottom: `calc(${footerHeight}px + 50px)`,
         }}
       >
