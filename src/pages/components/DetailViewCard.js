@@ -6,6 +6,7 @@ import { ReactComponent as Phone } from '../../assets/icos/phone.svg'
 import { ReactComponent as MapIcon } from '../../assets/icos/map-icon.svg'
 import { ReactComponent as Share } from '../../assets/icos/share-icon.svg'
 import { ReactComponent as AddItinerary } from '../../assets/icos/add-itinerary.svg'
+import '../../sass/componentsass/DetailViewCard.scss'
 
 const DetailViewCard = ({ item, category, navigate }) => {
   if (!item) {
@@ -98,23 +99,22 @@ const DetailViewCard = ({ item, category, navigate }) => {
                 Website
               </a>
             )}
-            <div className="contact-btn">
-              {item.phone && item.phone.length > 0 && (
-                <a href={`tel:${item.phone}`} className="phone-button">
-                  <Phone /> {item.phone}
-                </a>
-              )}
-              {item.lat && item.long && (
-                <a
-                  href={googleMapsLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="map-button"
-                >
-                  <MapIcon /> Get Direction
-                </a>
-              )}
-            </div>
+
+            {item.phone && item.phone.length > 0 && (
+              <a href={`tel:${item.phone}`} className="phone-button">
+                <Phone /> {item.phone}
+              </a>
+            )}
+            {item.lat && item.long && (
+              <a
+                href={googleMapsLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="map-button"
+              >
+                <MapIcon /> Get Direction
+              </a>
+            )}
           </div>
         </div>
 
