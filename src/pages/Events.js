@@ -1,23 +1,34 @@
-import React from 'react'
-import Header from './components/Header'
-import Footer from './components/Footer'
-import { ReactComponent as EventsIcon } from '../assets/icos/events.svg'
-import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg'
-import { useHeightContext } from '../hooks/HeightContext'
-import { useOrientation } from '../hooks/OrientationContext'
-import { useDataContext } from '../hooks/DataContext'
-import { useViewMode } from '../hooks/ViewModeContext'
-import MapView from './components/MapView' // Import the MapView component
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useMemo } from 'react';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import { ReactComponent as EventsIcon } from '../assets/icos/events.svg';
+import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg';
+import { useHeightContext } from '../hooks/HeightContext';
+import { useOrientation } from '../hooks/OrientationContext';
+import { useDataContext } from '../hooks/DataContext';
+import { useViewMode } from '../hooks/ViewModeContext';
+import MapView from './components/MapView'; // Import the MapView component
+import { useNavigate } from 'react-router-dom';
 
 const Events = ({ pageTitle }) => {
-  const { headerHeight, footerHeight, footerRef } = useHeightContext()
-  const { data, loading, error } = useDataContext()
-  const { isMapView } = useViewMode()
-  const eventsData = data.events
-  const navigate = useNavigate()
+  const { headerHeight, footerHeight, footerRef } = useHeightContext();
+  const { data, loading, error } = useDataContext();
+  const { isMapView } = useViewMode();
+  const navigate = useNavigate();
 
-  const orientation = useOrientation()
+  const orientation = useOrientation();
+
+  const [sortOrder, setSortOrder] = useState('asc'); // State for sorting order
+
+  const sortedEventsData = useMemo(() => {
+    return data.events.slice().sort((a, b) => {
+      if (sortOrder === 'asc') {
+        return a.name.localeCompare(b.name);
+      } else {
+        return b.name.localeCompare(a.name);
+      }
+    });
+  }, [data.events, sortOrder]);
 
   const pageTitleContent = (
     <div className="page-title">
@@ -27,7 +38,7 @@ const Events = ({ pageTitle }) => {
       </h1>
       {isMapView && <MapsIcon className="icon-svg" />}
     </div>
-  )
+  );
 
   return (
     <div
@@ -54,9 +65,9 @@ const Events = ({ pageTitle }) => {
         {!loading && !error && (
           <div className="content">
             {isMapView ? (
-              <MapView data={eventsData} type="events" />
+              <MapView data={sortedEventsData} type="events" />
             ) : (
-              eventsData.map((item) => (
+              sortedEventsData.map((item) => (
                 <div key={item.id} className="content-item">
                   <h2>{item.name}</h2>
                   <div className="descriptBox">
@@ -80,7 +91,7 @@ const Events = ({ pageTitle }) => {
       </main>
       <Footer showCircles={true} ref={footerRef} />
     </div>
-  )
-}
+  );
+};
 
-export default Events
+export default Events;

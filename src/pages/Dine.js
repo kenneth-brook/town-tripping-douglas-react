@@ -1,31 +1,31 @@
-import React from 'react'
-import Header from './components/Header'
-import Footer from './components/Footer'
-import { ReactComponent as DineIcon } from '../assets/icos/dine.svg'
-import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg'
-import { ReactComponent as Phone } from '../assets/icos/phone.svg'
-import { ReactComponent as MapIcon } from '../assets/icos/map-icon.svg'
-import { ReactComponent as Share } from '../assets/icos/share-icon.svg'
-import { ReactComponent as AddItinerary } from '../assets/icos/add-itinerary.svg'
-import { useHeightContext } from '../hooks/HeightContext'
-import { useOrientation } from '../hooks/OrientationContext'
-import { useDataContext } from '../hooks/DataContext'
-import { useViewMode } from '../hooks/ViewModeContext'
-import MapView from './components/MapView'
-import { useNavigate } from 'react-router-dom'
-import DetailViewCard from './components/DetailViewCard'
+import React, { useState, useMemo } from 'react';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import { ReactComponent as DineIcon } from '../assets/icos/dine.svg';
+import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg';
+import { ReactComponent as Phone } from '../assets/icos/phone.svg';
+import { ReactComponent as MapIcon } from '../assets/icos/map-icon.svg';
+import { ReactComponent as Share } from '../assets/icos/share-icon.svg';
+import { ReactComponent as AddItinerary } from '../assets/icos/add-itinerary.svg';
+import { useHeightContext } from '../hooks/HeightContext';
+import { useOrientation } from '../hooks/OrientationContext';
+import { useDataContext } from '../hooks/DataContext';
+import { useViewMode } from '../hooks/ViewModeContext';
+import MapView from './components/MapView';
+import { useNavigate } from 'react-router-dom';
+import DetailViewCard from './components/DetailViewCard';
 
 const Dine = ({ pageTitle }) => {
-  const { headerHeight, footerHeight, footerRef } = useHeightContext()
-  const { data, loading, error } = useDataContext()
-  const { isMapView } = useViewMode()
-  const dineData = data.eat
-  const navigate = useNavigate()
+  const { headerHeight, footerHeight, footerRef } = useHeightContext();
+  const { data, loading, error } = useDataContext();
+  const { isMapView } = useViewMode();
+  const dineData = data.eat;
+  const navigate = useNavigate();
 
   const renderStars = (rating) => {
-    const fullStars = Math.floor(rating)
-    const halfStar = rating % 1 !== 0 ? 1 : 0
-    const emptyStars = 5 - fullStars - halfStar
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 !== 0 ? 1 : 0;
+    const emptyStars = 5 - fullStars - halfStar;
 
     return (
       <>
@@ -41,10 +41,10 @@ const Dine = ({ pageTitle }) => {
           </span>
         ))}
       </>
-    )
-  }
+    );
+  };
 
-  const orientation = useOrientation()
+  const orientation = useOrientation();
 
   const pageTitleContent = (
     <div className="page-title">
@@ -54,7 +54,7 @@ const Dine = ({ pageTitle }) => {
       </h1>
       {isMapView && <MapsIcon className="icon-svg" />}
     </div>
-  )
+  );
 
   return (
     <div
@@ -145,7 +145,7 @@ const Dine = ({ pageTitle }) => {
 
       <Footer ref={footerRef} showCircles={true} />
     </div>
-  )
-}
+  );
+};
 
-export default Dine
+export default Dine;

@@ -1,27 +1,27 @@
-import React from 'react'
-import Header from './components/Header'
-import Footer from './components/Footer'
-import { ReactComponent as StayIcon } from '../assets/icos/stay.svg'
-import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg'
-import { useHeightContext } from '../hooks/HeightContext'
-import { useOrientation } from '../hooks/OrientationContext'
-import { useDataContext } from '../hooks/DataContext'
-import { useViewMode } from '../hooks/ViewModeContext'
-import MapView from './components/MapView' // Import the MapView component
-import { useNavigate } from 'react-router-dom'
-import DetailViewCard from './components/DetailViewCard'
+import React from 'react';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import { ReactComponent as StayIcon } from '../assets/icos/stay.svg';
+import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg';
+import { useHeightContext } from '../hooks/HeightContext';
+import { useOrientation } from '../hooks/OrientationContext';
+import { useDataContext } from '../hooks/DataContext';
+import { useViewMode } from '../hooks/ViewModeContext';
+import MapView from './components/MapView'; // Import the MapView component
+import { useNavigate } from 'react-router-dom';
+import DetailViewCard from './components/DetailViewCard';
 
 const Stay = ({ pageTitle }) => {
-  const { headerHeight, footerHeight, footerRef } = useHeightContext()
-  const { data, loading, error } = useDataContext()
-  const { isMapView } = useViewMode()
-  const stayData = data.stay
-  const navigate = useNavigate()
+  const { headerHeight, footerHeight, footerRef } = useHeightContext();
+  const { data, loading, error } = useDataContext();
+  const { isMapView } = useViewMode();
+  const stayData = data.stay;
+  const navigate = useNavigate();
 
   const renderStars = (rating) => {
-    const fullStars = Math.floor(rating)
-    const halfStar = rating % 1 !== 0 ? 1 : 0
-    const emptyStars = 5 - fullStars - halfStar
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 !== 0 ? 1 : 0;
+    const emptyStars = 5 - fullStars - halfStar;
 
     return (
       <>
@@ -37,10 +37,10 @@ const Stay = ({ pageTitle }) => {
           </span>
         ))}
       </>
-    )
-  }
+    );
+  };
 
-  const orientation = useOrientation()
+  const orientation = useOrientation();
 
   const pageTitleContent = (
     <div className="page-title">
@@ -50,7 +50,7 @@ const Stay = ({ pageTitle }) => {
       </h1>
       {isMapView && <MapsIcon className="icon-svg" />}
     </div>
-  )
+  );
 
   return (
     <div
@@ -71,7 +71,7 @@ const Stay = ({ pageTitle }) => {
             <DetailViewCard
               key={item.id}
               item={item}
-              category="eat"
+              category="stay"
               navigate={navigate}
             />
           ))}
@@ -140,7 +140,7 @@ const Stay = ({ pageTitle }) => {
 
       <Footer ref={footerRef} showCircles={true} />
     </div>
-  )
-}
+  );
+};
 
-export default Stay
+export default Stay;
