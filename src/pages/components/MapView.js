@@ -1,10 +1,10 @@
-// src/pages/components/MapView.js
 import React, { useState, useEffect, useRef } from 'react';
 import Map, { Marker, Popup } from 'react-map-gl';
 import mapboxgl from 'mapbox-gl';
 import { ReactComponent as Phone } from '../../assets/icos/phone2.svg';
 import { ReactComponent as Share } from '../../assets/icos/share-icon2.svg';
 import { ReactComponent as AddItinerary } from '../../assets/icos/add-itinerary2.svg';
+import { useDataContext } from '../../hooks/DataContext';
 
 // Import PNG markers
 import eatPin from '../../assets/icos/eatPin.png';
@@ -24,29 +24,58 @@ const markerIcons = {
 const MapView = ({ data, type }) => {
   const [selectedPlace, setSelectedPlace] = useState(null);
   const mapRef = useRef();
+  const { userLocation } = useDataContext();
+
+  const isValidCoordinate = (lat, lon) => {
+    const latNum = parseFloat(lat);
+    const lonNum = parseFloat(lon);
+    console.log(`Coordinate check: lat=${latNum} (${typeof latNum}), lon=${lonNum} (${typeof lonNum})`); // Debugging log
+    const valid = typeof latNum === 'number' && typeof lonNum === 'number' &&
+                  !isNaN(latNum) && !isNaN(lonNum) &&
+                  latNum >= -90 && latNum <= 90 &&
+                  lonNum >= -180 && lonNum <= 180;
+    if (!valid) {
+      console.error(`Invalid coordinates: (${latNum}, ${lonNum})`);
+    }
+    return valid;
+  };
 
   useEffect(() => {
     if (data && data.length > 0 && mapRef.current) {
       const bounds = new mapboxgl.LngLatBounds();
       data.forEach((item) => {
-        bounds.extend([item.long, item.lat]);
+        if (isValidCoordinate(item.lat, item.long)) {
+          bounds.extend([parseFloat(item.long), parseFloat(item.lat)]);
+        } else {
+          console.error(`Invalid item coordinates for ${item.name}: (${item.lat}, ${item.long})`);
+        }
       });
 
-      const map = mapRef.current.getMap();
-      map.fitBounds(bounds, {
-        padding: { top: 50, bottom: 50, left: 50, right: 50 },
-        maxZoom: 15,
-        duration: 1000,
-      });
+      if (userLocation && isValidCoordinate(userLocation.lat, userLocation.lon)) {
+        bounds.extend([parseFloat(userLocation.lon), parseFloat(userLocation.lat)]);
+      } else {
+        console.error(`Invalid user coordinates: (${userLocation.lat}, ${userLocation.lon})`);
+      }
+
+      if (!bounds.isEmpty()) {
+        const map = mapRef.current.getMap();
+        map.fitBounds(bounds, {
+          padding: { top: 50, bottom: 50, left: 50, right: 50 },
+          maxZoom: 15,
+          duration: 1000,
+        });
+      } else {
+        console.error("Bounds are empty, cannot fit map to bounds.");
+      }
     }
-  }, [data]);
+  }, [data, userLocation]);
 
   const handleMarkerClick = (item) => {
     setSelectedPlace(item);
     if (mapRef.current) {
       const map = mapRef.current.getMap();
       map.flyTo({
-        center: [item.long, item.lat],
+        center: [parseFloat(item.long), parseFloat(item.lat)],
         zoom: 14,
         speed: 1,
         offset: [0, -200],
@@ -63,43 +92,61 @@ const MapView = ({ data, type }) => {
           latitude: 40,
           zoom: 5,
         }}
-        style={{
-          width: '100%',
-          height: 'calc(100vh - 165px)',
-        }}
+        style={{ width: '100%', height: 'calc(100vh - 165px)' }}
         mapStyle="mapbox://styles/mapbox/streets-v11"
         mapboxAccessToken="pk.eyJ1Ijoid29tYmF0MTk3MiIsImEiOiJjbDN1bmdqM2MyZHF2M2J1djg4bzRncWZpIn0.dXd3qQMnwuob5XB9HKXgkw"
         onLoad={() => {
           if (data && data.length > 0) {
             const bounds = new mapboxgl.LngLatBounds();
             data.forEach((item) => {
-              bounds.extend([item.long, item.lat]);
+              if (isValidCoordinate(item.lat, item.long)) {
+                bounds.extend([parseFloat(item.long), parseFloat(item.lat)]);
+              }
             });
-            const map = mapRef.current.getMap();
-            map.fitBounds(bounds, {
-              padding: { top: 50, bottom: 50, left: 50, right: 50 },
-              maxZoom: 15,
-              duration: 1000,
-            });
+            if (userLocation && isValidCoordinate(userLocation.lat, userLocation.lon)) {
+              bounds.extend([parseFloat(userLocation.lon), parseFloat(userLocation.lat)]);
+            }
+            if (!bounds.isEmpty()) {
+              const map = mapRef.current.getMap();
+              map.fitBounds(bounds, {
+                padding: { top: 50, bottom: 50, left: 50, right: 50 },
+                maxZoom: 15,
+                duration: 1000,
+              });
+            } else {
+              console.error("Bounds are empty, cannot fit map to bounds.");
+            }
           }
         }}
       >
-        {data.map((item) => (
+        {userLocation && isValidCoordinate(userLocation.lat, userLocation.lon) && (
           <Marker
-            key={item.id}
-            longitude={item.long}
-            latitude={item.lat}
+            longitude={parseFloat(userLocation.lon)}
+            latitude={parseFloat(userLocation.lat)}
+            color="red"
             anchor="bottom"
-            onClick={() => handleMarkerClick(item)}
           >
-            <img src={markerIcons[item.type]} alt={`${item.type} marker`} className="marker-icon" />
+            <Popup>You are here</Popup>
           </Marker>
+        )}
+        {data.map((item) => (
+          isValidCoordinate(item.lat, item.long) && (
+            <Marker
+              key={item.id}
+              longitude={parseFloat(item.long)}
+              latitude={parseFloat(item.lat)}
+              anchor="bottom"
+              onClick={() => handleMarkerClick(item)}
+            >
+              <img src={markerIcons[item.type]} alt={`${item.type} marker`} className="marker-icon" />
+            </Marker>
+          )
         ))}
         {selectedPlace && (
           <Popup
             className="popCard"
-            longitude={selectedPlace.long}
-            latitude={selectedPlace.lat}
+            longitude={parseFloat(selectedPlace.long)}
+            latitude={parseFloat(selectedPlace.lat)}
             onClose={() => {
               setSelectedPlace(null);
             }}
