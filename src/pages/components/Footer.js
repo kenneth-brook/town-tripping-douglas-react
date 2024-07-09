@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useOrientation } from '../../hooks/OrientationContext';
 import { ReactComponent as DineIcon } from '../../assets/icos/dine.svg';
 import { ReactComponent as PlayIcon } from '../../assets/icos/play.svg';
@@ -11,6 +11,7 @@ import '../../sass/componentsass/Footer.scss';
 import { useHeightContext } from '../../hooks/HeightContext';
 import { useDataContext } from '../../hooks/DataContext';
 import { useViewMode } from '../../hooks/ViewModeContext';
+import { useResettingNavigate } from '../../hooks/useResettingNavigate';
 
 const icons = {
   dine: DineIcon,
@@ -31,7 +32,7 @@ const routeToDataType = {
 
 const Footer = forwardRef(({ showCircles = false }, ref) => {
   const orientation = useOrientation();
-  const navigate = useNavigate();
+  const navigate = useResettingNavigate(); // Use the custom hook for navigation
   const location = useLocation();
   const { setFooterHeight } = useHeightContext();
   const { data } = useDataContext();
