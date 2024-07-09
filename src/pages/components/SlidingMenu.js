@@ -5,7 +5,16 @@ import { ReactComponent as Cross } from '../../assets/icos/cross.svg'
 import { useViewMode } from '../../hooks/ViewModeContext'
 import { useNavigate } from 'react-router-dom'
 
-function SlidingMenu({ isOpen, top, menuContent, orientation, toggleMenu }) {
+function SlidingMenu({
+  isOpen,
+  top,
+  menuContent,
+  orientation,
+  toggleMenu,
+  isSortMenu = false,
+  selectedDate,
+  setDate,
+}) {
   const { setIsMapView } = useViewMode()
   const navigate = useNavigate()
 
@@ -66,7 +75,11 @@ function SlidingMenu({ isOpen, top, menuContent, orientation, toggleMenu }) {
                     {item.type === 'date' && (
                       <input
                         type="date"
-                        value={selectedDate ? selectedDate.toISOString().substring(0, 10) : ''}
+                        value={
+                          selectedDate
+                            ? selectedDate.toISOString().substring(0, 10)
+                            : ''
+                        }
                         onChange={item.onChange}
                       />
                     )}
@@ -87,7 +100,11 @@ function SlidingMenu({ isOpen, top, menuContent, orientation, toggleMenu }) {
                     {item.type === 'date' && (
                       <input
                         type="date"
-                        value={selectedDate ? selectedDate.toISOString().substring(0, 10) : ''}
+                        value={
+                          selectedDate
+                            ? selectedDate.toISOString().substring(0, 10)
+                            : ''
+                        }
                         onChange={item.onChange}
                       />
                     )}
@@ -107,7 +124,11 @@ function SlidingMenu({ isOpen, top, menuContent, orientation, toggleMenu }) {
               {item.type === 'date' && (
                 <input
                   type="date"
-                  value={selectedDate ? selectedDate.toISOString().substring(0, 10) : ''}
+                  value={
+                    selectedDate
+                      ? selectedDate.toISOString().substring(0, 10)
+                      : ''
+                  }
                   onChange={item.onChange}
                 />
               )}
