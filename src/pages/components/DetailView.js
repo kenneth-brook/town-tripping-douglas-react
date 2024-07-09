@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useOrientation } from '../../hooks/OrientationContext'
 import { useHeightContext } from '../../hooks/HeightContext'
 import { useDataContext } from '../../hooks/DataContext'
+import { useNavigate } from 'react-router-dom'
 import { ReactComponent as Location } from '../../assets/icos/location.svg'
 import { ReactComponent as DateIcon } from '../../assets/icos/date.svg'
 import { ReactComponent as TimeIcon } from '../../assets/icos/time.svg'
@@ -10,6 +11,7 @@ import { ReactComponent as Phone } from '../../assets/icos/phone.svg'
 import { ReactComponent as MapIcon } from '../../assets/icos/map-icon.svg'
 import { ReactComponent as Share } from '../../assets/icos/share-icon.svg'
 import { ReactComponent as AddItinerary } from '../../assets/icos/add-itinerary.svg'
+import { ReactComponent as BackArrow } from '../../assets/icos/back-arrow.svg'
 import Header from './Header'
 import Footer from './Footer'
 import styles from '../../sass/componentsass/DetailView.scss'
@@ -20,6 +22,7 @@ const DetailView = () => {
   const { headerHeight, footerHeight, footerRef } = useHeightContext()
   const orientation = useOrientation()
   const [item, setItem] = useState(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (data) {
@@ -68,7 +71,14 @@ const DetailView = () => {
     return { date, time: `${hours}:${minutes}` }
   }
 
+  const handleBack = () => {
+    navigate(-1)
+  }
+
   const { date, time } = formatDate(item.start_date)
+
+  console.log('Formatted Date: ', date)
+  console.log('Formatted Time: ', time)
 
   return (
     <div
@@ -91,14 +101,25 @@ const DetailView = () => {
       >
         <div className="view-card">
           <div className="top-image">
-            {item.images && item.images.length > 0 && (
-              <div className="image-container">
-                <img
-                  src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
-                  alt={item.name}
-                />
-              </div>
-            )}
+            <div className="img-back">
+              {item.images && item.images.length > 0 && (
+                <div className="image-container">
+                  <img
+                    src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
+                    alt={item.name}
+                  />
+                </div>
+              )}
+              {orientation === 'landscape-primary' ? (
+                <a onClick={handleBack} className="web-button-landscape">
+                  <BackArrow />
+                  back
+                </a>
+              ) : (
+                ''
+              )}
+            </div>
+
             {orientation === 'landscape-primary' ? (
               <div className="contact-container">
                 {item.web && item.web.length > 0 && (
@@ -111,6 +132,7 @@ const DetailView = () => {
                     Website
                   </a>
                 )}
+
                 <div className="contact-btn">
                   {item.phone && item.phone.length > 0 && (
                     <a href={`tel:${item.phone}`} className="phone-button">
@@ -144,7 +166,7 @@ const DetailView = () => {
                   <DateIcon />
                   {date}
                 </p>
-                {time === '00:00:00' ? (
+                {time === '00:00' ? (
                   ''
                 ) : (
                   <p>
@@ -161,16 +183,23 @@ const DetailView = () => {
             ''
           ) : (
             <div className="contact-container">
-              {item.web && item.web.length > 0 && (
-                <a
-                  href={item.web}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="web-button"
-                >
-                  Website
+              <div className="web-back">
+                {item.web && item.web.length > 0 && (
+                  <a
+                    href={item.web}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="web-button"
+                  >
+                    Website
+                  </a>
+                )}
+                <a onClick={handleBack} className="web-button">
+                  <BackArrow />
+                  Back
                 </a>
-              )}
+              </div>
+
               <div className="contact-btn">
                 {item.phone && item.phone.length > 0 && (
                   <a href={`tel:${item.phone}`} className="phone-button">

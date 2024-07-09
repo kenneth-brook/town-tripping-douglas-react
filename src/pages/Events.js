@@ -1,34 +1,34 @@
-import React, { useState, useMemo } from 'react';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import { ReactComponent as EventsIcon } from '../assets/icos/events.svg';
-import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg';
-import { useHeightContext } from '../hooks/HeightContext';
-import { useOrientation } from '../hooks/OrientationContext';
-import { useDataContext } from '../hooks/DataContext';
-import { useViewMode } from '../hooks/ViewModeContext';
-import MapView from './components/MapView'; // Import the MapView component
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useMemo } from 'react'
+import Header from './components/Header'
+import Footer from './components/Footer'
+import { ReactComponent as EventsIcon } from '../assets/icos/events.svg'
+import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg'
+import { useHeightContext } from '../hooks/HeightContext'
+import { useOrientation } from '../hooks/OrientationContext'
+import { useDataContext } from '../hooks/DataContext'
+import { useViewMode } from '../hooks/ViewModeContext'
+import MapView from './components/MapView'
+import { useNavigate } from 'react-router-dom'
+import DetailViewCard from './components/DetailViewCard' // Don't forget to import DetailViewCard
 
 const Events = ({ pageTitle }) => {
-  const { headerHeight, footerHeight, footerRef } = useHeightContext();
-  const { data, loading, error } = useDataContext();
-  const { isMapView } = useViewMode();
-  const navigate = useNavigate();
+  const { headerHeight, footerHeight, footerRef } = useHeightContext()
+  const { data, loading, error } = useDataContext()
+  const { isMapView } = useViewMode()
+  const navigate = useNavigate()
+  const orientation = useOrientation()
 
-  const orientation = useOrientation();
-
-  const [sortOrder, setSortOrder] = useState('asc'); // State for sorting order
+  const [sortOrder, setSortOrder] = useState('asc')
 
   const sortedEventsData = useMemo(() => {
     return data.events.slice().sort((a, b) => {
       if (sortOrder === 'asc') {
-        return a.name.localeCompare(b.name);
+        return a.name.localeCompare(b.name)
       } else {
-        return b.name.localeCompare(a.name);
+        return b.name.localeCompare(a.name)
       }
-    });
-  }, [data.events, sortOrder]);
+    })
+  }, [data.events, sortOrder])
 
   const pageTitleContent = (
     <div className="page-title">
@@ -38,7 +38,7 @@ const Events = ({ pageTitle }) => {
       </h1>
       {isMapView && <MapsIcon className="icon-svg" />}
     </div>
-  );
+  )
 
   return (
     <div
@@ -60,28 +60,55 @@ const Events = ({ pageTitle }) => {
         }}
       >
         <div className="page-title">{pageTitleContent}</div>
-        {loading && <p>Loading...</p>}
+        {loading && <div className="loader"></div>}
         {error && <p>{error}</p>}
         {!loading && !error && (
           <div className="content">
             {isMapView ? (
               <MapView data={sortedEventsData} type="events" />
+            ) : orientation === 'desktop' ? (
+              <div className="two-column-layout-desk">
+                {sortedEventsData.map((item) => (
+                  <DetailViewCard
+                    key={item.id}
+                    item={item}
+                    category="events"
+                    navigate={navigate}
+                  />
+                ))}
+              </div>
             ) : (
               sortedEventsData.map((item) => (
                 <div key={item.id} className="content-item">
                   <h2>{item.name}</h2>
-                  <div className="descriptBox">
-                    <p
-                      dangerouslySetInnerHTML={{ __html: item.description }}
-                    ></p>
-                  </div>
-                  <div className="reviews-container">
-                    <button
-                      className="more-button"
-                      onClick={() => navigate(`/events/${item.id}`)}
-                    >
-                      more
-                    </button>
+                  <div className="content-box">
+                    {item.images && item.images.length > 0 && (
+                      <img
+                        src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
+                        alt={item.name}
+                        className="content-image"
+                      />
+                    )}
+                    <div className="text-box">
+                      <p
+                        dangerouslySetInnerHTML={{ __html: item.description }}
+                      ></p>
+                      <div className="reviews-container">
+                        {item.rating && (
+                          <div className="reviews-block">
+                            <p className="reviews-text">
+                              {item.rating.toFixed(1)} Google reviews
+                            </p>
+                          </div>
+                        )}
+                        <button
+                          className="more-button"
+                          onClick={() => navigate(`/shop/${item.id}`)}
+                        >
+                          more
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))
@@ -91,7 +118,7 @@ const Events = ({ pageTitle }) => {
       </main>
       <Footer showCircles={true} ref={footerRef} />
     </div>
-  );
-};
+  )
+}
 
-export default Events;
+export default Events

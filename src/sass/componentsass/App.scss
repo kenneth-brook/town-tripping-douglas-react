@@ -412,6 +412,10 @@ main {
 
       border-bottom-right-radius: 12px;
     }
+
+    .sort-menu {
+      z-index: 10005;
+    }
   }
 
   &.desktop {
