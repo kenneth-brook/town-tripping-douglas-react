@@ -1,26 +1,26 @@
 // SlidingMenu.js
-import React from 'react';
-import '../../sass/componentsass/SlidingMenu.scss';
-import { ReactComponent as Triangle } from '../../assets/icos/triangle.svg';
-import { ReactComponent as Cross } from '../../assets/icos/cross.svg';
-import { useViewMode } from '../../hooks/ViewModeContext';
-import { useNavigate } from 'react-router-dom';
+import React from 'react'
+import '../../sass/componentsass/SlidingMenu.scss'
+import { ReactComponent as Triangle } from '../../assets/icos/triangle.svg'
+import { ReactComponent as Cross } from '../../assets/icos/cross.svg'
+import { useViewMode } from '../../hooks/ViewModeContext'
+import { useNavigate } from 'react-router-dom'
 
 function SlidingMenu({ isOpen, top, menuContent, orientation, toggleMenu }) {
-  const { setIsMapView } = useViewMode();
-  const navigate = useNavigate();
+  const { setIsMapView } = useViewMode()
+  const navigate = useNavigate()
 
   const handleNavigation = (link) => {
     if (link === '/all') {
-      setIsMapView(true);
-      navigate(link);
+      setIsMapView(true)
+      navigate(link)
     } else if (link.startsWith('http')) {
-      window.open(link, '_blank', 'noopener,noreferrer');
+      window.open(link, '_blank', 'noopener,noreferrer')
     } else {
-      navigate(link);
+      navigate(link)
     }
-    toggleMenu();
-  };
+    toggleMenu()
+  }
 
   const menuStyle =
     orientation === 'landscape-primary' ||
@@ -33,7 +33,7 @@ function SlidingMenu({ isOpen, top, menuContent, orientation, toggleMenu }) {
       : {
           top: `${top}px`,
           transform: isOpen ? 'translateY(0)' : 'translateY(-110%)',
-        };
+        }
 
   return (
     <div className={`sliding-menu ${orientation}`} style={menuStyle}>
@@ -50,6 +50,9 @@ function SlidingMenu({ isOpen, top, menuContent, orientation, toggleMenu }) {
         orientation === 'landscape-secondary' ||
         orientation === 'desktop' ? (
           <>
+            <button onClick={toggleMenu} className="menu-close-button">
+              <Cross />
+            </button>
             <div className="column">
               {menuContent
                 .slice(0, Math.ceil(menuContent.length / 2))
@@ -93,7 +96,7 @@ function SlidingMenu({ isOpen, top, menuContent, orientation, toggleMenu }) {
         )}
       </div>
     </div>
-  );
+  )
 }
 
-export default SlidingMenu;
+export default SlidingMenu

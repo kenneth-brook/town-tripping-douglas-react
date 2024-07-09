@@ -1,41 +1,43 @@
-import React, { useState, useMemo } from 'react';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import { ReactComponent as ShopIcon } from '../assets/icos/shop.svg';
-import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg';
-import { useHeightContext } from '../hooks/HeightContext';
-import { useOrientation } from '../hooks/OrientationContext';
-import { useDataContext } from '../hooks/DataContext';
-import { useViewMode } from '../hooks/ViewModeContext';
-import MapView from './components/MapView';
-import { useNavigate } from 'react-router-dom';
-import DetailViewCard from './components/DetailViewCard';
+import React, { useState, useMemo } from 'react'
+import Header from './components/Header'
+import Footer from './components/Footer'
+import { ReactComponent as ShopIcon } from '../assets/icos/shop.svg'
+import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg'
+import { useHeightContext } from '../hooks/HeightContext'
+import { useOrientation } from '../hooks/OrientationContext'
+import { useDataContext } from '../hooks/DataContext'
+import { useViewMode } from '../hooks/ViewModeContext'
+import MapView from './components/MapView'
+import { useNavigate } from 'react-router-dom'
+import DetailViewCard from './components/DetailViewCard'
 
 const Shop = ({ pageTitle }) => {
-  const { headerHeight, footerHeight, footerRef } = useHeightContext();
-  const { data, loading, error } = useDataContext();
-  const { isMapView } = useViewMode();
-  const navigate = useNavigate();
+  const { headerHeight, footerHeight, footerRef } = useHeightContext()
+  const { data, loading, error } = useDataContext()
+  const { isMapView } = useViewMode()
+  const navigate = useNavigate()
 
-  const [sortOrder, setSortOrder] = useState('asc'); // State for sorting order
-  const [filterText, setFilterText] = useState(''); // State for filter text
+  const [sortOrder, setSortOrder] = useState('asc') // State for sorting order
+  const [filterText, setFilterText] = useState('') // State for filter text
 
   const shopData = useMemo(() => {
     return data.shop
-      .filter(item => item.name.toLowerCase().includes(filterText.toLowerCase())) // Filter logic
+      .filter((item) =>
+        item.name.toLowerCase().includes(filterText.toLowerCase())
+      ) // Filter logic
       .sort((a, b) => {
         if (sortOrder === 'asc') {
-          return a.name.localeCompare(b.name);
+          return a.name.localeCompare(b.name)
         } else {
-          return b.name.localeCompare(a.name);
+          return b.name.localeCompare(a.name)
         }
-      });
-  }, [data.shop, sortOrder, filterText]);
+      })
+  }, [data.shop, sortOrder, filterText])
 
   const renderStars = (rating) => {
-    const fullStars = Math.floor(rating);
-    const halfStar = rating % 1 !== 0 ? 1 : 0;
-    const emptyStars = 5 - fullStars - halfStar;
+    const fullStars = Math.floor(rating)
+    const halfStar = rating % 1 !== 0 ? 1 : 0
+    const emptyStars = 5 - fullStars - halfStar
 
     return (
       <>
@@ -51,10 +53,10 @@ const Shop = ({ pageTitle }) => {
           </span>
         ))}
       </>
-    );
-  };
+    )
+  }
 
-  const orientation = useOrientation();
+  const orientation = useOrientation()
 
   const pageTitleContent = (
     <div className="page-title">
@@ -64,12 +66,58 @@ const Shop = ({ pageTitle }) => {
       </h1>
       {isMapView && <MapsIcon className="icon-svg" />}
     </div>
-  );
+  )
 
-  // Split shopData into two halves
-  const halfLength = Math.ceil(shopData.length / 2);
-  const firstHalf = shopData.slice(0, halfLength);
-  const secondHalf = shopData.slice(halfLength);
+  const renderShopContent = () => (
+    <div className="two-column-layout">
+      {shopData.map((item) => (
+        <div key={item.id} className="content-item">
+          <h2>{item.name}</h2>
+          <div className="content-box">
+            {item.images && item.images.length > 0 && (
+              <img
+                src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
+                alt={item.name}
+                className="content-image"
+              />
+            )}
+            <div className="text-box">
+              <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
+              <div className="reviews-container">
+                {item.rating && (
+                  <div className="reviews-block">
+                    <div className="stars">{renderStars(item.rating)}</div>
+                    <p className="reviews-text">
+                      {item.rating.toFixed(1)} Google reviews
+                    </p>
+                  </div>
+                )}
+                <button
+                  className="more-button"
+                  onClick={() => navigate(`/shop/${item.id}`)}
+                >
+                  more
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+
+  const renderShopDesktopContent = () => (
+    <div className="two-column-layout-desk">
+      {shopData.map((item) => (
+        <DetailViewCard
+          key={item.id}
+          item={item}
+          category="shop"
+          navigate={navigate}
+        />
+      ))}
+    </div>
+  )
 
   return (
     <div
@@ -83,126 +131,31 @@ const Shop = ({ pageTitle }) => {
       }`}
     >
       <Header />
-      {orientation === 'desktop' ? (
-        <div className="two-column-layout-desk">
-          {shopData.map((item) => (
-            <DetailViewCard
-              key={item.id}
-              item={item}
-              category="shop"
-              navigate={navigate}
-            />
-          ))}
-        </div>
-      ) : (
-        <main
-          className="internal-content"
-          style={{
-            paddingTop: `calc(${headerHeight}px + 30px)`,
-            paddingBottom: `calc(${footerHeight}px + 50px)`,
-          }}
-        >
-          <div className="page-title">{pageTitleContent}</div>
-          {loading && <div className="loader"></div>}
-          {error && <p>{error}</p>}
-          {!loading && !error && (
-            <div className="content">
-              {!isMapView ? (
-                <div className="two-column-layout">
-                  <div className="column">
-                    {firstHalf.map((item) => (
-                      <div key={item.id} className="content-item">
-                        <h2>{item.name}</h2>
-                        <div className="content-box">
-                          {item.images && item.images.length > 0 && (
-                            <img
-                              src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
-                              alt={item.name}
-                              className="content-image"
-                            />
-                          )}
-                          <div className="text-box">
-                            <p
-                              dangerouslySetInnerHTML={{
-                                __html: item.description,
-                              }}
-                            ></p>
-                            <div className="reviews-container">
-                              {item.rating && (
-                                <div className="reviews-block">
-                                  <div className="stars">
-                                    {renderStars(item.rating)}
-                                  </div>
-                                  <p className="reviews-text">
-                                    {item.rating.toFixed(1)} Google reviews
-                                  </p>
-                                </div>
-                              )}
-                              <button
-                                className="more-button"
-                                onClick={() => navigate(`/shop/${item.id}`)}
-                              >
-                                more
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="column">
-                    {secondHalf.map((item) => (
-                      <div key={item.id} className="content-item">
-                        <h2>{item.name}</h2>
-                        <div className="content-box">
-                          {item.images && item.images.length > 0 && (
-                            <img
-                              src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
-                              alt={item.name}
-                              className="content-image"
-                            />
-                          )}
-                          <div className="text-box">
-                            <p
-                              dangerouslySetInnerHTML={{
-                                __html: item.description,
-                              }}
-                            ></p>
-                            <div className="reviews-container">
-                              {item.rating && (
-                                <div className="reviews-block">
-                                  <div className="stars">
-                                    {renderStars(item.rating)}
-                                  </div>
-                                  <p className="reviews-text">
-                                    {item.rating.toFixed(1)} Google reviews
-                                  </p>
-                                </div>
-                              )}
-                              <button
-                                className="more-button"
-                                onClick={() => navigate(`/shop/${item.id}`)}
-                              >
-                                more
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <MapView data={shopData} type="shop" />
-              )}
-            </div>
-          )}
-        </main>
-      )}
-
+      <main
+        className="internal-content"
+        style={{
+          paddingTop: `calc(${headerHeight}px + 30px)`,
+          paddingBottom: `calc(${footerHeight}px + 50px)`,
+        }}
+      >
+        {pageTitleContent}
+        {loading && <div className="loader"></div>}
+        {error && <p>{error}</p>}
+        {!loading && !error && (
+          <div className="content">
+            {isMapView ? (
+              <MapView data={shopData} type="shop" />
+            ) : orientation === 'desktop' ? (
+              renderShopDesktopContent()
+            ) : (
+              renderShopContent()
+            )}
+          </div>
+        )}
+      </main>
       <Footer ref={footerRef} showCircles={true} />
     </div>
-  );
-};
+  )
+}
 
-export default Shop;
+export default Shop
