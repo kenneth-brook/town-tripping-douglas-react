@@ -1,4 +1,3 @@
-// SlidingMenu.js
 import React from 'react'
 import '../../sass/componentsass/SlidingMenu.scss'
 import { ReactComponent as Triangle } from '../../assets/icos/triangle.svg'
@@ -60,10 +59,17 @@ function SlidingMenu({ isOpen, top, menuContent, orientation, toggleMenu }) {
                   <div
                     key={index}
                     className="menu-item"
-                    onClick={() => handleNavigation(item.link)}
+                    onClick={() => handleNavigation(item.link, item.onClick)}
                   >
                     <Triangle />
                     {item.label}
+                    {item.type === 'date' && (
+                      <input
+                        type="date"
+                        value={selectedDate ? selectedDate.toISOString().substring(0, 10) : ''}
+                        onChange={item.onChange}
+                      />
+                    )}
                   </div>
                 ))}
             </div>
@@ -74,10 +80,17 @@ function SlidingMenu({ isOpen, top, menuContent, orientation, toggleMenu }) {
                   <div
                     key={index + Math.ceil(menuContent.length / 2)}
                     className="menu-item"
-                    onClick={() => handleNavigation(item.link)}
+                    onClick={() => handleNavigation(item.link, item.onClick)}
                   >
                     <Triangle />
                     {item.label}
+                    {item.type === 'date' && (
+                      <input
+                        type="date"
+                        value={selectedDate ? selectedDate.toISOString().substring(0, 10) : ''}
+                        onChange={item.onChange}
+                      />
+                    )}
                   </div>
                 ))}
             </div>
@@ -87,10 +100,17 @@ function SlidingMenu({ isOpen, top, menuContent, orientation, toggleMenu }) {
             <div
               key={index}
               className="menu-item"
-              onClick={() => handleNavigation(item.link)}
+              onClick={() => handleNavigation(item.link, item.onClick)}
             >
               <Triangle />
               {item.label}
+              {item.type === 'date' && (
+                <input
+                  type="date"
+                  value={selectedDate ? selectedDate.toISOString().substring(0, 10) : ''}
+                  onChange={item.onChange}
+                />
+              )}
             </div>
           ))
         )}
