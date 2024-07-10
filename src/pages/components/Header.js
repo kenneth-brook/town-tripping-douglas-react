@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import SlidingMenu from './SlidingMenu';
+import SortMenu from './SortMenu.js';
 import '../../sass/componentsass/Header.scss';
 import { ReactComponent as EyeIcon } from '../../assets/icos/eye.svg';
 import { ReactComponent as Search } from '../../assets/icos/search.svg';
@@ -14,13 +15,14 @@ function Header() {
   const { headerRef, headerHeight } = useHeightContext();
   const [menuOpen, setMenuOpen] = useState(false);
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
-  const { setKeyword, resetKeyword, sortData, isAscending, setIsAscending, setSelectedDate, handleNearMe } = useDataContext();
+  const { setKeyword, resetKeyword, sortData, isAscending, setIsAscending, setSelectedDate, handleNearMe, setNearMe, resetFilteredData, typeCounts } = useDataContext();
   const orientation = useOrientation();
   const location = useLocation();
   const isNotHomePage = location.pathname !== '/home';
   const keywordInputRef = useRef(null);
   const navigate = useResettingNavigate();
   const [selectedDate, setDate] = useState(null);
+  const [dropdownItem, setDropdownItem] = useState(null);
 
   const handleKeywordChange = (e) => {
     setKeyword(e.target.value);
@@ -30,10 +32,12 @@ function Header() {
   const handleShowAllClick = () => {
     console.log('Show All clicked');
     resetKeyword(); // Reset the keyword search
+    resetFilteredData(); // Reset filtered data
     if (keywordInputRef.current) {
       keywordInputRef.current.value = ''; // Clear the input field
     }
     setSortMenuOpen(false); // Close the sort menu
+    setNearMe(false); // Turn off Near Me functionality
   };
 
   const handleAlphabeticalSort = () => {
@@ -49,6 +53,83 @@ function Header() {
     setSortMenuOpen(false); // Close the sort menu
   };
 
+  const handleNearMeWithClose = () => {
+    handleNearMe();
+    setSortMenuOpen(false);
+  };
+
+  const getDropdownLabel = () => {
+    switch (location.pathname) {
+      case '/dine':
+        return 'Cuisine Type';
+      case '/play':
+        return 'Play Type';
+      case '/stay':
+        return 'Stay Type';
+      case '/shop':
+        return 'Shop Type';
+      default:
+        return '';
+    }
+  };
+
+  const getDropdownOptions = (typeCounts) => {
+    return Object.entries(typeCounts).map(([key, count]) => ({
+      value: key,
+      label: `${key} (${count})`,
+    }));
+  };
+
+  useEffect(() => {
+    console.log('Location changed:', location.pathname);
+    console.log('Type counts:', typeCounts);
+    const label = getDropdownLabel();
+    if (label && typeCounts) {
+      let typeCountsData;
+      switch (location.pathname) {
+        case '/dine':
+          typeCountsData = typeCounts.menu_types;
+          break;
+        case '/play':
+          typeCountsData = typeCounts.play_types;
+          break;
+        case '/stay':
+          typeCountsData = typeCounts.stay_types;
+          break;
+        case '/shop':
+          typeCountsData = typeCounts.shop_types;
+          break;
+        default:
+          typeCountsData = {};
+      }
+
+      if (typeCountsData && Object.keys(typeCountsData).length > 0) {
+        setDropdownItem({
+          label,
+          type: 'dropdown',
+          options: getDropdownOptions(typeCountsData),
+          onChange: (e) => console.log(`Selected: ${e.target.value}`),
+        });
+      } else {
+        setDropdownItem(null);
+      }
+    } else {
+      setDropdownItem(null);
+    }
+  }, [location.pathname, typeCounts]);
+
+  const sortMenuContent = [
+    { label: 'Show All', onClick: handleShowAllClick },
+    { label: 'Near Me', onClick: handleNearMeWithClose },
+    { label: 'Alphabetical', onClick: handleAlphabeticalSort },
+    location.pathname === '/events' && {
+      label: 'Select a Date',
+      type: 'date',
+      onChange: handleDateChange,
+    },
+    dropdownItem,
+  ].filter(Boolean);
+
   const menuContent = [
     { label: 'Stay', link: '/stay' },
     { label: 'Play', link: '/play' },
@@ -60,16 +141,6 @@ function Header() {
     { label: 'Visitors Guide', link: 'https://365publicationsonline.com/DouglasVG2024/#p=1' },
     { label: 'Website', link: 'https://visitdouglasga.org/' },
   ];
-
-  const sortMenuContent = location.pathname === '/events'
-    ? [
-        { label: 'Select a Date', type: 'date', onChange: handleDateChange },
-      ]
-    : [
-        { label: 'Near Me', onClick: handleNearMe },
-        { label: 'Alphabetical', onClick: handleAlphabeticalSort },
-        { label: 'Cuisine Type', link: '/cuisine-type' },
-      ];
 
   return (
     <header ref={headerRef}>
@@ -129,13 +200,12 @@ function Header() {
         orientation={orientation}
         toggleMenu={() => setMenuOpen(!menuOpen)}
       />
-      <SlidingMenu
+      <SortMenu
         isOpen={sortMenuOpen}
         top={headerHeight}
-        menuContent={sortMenuContent}
+        menuList={sortMenuContent}
         orientation={orientation}
-        toggleMenu={() => setSortMenuOpen(!sortMenuOpen)}
-        isSortMenu={true}
+        toggleMenu2={() => setSortMenuOpen(!sortMenuOpen)}
         selectedDate={selectedDate}
         setDate={setDate}
       />

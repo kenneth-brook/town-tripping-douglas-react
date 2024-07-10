@@ -12,9 +12,15 @@ const DataProvider = ({ children }) => {
     play: [],
     shop: [],
     events: [],
-    combined: [], // Add a combined key
+    combined: [],
   });
   const [filteredData, setFilteredData] = useState(data);
+  const [typeCounts, setTypeCounts] = useState({
+    menu_types: {},
+    play_types: {},
+    stay_types: {},
+    shop_types: {},
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [keyword, setKeyword] = useState('');
@@ -50,6 +56,7 @@ const DataProvider = ({ children }) => {
   }, []);
 
   const fetchData = useCallback(async () => {
+    console.log('Fetching data...');
     try {
       const endpoints = {
         eat: 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/Prod/data/eat',
@@ -137,8 +144,35 @@ const DataProvider = ({ children }) => {
         ...dataMap.shop,
       ].sort((a, b) => a.name.localeCompare(b.name));
 
+      // Collect types and their counts
+      const collectTypes = (data, typeKey) => {
+        const typeCounts = {};
+        data.forEach(item => {
+          if (item[typeKey]) {
+            item[typeKey].forEach(type => {
+              if (typeCounts[type]) {
+                typeCounts[type]++;
+              } else {
+                typeCounts[type] = 1;
+              }
+            });
+          }
+        });
+        return typeCounts;
+      };
+
+      const newTypeCounts = {
+        menu_types: collectTypes(dataMap.eat, 'menu_types'),
+        play_types: collectTypes(dataMap.play, 'play_types'),
+        stay_types: collectTypes(dataMap.stay, 'stay_types'),
+        shop_types: collectTypes(dataMap.shop, 'shop_types'),
+      };
+
+      console.log('Data fetched and type counts set:', newTypeCounts);
+
       setData(dataMap);
       setFilteredData(dataMap); // Set filteredData to the original data
+      setTypeCounts(newTypeCounts); // Set type counts
       console.log('Filtered Data Set:', dataMap); // Log the filtered data set
       setUserLocation(userLocation); // Set the user location
       console.log('Data fetched and set:', dataMap, 'User Location:', userLocation);
@@ -208,6 +242,10 @@ const DataProvider = ({ children }) => {
     } else {
       console.error("Invalid or missing user coordinates:", userLocation);
     }
+  };
+
+  const resetFilteredData = () => {
+    setFilteredData(data);
   };
 
   useEffect(() => {
@@ -305,7 +343,9 @@ const DataProvider = ({ children }) => {
       handleNearMe, // Add handleNearMe to the context
       userLocation, // Add userLocation to the context
       nearMe, // Expose nearMe state
-      setNearMe // Expose setNearMe function
+      setNearMe, // Expose setNearMe function
+      resetFilteredData, // Expose resetFilteredData function
+      typeCounts // Expose typeCounts state
     }}>
       {children}
     </DataContext.Provider>

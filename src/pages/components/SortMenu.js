@@ -1,13 +1,12 @@
-import React from 'react'
-import { ReactComponent as ShowAll } from '../../assets/icos/show-all.svg'
-import { ReactComponent as NearMe } from '../../assets/icos/near-me.svg'
-import { ReactComponent as Alpha } from '../../assets/icos/alphabetic.svg'
-import { ReactComponent as Price } from '../../assets/icos/price.svg'
-import { ReactComponent as Cuisine } from '../../assets/icos/cuisine.svg'
-import { ReactComponent as Cross } from '../../assets/icos/cross.svg'
-import styles from '../../sass/componentsass/SortMenu.scss'
+import React from 'react';
+import { ReactComponent as ShowAll } from '../../assets/icos/show-all.svg';
+import { ReactComponent as NearMe } from '../../assets/icos/near-me.svg';
+import { ReactComponent as Alpha } from '../../assets/icos/alphabetic.svg';
+import { ReactComponent as Cuisine } from '../../assets/icos/cuisine.svg';
+import { ReactComponent as Cross } from '../../assets/icos/cross.svg';
+import '../../sass/componentsass/SortMenu.scss';
 
-function SortMenu({ isOpen, top, menuList, orientation, toggleMenu2 }) {
+function SortMenu({ isOpen, top, menuList = [], orientation, toggleMenu2, selectedDate, setDate }) {
   const menuStyle2 =
     orientation === 'landscape-primary' ||
     orientation === 'landscape-secondary' ||
@@ -19,32 +18,63 @@ function SortMenu({ isOpen, top, menuList, orientation, toggleMenu2 }) {
       : {
           top: `${top}px`,
           transform: isOpen ? 'translateY(0)' : 'translateY(-110%)',
-        }
+        };
 
   const icons = {
     'Show All': ShowAll,
     'Near Me': NearMe,
     Alphabetical: Alpha,
-    Price: Price,
     'Cuisine Type': Cuisine,
-  }
+    'Play Type': Cuisine, // Placeholder icon for Play Type
+    'Stay Type': Cuisine, // Placeholder icon for Stay Type
+    'Shop Type': Cuisine, // Placeholder icon for Shop Type
+  };
 
   return (
     <div className="sort-menu" style={menuStyle2}>
       <button onClick={toggleMenu2}>
         <Cross />
       </button>
-      {menuList.map((item, index) => {
-        const IconComponent = icons[item.label]
-        return (
-          <a key={index} href={item.link} className="s-menu-item">
-            {IconComponent && <IconComponent />}
-            {item.label}
-          </a>
-        )
-      })}
+      {menuList.length > 0 ? (
+        menuList.map((item, index) => {
+          const IconComponent = icons[item.label];
+          return (
+            <div key={index} className="s-menu-item">
+              {IconComponent && <IconComponent />}
+              {item.type === 'dropdown' ? (
+                <select onChange={item.onChange} defaultValue="">
+                  <option value="" disabled>
+                    {item.label}
+                  </option>
+                  {item.options.map((option, idx) => (
+                    <option key={idx} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              ) : item.type === 'date' ? (
+                <input
+                  type="date"
+                  value={
+                    selectedDate
+                      ? selectedDate.toISOString().substring(0, 10)
+                      : ''
+                  }
+                  onChange={item.onChange}
+                />
+              ) : (
+                <a href={item.link} onClick={item.onClick}>
+                  {item.label}
+                </a>
+              )}
+            </div>
+          );
+        })
+      ) : (
+        <div>No items to display</div>
+      )}
     </div>
-  )
+  );
 }
 
-export default SortMenu
+export default SortMenu;
