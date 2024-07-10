@@ -29,7 +29,7 @@ const DataProvider = ({ children }) => {
   const [userLocation, setUserLocation] = useState(null);
   const [nearMe, setNearMe] = useState(false); // State for "Near Me" functionality
 
-  /*const fetchUserLocation = useCallback(() => {
+  const fetchUserLocation = useCallback(() => {
     return new Promise((resolve, reject) => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -53,7 +53,7 @@ const DataProvider = ({ children }) => {
         reject(new Error("Geolocation is not supported by this browser."));
       }
     });
-  }, []);*/
+  }, []);
 
   const fetchData = useCallback(async () => {
     console.log('Fetching data...');
@@ -118,7 +118,7 @@ const DataProvider = ({ children }) => {
             }
           })
         ),
-        //fetchUserLocation()
+        fetchUserLocation()
       ]);
 
       const dataMap = results.reduce((acc, { key, data }) => {
@@ -182,7 +182,7 @@ const DataProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  }, [/*fetchUserLocation*/]);
+  }, [fetchUserLocation]);
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const toRad = (value) => (value * Math.PI) / 180;
