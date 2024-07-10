@@ -85,10 +85,10 @@ const DataProvider = ({ children }) => {
                 const updatedData = await Promise.all(
                   result.map(async (item) => {
                     try {
-                      const details = await getGoogleReviews(item.lat, item.long, item.name);
+                      //const details = await getGoogleReviews(item.lat, item.long, item.name);
                       return { 
                         ...item, 
-                        ...details, 
+                        //...details, 
                         type: key, 
                         name: removeQuotesFromName(item.name) // Remove quotes from name here
                       };
