@@ -18,17 +18,19 @@ function SlidingMenu({
   const { setIsMapView } = useViewMode()
   const navigate = useNavigate()
 
-  const handleNavigation = (link) => {
-    if (link === '/all') {
-      setIsMapView(true)
-      navigate(link)
-    } else if (link.startsWith('http')) {
-      window.open(link, '_blank', 'noopener,noreferrer')
-    } else {
-      navigate(link)
+  const handleNavigation = (link, onClick) => {
+    if (!link && onClick) {
+      onClick();
+    } else if (link === '/all') {
+      setIsMapView(true);
+      navigate(link);
+    } else if (link && link.startsWith('http')) {
+      window.open(link, '_blank', 'noopener,noreferrer');
+    } else if (link) {
+      navigate(link);
     }
-    toggleMenu()
-  }
+    toggleMenu();
+  };
 
   const menuStyle =
     orientation === 'landscape-primary' ||

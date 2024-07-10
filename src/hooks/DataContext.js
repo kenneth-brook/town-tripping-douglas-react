@@ -21,6 +21,33 @@ const DataProvider = ({ children }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [isAscending, setIsAscending] = useState(true);
   const [userLocation, setUserLocation] = useState(null);
+  const [nearMe, setNearMe] = useState(false); // State for "Near Me" functionality
+
+  const fetchUserLocation = useCallback(() => {
+    return new Promise((resolve, reject) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          position => {
+            const userLocation = {
+              lat: parseFloat(position.coords.latitude),
+              lon: parseFloat(position.coords.longitude),
+            };
+            console.log('User Location:', userLocation); // Debugging log
+            if (isValidCoordinate(userLocation.lat, userLocation.lon)) {
+              resolve(userLocation);
+            } else {
+              reject(new Error("Invalid user coordinates"));
+            }
+          },
+          error => {
+            reject(error);
+          }
+        );
+      } else {
+        reject(new Error("Geolocation is not supported by this browser."));
+      }
+    });
+  }, []);
 
   const fetchData = useCallback(async () => {
     try {
@@ -42,47 +69,50 @@ const DataProvider = ({ children }) => {
 
       const removeQuotesFromName = (name) => name.replace(/['"]/g, '');
 
-      const results = await Promise.all(
-        Object.keys(endpoints).map(async (key) => {
-          try {
-            const result = await fetchEndpointData(endpoints[key]);
-            if (key !== 'events') {
-              const updatedData = await Promise.all(
-                result.map(async (item) => {
-                  try {
-                    const details = await getGoogleReviews(item.lat, item.long, item.name);
-                    return { 
-                      ...item, 
-                      ...details, 
-                      type: key, 
-                      name: removeQuotesFromName(item.name) // Remove quotes from name here
-                    };
-                  } catch (error) {
-                    console.error(`Failed to fetch Google reviews for ${item.name}`, error);
-                    return { 
-                      ...item, 
-                      type: key, 
-                      name: removeQuotesFromName(item.name) // Remove quotes from name here
-                    };
-                  }
-                })
-              );
-              return { key, data: updatedData };
-            } else {
-              // Add type attribute for events data and remove quotes from name
-              const updatedEventsData = result.map(item => ({
-                ...item,
-                type: 'events',
-                name: removeQuotesFromName(item.name) // Remove quotes from name here
-              }));
-              return { key, data: updatedEventsData };
+      const [results, userLocation] = await Promise.all([
+        Promise.all(
+          Object.keys(endpoints).map(async (key) => {
+            try {
+              const result = await fetchEndpointData(endpoints[key]);
+              if (key !== 'events') {
+                const updatedData = await Promise.all(
+                  result.map(async (item) => {
+                    try {
+                      const details = await getGoogleReviews(item.lat, item.long, item.name);
+                      return { 
+                        ...item, 
+                        ...details, 
+                        type: key, 
+                        name: removeQuotesFromName(item.name) // Remove quotes from name here
+                      };
+                    } catch (error) {
+                      console.error(`Failed to fetch Google reviews for ${item.name}`, error);
+                      return { 
+                        ...item, 
+                        type: key, 
+                        name: removeQuotesFromName(item.name) // Remove quotes from name here
+                      };
+                    }
+                  })
+                );
+                return { key, data: updatedData };
+              } else {
+                // Add type attribute for events data and remove quotes from name
+                const updatedEventsData = result.map(item => ({
+                  ...item,
+                  type: 'events',
+                  name: removeQuotesFromName(item.name) // Remove quotes from name here
+                }));
+                return { key, data: updatedEventsData };
+              }
+            } catch (error) {
+              console.error(`Failed to fetch data from ${endpoints[key]}`, error);
+              throw error;
             }
-          } catch (error) {
-            console.error(`Failed to fetch data from ${endpoints[key]}`, error);
-            throw error;
-          }
-        })
-      );
+          })
+        ),
+        fetchUserLocation()
+      ]);
 
       const dataMap = results.reduce((acc, { key, data }) => {
         if (key === 'events') {
@@ -109,14 +139,16 @@ const DataProvider = ({ children }) => {
 
       setData(dataMap);
       setFilteredData(dataMap); // Set filteredData to the original data
-      console.log('Data fetched and set:', dataMap);
+      console.log('Filtered Data Set:', dataMap); // Log the filtered data set
+      setUserLocation(userLocation); // Set the user location
+      console.log('Data fetched and set:', dataMap, 'User Location:', userLocation);
     } catch (error) {
       setError(`Failed to fetch data: ${error.message}`);
       console.error(error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [fetchUserLocation]);
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const toRad = (value) => (value * Math.PI) / 180;
@@ -161,35 +193,22 @@ const DataProvider = ({ children }) => {
   };
   
   const handleNearMe = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(position => {
-        const userLocation = {
-          lat: parseFloat(position.coords.latitude),
-          lon: parseFloat(position.coords.longitude),
-        };
-        console.log('User Location:', userLocation); // Debugging log
-        if (isValidCoordinate(userLocation.lat, userLocation.lon)) {
-          setUserLocation(userLocation);
-          setFilteredData(prevData => ({
-            ...prevData,
-            eat: sortByProximity(data.eat, userLocation),
-            stay: sortByProximity(data.stay, userLocation),
-            play: sortByProximity(data.play, userLocation),
-            shop: sortByProximity(data.shop, userLocation),
-            combined: sortByProximity(data.combined, userLocation),
-          }));
-        } else {
-          console.error("Invalid user coordinates:", userLocation);
-        }
-      });
+    if (userLocation && isValidCoordinate(userLocation.lat, userLocation.lon)) {
+      setNearMe(true); // Set nearMe to true
+      const sortedData = {
+        ...data,
+        eat: sortByProximity(data.eat, userLocation),
+        stay: sortByProximity(data.stay, userLocation),
+        play: sortByProximity(data.play, userLocation),
+        shop: sortByProximity(data.shop, userLocation),
+        combined: sortByProximity(data.combined, userLocation),
+      };
+      setFilteredData(sortedData);
+      console.log('Filtered Data Set after Near Me:', sortedData); // Log the filtered data set after Near Me
     } else {
-      console.error("Geolocation is not supported by this browser.");
+      console.error("Invalid or missing user coordinates:", userLocation);
     }
   };
-  
-  
-  
-  
 
   useEffect(() => {
     fetchData();
@@ -206,18 +225,20 @@ const DataProvider = ({ children }) => {
         );
       };
 
-      setFilteredData({
+      const filtered = {
         eat: filterData(data.eat),
         stay: filterData(data.stay),
         play: filterData(data.play),
         shop: filterData(data.shop),
         events: filterData(data.events),
         combined: filterData(data.combined),
-      });
+      };
+      setFilteredData(filtered);
+      console.log('Filtered Data Set with keyword:', filtered); // Log the filtered data set with keyword
     } else {
       setFilteredData(data);
+      console.log('Filtered Data Set reset to original:', data); // Log the reset to original filtered data set
     }
-    console.log('Filtered data set:', filteredData);
   }, [keyword, data]);
 
   useEffect(() => {
@@ -233,12 +254,15 @@ const DataProvider = ({ children }) => {
         }).sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
       };
 
-      setFilteredData(prevData => ({
-        ...prevData,
+      const filtered = {
+        ...data,
         events: filterEventsByDate(data.events, selectedDate),
-      }));
+      };
+      setFilteredData(filtered);
+      console.log('Filtered Data Set with selected date:', filtered); // Log the filtered data set with selected date
     } else {
       setFilteredData(data);
+      console.log('Filtered Data Set reset to original:', data); // Log the reset to original filtered data set
     }
   }, [selectedDate, data]);
 
@@ -258,6 +282,7 @@ const DataProvider = ({ children }) => {
       combined: [...data.combined].sort((a, b) => a.name.localeCompare(b.name) * sortOrder),
     };
     setFilteredData(sortedData);
+    console.log('Filtered Data Set after sort:', sortedData); // Log the filtered data set after sort
   }, [data]);
 
   const resetSortOrder = useCallback(() => {
@@ -278,7 +303,9 @@ const DataProvider = ({ children }) => {
       setIsAscending, 
       setSelectedDate,
       handleNearMe, // Add handleNearMe to the context
-      userLocation // Add userLocation to the context
+      userLocation, // Add userLocation to the context
+      nearMe, // Expose nearMe state
+      setNearMe // Expose setNearMe function
     }}>
       {children}
     </DataContext.Provider>
