@@ -662,7 +662,7 @@ main {
 }
 
 .popCard {
-  max-width: unset !important;
+  max-width: 300px !important;
   width: 90% !important;
   border-radius: 10px;
 
@@ -680,7 +680,7 @@ main {
       }
 
       h2 {
-        color: #007037;
+        color: #bf772f;
         font-size: 1.4rem;
         text-align: center;
       }
@@ -689,7 +689,6 @@ main {
     .addyText {
       width: 100%;
       padding: 5px 0;
-      border-top: 1px solid #aaaaaa;
       border-bottom: 1px solid #aaaaaa;
 
       p {
