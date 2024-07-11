@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import Map, { Marker, Popup } from 'react-map-gl';
 import mapboxgl from 'mapbox-gl';
 import { useDataContext } from '../../hooks/DataContext';
+import { ReactComponent as Phone } from '../../assets/icos/phone2.svg';
+import { ReactComponent as Share } from '../../assets/icos/share-icon2.svg';
+import { ReactComponent as AddItinerary } from '../../assets/icos/add-itinerary2.svg';
 
 // Import PNG markers
 import eatPin from '../../assets/icos/eatPin.png';
@@ -117,16 +121,17 @@ const addMarkers = (data, handleMarkerClick) => {
   });
 };
 
-const renderPopup = (place, setSelectedPlace) => {
-  const lat = parseFloat(place.lat);
-  const lon = parseFloat(place.long);
+const renderPopup = (selectedPlace, setSelectedPlace) => {
+  const lat = parseFloat(selectedPlace.lat);
+  const lon = parseFloat(selectedPlace.long);
   if (!isNaN(lat) && !isNaN(lon)) {
     return (
       <Popup
         className="popCard"
-        longitude={lon}
-        latitude={lat}
+        longitude={selectedPlace.long}
+        latitude={selectedPlace.lat}
         onClose={() => {
+          console.log('Popup closed');
           setSelectedPlace(null);
         }}
         closeOnClick={false}
@@ -134,19 +139,39 @@ const renderPopup = (place, setSelectedPlace) => {
       >
         <div className="popWrap">
           <div className="popTop">
-            {place.images && place.images.length > 0 && (
+            {selectedPlace.images && selectedPlace.images.length > 0 && (
               <img
-                src={`https://douglas.365easyflow.com/easyflow-images/${place.images[0]}`}
-                alt={place.name}
+                src={`https://douglas.365easyflow.com/easyflow-images/${selectedPlace.images[0]}`}
+                alt={selectedPlace.name}
               />
             )}
-            <h2>{place.name}</h2>
+            <h2>{selectedPlace.name}</h2>
           </div>
           <div className="addyText">
-            <p>{place.street_address}</p>
+            <p>{selectedPlace.street_address}</p>
             <p>
-              {place.city}, {place.state} {place.zip}
+              {selectedPlace.city}, {selectedPlace.state} {selectedPlace.zip}
             </p>
+          </div>
+          <div className="popButtonsWrap">
+            <div className="popButtonDevide">
+              <div className="popButton">
+                <Phone />
+              </div>
+              <p>CALL</p>
+            </div>
+            <div className="popButtonDevide">
+              <div className="popButton">
+                <Share />
+              </div>
+              <p>SHARE</p>
+            </div>
+            <div className="popButtonDevide">
+              <div className="popButton">
+                <AddItinerary />
+              </div>
+              <p>ITINERARY</p>
+            </div>
           </div>
         </div>
       </Popup>
