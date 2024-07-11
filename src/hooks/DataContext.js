@@ -21,13 +21,61 @@ const DataProvider = ({ children }) => {
     stay_types: {},
     shop_types: {},
   });
+  const [typeNames, setTypeNames] = useState({
+    menu_types: {},
+    play_types: {},
+    stay_types: {},
+    shop_types: {},
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [keyword, setKeyword] = useState('');
   const [selectedDate, setSelectedDate] = useState(null);
   const [isAscending, setIsAscending] = useState(true);
   const [userLocation, setUserLocation] = useState(null);
-  const [nearMe, setNearMe] = useState(false); // State for "Near Me" functionality
+  const [nearMe, setNearMe] = useState(false);
+
+  const isValidCoordinate = (lat, lon) => {
+    const latNum = parseFloat(lat);
+    const lonNum = parseFloat(lon);
+    const valid = typeof latNum === 'number' && typeof lonNum === 'number' &&
+                  !isNaN(latNum) && !isNaN(lonNum) &&
+                  latNum >= -90 && latNum <= 90 &&
+                  lonNum >= -180 && lonNum <= 180;
+    if (!valid) {
+      console.error(`Invalid coordinates: (${latNum}, ${lonNum})`);
+    }
+    return valid;
+  };
+
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const toRad = (value) => (value * Math.PI) / 180;
+    const R = 6371; // Radius of the Earth in kilometers
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
+  const sortByProximity = (data, userLocation) => {
+    return data
+      .filter(item => {
+        const valid = isValidCoordinate(item.lat, item.long);
+        if (!valid) {
+          console.error(`Invalid item coordinates for ${item.name}: (${item.lat}, ${item.long})`);
+        }
+        return valid;
+      })
+      .map(item => ({
+        ...item,
+        distance: calculateDistance(userLocation.lat, userLocation.lon, parseFloat(item.lat), parseFloat(item.long))
+      }))
+      .sort((a, b) => a.distance - b.distance);
+  };
 
   const fetchUserLocation = useCallback(() => {
     return new Promise((resolve, reject) => {
@@ -85,30 +133,29 @@ const DataProvider = ({ children }) => {
                 const updatedData = await Promise.all(
                   result.map(async (item) => {
                     try {
-                      //const details = await getGoogleReviews(item.lat, item.long, item.name);
+                      const details = await getGoogleReviews(item.lat, item.long, item.name);
                       return { 
                         ...item, 
-                        //...details, 
+                        ...details, 
                         type: key, 
-                        name: removeQuotesFromName(item.name) // Remove quotes from name here
+                        name: removeQuotesFromName(item.name)
                       };
                     } catch (error) {
                       console.error(`Failed to fetch Google reviews for ${item.name}`, error);
                       return { 
                         ...item, 
                         type: key, 
-                        name: removeQuotesFromName(item.name) // Remove quotes from name here
+                        name: removeQuotesFromName(item.name)
                       };
                     }
                   })
                 );
                 return { key, data: updatedData };
               } else {
-                // Add type attribute for events data and remove quotes from name
                 const updatedEventsData = result.map(item => ({
                   ...item,
                   type: 'events',
-                  name: removeQuotesFromName(item.name) // Remove quotes from name here
+                  name: removeQuotesFromName(item.name)
                 }));
                 return { key, data: updatedEventsData };
               }
@@ -127,7 +174,7 @@ const DataProvider = ({ children }) => {
           acc[key] = data
             .filter(event => {
               const startDate = new Date(event.start_date);
-              return startDate >= today; // Filter out past events
+              return startDate >= today;
             })
             .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
         } else {
@@ -136,7 +183,6 @@ const DataProvider = ({ children }) => {
         return acc;
       }, {});
 
-      // Combine the data for eat, stay, play, and shop and sort alphabetically by name
       dataMap.combined = [
         ...dataMap.eat,
         ...dataMap.stay,
@@ -144,7 +190,6 @@ const DataProvider = ({ children }) => {
         ...dataMap.shop,
       ].sort((a, b) => a.name.localeCompare(b.name));
 
-      // Collect types and their counts
       const collectTypes = (data, typeKey) => {
         const typeCounts = {};
         data.forEach(item => {
@@ -171,11 +216,12 @@ const DataProvider = ({ children }) => {
       console.log('Data fetched and type counts set:', newTypeCounts);
 
       setData(dataMap);
-      setFilteredData(dataMap); // Set filteredData to the original data
-      setTypeCounts(newTypeCounts); // Set type counts
-      console.log('Filtered Data Set:', dataMap); // Log the filtered data set
-      setUserLocation(userLocation); // Set the user location
+      setFilteredData(dataMap);
+      setTypeCounts(newTypeCounts);
+      console.log('Filtered Data Set:', dataMap);
+      setUserLocation(userLocation);
       console.log('Data fetched and set:', dataMap, 'User Location:', userLocation);
+
     } catch (error) {
       setError(`Failed to fetch data: ${error.message}`);
       console.error(error);
@@ -184,48 +230,32 @@ const DataProvider = ({ children }) => {
     }
   }, [fetchUserLocation]);
 
-  const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const toRad = (value) => (value * Math.PI) / 180;
-    const R = 6371; // Radius of the Earth in kilometers
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  };
-  
-  const isValidCoordinate = (lat, lon) => {
-    const latNum = parseFloat(lat);
-    const lonNum = parseFloat(lon);
-    const valid = typeof latNum === 'number' && typeof lonNum === 'number' &&
-                  !isNaN(latNum) && !isNaN(lonNum) &&
-                  latNum >= -90 && latNum <= 90 &&
-                  lonNum >= -180 && lonNum <= 180;
-    if (!valid) {
-      console.error(`Invalid coordinates: (${latNum}, ${lonNum})`);
+  const fetchTypeNames = useCallback(async (typeCounts) => {
+    console.log('Request body for type names:', JSON.stringify({ typeCounts })); // Log the request body
+
+    try {
+      const response = await fetch('https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/Prod/type-names/fetch-type-names', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ typeCounts }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const typeNamesData = await response.json();
+      setTypeNames(typeNamesData);
+      console.log('Type names fetched:', typeNamesData);
+
+    } catch (error) {
+      setError(`Failed to fetch type names: ${error.message}`);
+      console.error(error);
     }
-    return valid;
-  };
-  
-  const sortByProximity = (data, userLocation) => {
-    return data
-      .filter(item => {
-        const valid = isValidCoordinate(item.lat, item.long);
-        if (!valid) {
-          console.error(`Invalid item coordinates for ${item.name}: (${item.lat}, ${item.long})`);
-        }
-        return valid;
-      })
-      .map(item => ({
-        ...item,
-        distance: calculateDistance(userLocation.lat, userLocation.lon, parseFloat(item.lat), parseFloat(item.long))
-      }))
-      .sort((a, b) => a.distance - b.distance);
-  };
-  
+  }, []);
+
   const handleNearMe = () => {
     if (userLocation && isValidCoordinate(userLocation.lat, userLocation.lon)) {
       setNearMe(true); // Set nearMe to true
@@ -251,6 +281,12 @@ const DataProvider = ({ children }) => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  useEffect(() => {
+    if (Object.keys(typeCounts).some(key => Object.keys(typeCounts[key]).length > 0)) {
+      fetchTypeNames(typeCounts);
+    }
+  }, [typeCounts, fetchTypeNames]);
 
   useEffect(() => {
     if (keyword) {
@@ -340,12 +376,13 @@ const DataProvider = ({ children }) => {
       isAscending, 
       setIsAscending, 
       setSelectedDate,
-      handleNearMe, // Add handleNearMe to the context
-      userLocation, // Add userLocation to the context
-      nearMe, // Expose nearMe state
-      setNearMe, // Expose setNearMe function
-      resetFilteredData, // Expose resetFilteredData function
-      typeCounts // Expose typeCounts state
+      handleNearMe, 
+      userLocation, 
+      nearMe, 
+      setNearMe, 
+      resetFilteredData, 
+      typeCounts, 
+      typeNames 
     }}>
       {children}
     </DataContext.Provider>

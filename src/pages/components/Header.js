@@ -15,7 +15,7 @@ function Header() {
   const { headerRef, headerHeight } = useHeightContext();
   const [menuOpen, setMenuOpen] = useState(false);
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
-  const { setKeyword, resetKeyword, sortData, isAscending, setIsAscending, setSelectedDate, handleNearMe, setNearMe, resetFilteredData, typeCounts } = useDataContext();
+  const { setKeyword, resetKeyword, sortData, isAscending, setIsAscending, setSelectedDate, handleNearMe, setNearMe, resetFilteredData, typeNames } = useDataContext();
   const orientation = useOrientation();
   const location = useLocation();
   const isNotHomePage = location.pathname !== '/home';
@@ -73,41 +73,41 @@ function Header() {
     }
   };
 
-  const getDropdownOptions = (typeCounts) => {
-    return Object.entries(typeCounts).map(([key, count]) => ({
+  const getDropdownOptions = (typeNames) => {
+    return Object.entries(typeNames).map(([key, { name, count }]) => ({
       value: key,
-      label: `${key} (${count})`,
+      label: `${name} (${count})`,
     }));
   };
 
   useEffect(() => {
     console.log('Location changed:', location.pathname);
-    console.log('Type counts:', typeCounts);
+    console.log('Type names:', typeNames);
     const label = getDropdownLabel();
-    if (label && typeCounts) {
-      let typeCountsData;
+    if (label && typeNames) {
+      let typeNamesData;
       switch (location.pathname) {
         case '/dine':
-          typeCountsData = typeCounts.menu_types;
+          typeNamesData = typeNames.menu_types;
           break;
         case '/play':
-          typeCountsData = typeCounts.play_types;
+          typeNamesData = typeNames.play_types;
           break;
         case '/stay':
-          typeCountsData = typeCounts.stay_types;
+          typeNamesData = typeNames.stay_types;
           break;
         case '/shop':
-          typeCountsData = typeCounts.shop_types;
+          typeNamesData = typeNames.shop_types;
           break;
         default:
-          typeCountsData = {};
+          typeNamesData = {};
       }
 
-      if (typeCountsData && Object.keys(typeCountsData).length > 0) {
+      if (typeNamesData && Object.keys(typeNamesData).length > 0) {
         setDropdownItem({
           label,
           type: 'dropdown',
-          options: getDropdownOptions(typeCountsData),
+          options: getDropdownOptions(typeNamesData),
           onChange: (e) => console.log(`Selected: ${e.target.value}`),
         });
       } else {
@@ -116,7 +116,7 @@ function Header() {
     } else {
       setDropdownItem(null);
     }
-  }, [location.pathname, typeCounts]);
+  }, [location.pathname, typeNames]);
 
   const sortMenuContent = [
     { label: 'Show All', onClick: handleShowAllClick },
