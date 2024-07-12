@@ -15,7 +15,7 @@ function Header() {
   const { headerRef, headerHeight } = useHeightContext();
   const [menuOpen, setMenuOpen] = useState(false);
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
-  const { setKeyword, resetKeyword, sortData, isAscending, setIsAscending, setSelectedDate, handleNearMe, setNearMe, resetFilteredData, typeNames } = useDataContext();
+  const { setKeyword, resetKeyword, sortData, isAscending, setIsAscending, setSelectedDate, handleNearMe, setNearMe, resetFilteredData, typeNames, setSelectedTypes } = useDataContext();
   const orientation = useOrientation();
   const location = useLocation();
   const isNotHomePage = location.pathname !== '/home';
@@ -56,6 +56,33 @@ function Header() {
   const handleNearMeWithClose = () => {
     handleNearMe();
     setSortMenuOpen(false);
+  };
+
+  const handleDropdownChange = (e) => {
+    const { options } = e.target;
+    const selectedValues = [];
+    for (let i = 0, l = options.length; i < l; i += 1) {
+      if (options[i].selected) {
+        selectedValues.push(parseInt(options[i].value, 10));
+      }
+    }
+
+    switch (location.pathname) {
+      case '/dine':
+        setSelectedTypes(prev => ({ ...prev, menu_types: selectedValues }));
+        break;
+      case '/play':
+        setSelectedTypes(prev => ({ ...prev, play_types: selectedValues }));
+        break;
+      case '/stay':
+        setSelectedTypes(prev => ({ ...prev, stay_types: selectedValues }));
+        break;
+      case '/shop':
+        setSelectedTypes(prev => ({ ...prev, shop_types: selectedValues }));
+        break;
+      default:
+        break;
+    }
   };
 
   const getDropdownLabel = () => {
@@ -108,7 +135,7 @@ function Header() {
           label,
           type: 'dropdown',
           options: getDropdownOptions(typeNamesData),
-          onChange: (e) => console.log(`Selected: ${e.target.value}`),
+          onChange: handleDropdownChange,
         });
       } else {
         setDropdownItem(null);

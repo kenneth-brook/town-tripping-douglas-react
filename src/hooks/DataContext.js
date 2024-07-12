@@ -27,6 +27,12 @@ const DataProvider = ({ children }) => {
     stay_types: {},
     shop_types: {},
   });
+  const [selectedTypes, setSelectedTypes] = useState({
+    menu_types: [],
+    play_types: [],
+    stay_types: [],
+    shop_types: [],
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [keyword, setKeyword] = useState('');
@@ -34,48 +40,6 @@ const DataProvider = ({ children }) => {
   const [isAscending, setIsAscending] = useState(true);
   const [userLocation, setUserLocation] = useState(null);
   const [nearMe, setNearMe] = useState(false);
-
-  const isValidCoordinate = (lat, lon) => {
-    const latNum = parseFloat(lat);
-    const lonNum = parseFloat(lon);
-    const valid = typeof latNum === 'number' && typeof lonNum === 'number' &&
-                  !isNaN(latNum) && !isNaN(lonNum) &&
-                  latNum >= -90 && latNum <= 90 &&
-                  lonNum >= -180 && lonNum <= 180;
-    if (!valid) {
-      console.error(`Invalid coordinates: (${latNum}, ${lonNum})`);
-    }
-    return valid;
-  };
-
-  const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const toRad = (value) => (value * Math.PI) / 180;
-    const R = 6371; // Radius of the Earth in kilometers
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  };
-
-  const sortByProximity = (data, userLocation) => {
-    return data
-      .filter(item => {
-        const valid = isValidCoordinate(item.lat, item.long);
-        if (!valid) {
-          console.error(`Invalid item coordinates for ${item.name}: (${item.lat}, ${item.long})`);
-        }
-        return valid;
-      })
-      .map(item => ({
-        ...item,
-        distance: calculateDistance(userLocation.lat, userLocation.lon, parseFloat(item.lat), parseFloat(item.long))
-      }))
-      .sort((a, b) => a.distance - b.distance);
-  };
 
   const fetchUserLocation = useCallback(() => {
     return new Promise((resolve, reject) => {
@@ -138,14 +102,14 @@ const DataProvider = ({ children }) => {
                         ...item, 
                         ...details, 
                         type: key, 
-                        name: removeQuotesFromName(item.name)
+                        name: removeQuotesFromName(item.name) // Remove quotes from name here
                       };
                     } catch (error) {
                       console.error(`Failed to fetch Google reviews for ${item.name}`, error);
                       return { 
                         ...item, 
                         type: key, 
-                        name: removeQuotesFromName(item.name)
+                        name: removeQuotesFromName(item.name) // Remove quotes from name here
                       };
                     }
                   })
@@ -155,7 +119,7 @@ const DataProvider = ({ children }) => {
                 const updatedEventsData = result.map(item => ({
                   ...item,
                   type: 'events',
-                  name: removeQuotesFromName(item.name)
+                  name: removeQuotesFromName(item.name) // Remove quotes from name here
                 }));
                 return { key, data: updatedEventsData };
               }
@@ -174,7 +138,7 @@ const DataProvider = ({ children }) => {
           acc[key] = data
             .filter(event => {
               const startDate = new Date(event.start_date);
-              return startDate >= today;
+              return startDate >= today; // Filter out past events
             })
             .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
         } else {
@@ -222,24 +186,12 @@ const DataProvider = ({ children }) => {
       setUserLocation(userLocation);
       console.log('Data fetched and set:', dataMap, 'User Location:', userLocation);
 
-    } catch (error) {
-      setError(`Failed to fetch data: ${error.message}`);
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  }, [fetchUserLocation]);
-
-  const fetchTypeNames = useCallback(async (typeCounts) => {
-    console.log('Request body for type names:', JSON.stringify({ typeCounts })); // Log the request body
-
-    try {
       const response = await fetch('https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/Prod/type-names/fetch-type-names', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ typeCounts }),
+        body: JSON.stringify({ typeCounts: newTypeCounts }),
       });
 
       if (!response.ok) {
@@ -251,14 +203,58 @@ const DataProvider = ({ children }) => {
       console.log('Type names fetched:', typeNamesData);
 
     } catch (error) {
-      setError(`Failed to fetch type names: ${error.message}`);
+      setError(`Failed to fetch data: ${error.message}`);
       console.error(error);
+    } finally {
+      setLoading(false);
     }
-  }, []);
+  }, [fetchUserLocation]);
+
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const toRad = (value) => (value * Math.PI) / 180;
+    const R = 6371;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lat2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
+  const isValidCoordinate = (lat, lon) => {
+    const latNum = parseFloat(lat);
+    const lonNum = parseFloat(lon);
+    const valid = typeof latNum === 'number' && typeof lonNum === 'number' &&
+                  !isNaN(latNum) && !isNaN(lonNum) &&
+                  latNum >= -90 && latNum <= 90 &&
+                  lonNum >= -180 && lonNum <= 180;
+    if (!valid) {
+      console.error(`Invalid coordinates: (${latNum}, ${lonNum})`);
+    }
+    return valid;
+  };
+
+  const sortByProximity = (data, userLocation) => {
+    return data
+      .filter(item => {
+        const valid = isValidCoordinate(item.lat, item.long);
+        if (!valid) {
+          console.error(`Invalid item coordinates for ${item.name}: (${item.lat}, ${item.long})`);
+        }
+        return valid;
+      })
+      .map(item => ({
+        ...item,
+        distance: calculateDistance(userLocation.lat, userLocation.lon, parseFloat(item.lat), parseFloat(item.long))
+      }))
+      .sort((a, b) => a.distance - b.distance);
+  };
 
   const handleNearMe = () => {
     if (userLocation && isValidCoordinate(userLocation.lat, userLocation.lon)) {
-      setNearMe(true); // Set nearMe to true
+      setNearMe(true);
       const sortedData = {
         ...data,
         eat: sortByProximity(data.eat, userLocation),
@@ -268,7 +264,7 @@ const DataProvider = ({ children }) => {
         combined: sortByProximity(data.combined, userLocation),
       };
       setFilteredData(sortedData);
-      console.log('Filtered Data Set after Near Me:', sortedData); // Log the filtered data set after Near Me
+      console.log('Filtered Data Set after Near Me:', sortedData);
     } else {
       console.error("Invalid or missing user coordinates:", userLocation);
     }
@@ -278,42 +274,44 @@ const DataProvider = ({ children }) => {
     setFilteredData(data);
   };
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  useEffect(() => {
-    if (Object.keys(typeCounts).some(key => Object.keys(typeCounts[key]).length > 0)) {
-      fetchTypeNames(typeCounts);
-    }
-  }, [typeCounts, fetchTypeNames]);
-
-  useEffect(() => {
-    if (keyword) {
-      console.log(`Filtering data with keyword: ${keyword}`);
-      const filterData = (data) => {
-        return data.filter(item => 
-          Object.values(item).some(value => 
+  const filterData = useCallback(() => {
+    if (keyword || Object.values(selectedTypes).some(types => types.length > 0)) {
+      console.log(`Filtering data with keyword: ${keyword} and selected types: ${JSON.stringify(selectedTypes)}`);
+      const filterByKeywordAndTypes = (data, typeKey) => {
+        return data.filter(item => {
+          const matchesKeyword = keyword ? Object.values(item).some(value => 
             typeof value === 'string' && value.toLowerCase().includes(keyword.toLowerCase())
-          )
-        );
+          ) : true;
+          const matchesTypes = selectedTypes[typeKey].length > 0 ? 
+            item[typeKey] && item[typeKey].some(type => selectedTypes[typeKey].includes(type)) 
+            : true;
+          return matchesKeyword && matchesTypes;
+        });
       };
 
       const filtered = {
-        eat: filterData(data.eat),
-        stay: filterData(data.stay),
-        play: filterData(data.play),
-        shop: filterData(data.shop),
-        events: filterData(data.events),
-        combined: filterData(data.combined),
+        eat: filterByKeywordAndTypes(data.eat, 'menu_types'),
+        stay: filterByKeywordAndTypes(data.stay, 'stay_types'),
+        play: filterByKeywordAndTypes(data.play, 'play_types'),
+        shop: filterByKeywordAndTypes(data.shop, 'shop_types'),
+        events: filterByKeywordAndTypes(data.events, 'event_types'),
+        combined: filterByKeywordAndTypes(data.combined, 'all_types'),
       };
       setFilteredData(filtered);
-      console.log('Filtered Data Set with keyword:', filtered); // Log the filtered data set with keyword
+      console.log('Filtered Data Set with keyword and selected types:', filtered); // Log the filtered data set with keyword and selected types
     } else {
       setFilteredData(data);
       console.log('Filtered Data Set reset to original:', data); // Log the reset to original filtered data set
     }
-  }, [keyword, data]);
+  }, [keyword, selectedTypes, data]);
+
+  useEffect(() => {
+    filterData();
+  }, [keyword, selectedTypes, data, filterData]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   useEffect(() => {
     if (selectedDate) {
@@ -382,7 +380,9 @@ const DataProvider = ({ children }) => {
       setNearMe, 
       resetFilteredData, 
       typeCounts, 
-      typeNames 
+      typeNames, 
+      selectedTypes,
+      setSelectedTypes
     }}>
       {children}
     </DataContext.Provider>
