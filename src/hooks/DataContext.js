@@ -129,7 +129,7 @@ const DataProvider = ({ children }) => {
             }
           })
         ),
-        fetchUserLocation()
+        //fetchUserLocation()
       ]);
 
       const dataMap = results.reduce((acc, { key, data }) => {
