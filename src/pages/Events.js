@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom'
 import DetailViewCard from './components/DetailViewCard' // Don't forget to import DetailViewCard
 
 const Events = ({ pageTitle }) => {
-  const { headerHeight, footerHeight, footerRef } = useHeightContext()
+  const { headerRef, footerRef, headerHeight, footerHeight } = useHeightContext();
   const { data, loading, error } = useDataContext()
   const { isMapView } = useViewMode()
   const navigate = useNavigate()
@@ -51,7 +51,7 @@ const Events = ({ pageTitle }) => {
           : 'portrait'
       }`}
     >
-      <Header />
+      <Header ref={headerRef} />
       <main
         className="internal-content"
         style={{

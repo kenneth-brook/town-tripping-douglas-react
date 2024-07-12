@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import { ReactComponent as ShopIcon } from '../assets/icos/shop.svg'
@@ -12,13 +12,18 @@ import { useNavigate } from 'react-router-dom'
 import DetailViewCard from './components/DetailViewCard'
 
 const Shop = ({ pageTitle }) => {
-  const { headerHeight, footerHeight, footerRef } = useHeightContext()
+  const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext()
   const { data, loading, error } = useDataContext()
   const { isMapView } = useViewMode()
   const navigate = useNavigate()
 
   const [sortOrder, setSortOrder] = useState('asc') // State for sorting order
   const [filterText, setFilterText] = useState('') // State for filter text
+
+  useEffect(() => {
+    updateHeights();
+  }, [headerRef, footerRef, updateHeights]);
+ 
 
   const shopData = useMemo(() => {
     return data.shop
@@ -130,7 +135,7 @@ const Shop = ({ pageTitle }) => {
           : 'portrait'
       }`}
     >
-      <Header />
+      <Header ref={headerRef} />
       <main
         className="internal-content"
         style={{

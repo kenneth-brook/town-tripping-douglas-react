@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react';
 import Header from './components/Header'
 import Footer from './components/Footer'
 import { ReactComponent as StayIcon } from '../assets/icos/stay.svg'
@@ -12,12 +12,16 @@ import { useNavigate } from 'react-router-dom'
 import DetailViewCard from './components/DetailViewCard'
 
 const Stay = ({ pageTitle }) => {
-  const { headerHeight, footerHeight, footerRef } = useHeightContext()
+  const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext()
   const { data, loading, error } = useDataContext()
   const { isMapView } = useViewMode()
   const stayData = data.stay
   const navigate = useNavigate()
   const orientation = useOrientation()
+
+  useEffect(() => {
+    updateHeights();
+  }, [headerRef, footerRef, updateHeights]);
 
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating)
@@ -113,7 +117,7 @@ const Stay = ({ pageTitle }) => {
           : 'portrait'
       }`}
     >
-      <Header />
+      <Header ref={headerRef} />
       <main
         className="internal-content"
         style={{

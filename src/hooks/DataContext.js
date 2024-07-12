@@ -274,40 +274,68 @@ const DataProvider = ({ children }) => {
     setFilteredData(data);
   };
 
-  const filterData = useCallback(() => {
-    if (keyword || Object.values(selectedTypes).some(types => types.length > 0)) {
-      console.log(`Filtering data with keyword: ${keyword} and selected types: ${JSON.stringify(selectedTypes)}`);
-      const filterByKeywordAndTypes = (data, typeKey) => {
-        return data.filter(item => {
-          const matchesKeyword = keyword ? Object.values(item).some(value => 
-            typeof value === 'string' && value.toLowerCase().includes(keyword.toLowerCase())
-          ) : true;
-          const matchesTypes = selectedTypes[typeKey].length > 0 ? 
-            item[typeKey] && item[typeKey].some(type => selectedTypes[typeKey].includes(type)) 
-            : true;
-          return matchesKeyword && matchesTypes;
-        });
-      };
+  const filterDataByTypes = useCallback(() => {
+    console.log(`Filtering data by selected types: ${JSON.stringify(selectedTypes)}`);
+    const filterByTypes = (data, typeKey) => {
+      if (selectedTypes[typeKey]?.length > 0) {
+        return data.filter(item => item[typeKey]?.some(type => selectedTypes[typeKey].includes(parseInt(type))));
+      }
+      return data;
+    };
 
-      const filtered = {
-        eat: filterByKeywordAndTypes(data.eat, 'menu_types'),
-        stay: filterByKeywordAndTypes(data.stay, 'stay_types'),
-        play: filterByKeywordAndTypes(data.play, 'play_types'),
-        shop: filterByKeywordAndTypes(data.shop, 'shop_types'),
-        events: filterByKeywordAndTypes(data.events, 'event_types'),
-        combined: filterByKeywordAndTypes(data.combined, 'all_types'),
-      };
-      setFilteredData(filtered);
-      console.log('Filtered Data Set with keyword and selected types:', filtered); // Log the filtered data set with keyword and selected types
-    } else {
-      setFilteredData(data);
-      console.log('Filtered Data Set reset to original:', data); // Log the reset to original filtered data set
-    }
-  }, [keyword, selectedTypes, data]);
+    const filtered = {
+      eat: filterByTypes(data.eat, 'menu_types'),
+      stay: filterByTypes(data.stay, 'stay_types'),
+      play: filterByTypes(data.play, 'play_types'),
+      shop: filterByTypes(data.shop, 'shop_types'),
+      events: data.events,
+      combined: [
+        ...filterByTypes(data.eat, 'menu_types'),
+        ...filterByTypes(data.stay, 'stay_types'),
+        ...filterByTypes(data.play, 'play_types'),
+        ...filterByTypes(data.shop, 'shop_types'),
+      ],
+    };
+    setFilteredData(filtered);
+    console.log('Filtered Data Set by types:', filtered);
+  }, [selectedTypes, data]);
+
+  const filterDataByKeyword = useCallback(() => {
+    console.log(`Filtering data with keyword: ${keyword}`);
+    const filterByKeyword = (data) => {
+      return data.filter(item => 
+        Object.values(item).some(value => 
+          typeof value === 'string' && value.toLowerCase().includes(keyword.toLowerCase())
+        )
+      );
+    };
+
+    const filtered = {
+      eat: filterByKeyword(data.eat),
+      stay: filterByKeyword(data.stay),
+      play: filterByKeyword(data.play),
+      shop: filterByKeyword(data.shop),
+      events: filterByKeyword(data.events),
+      combined: [
+        ...filterByKeyword(data.eat),
+        ...filterByKeyword(data.stay),
+        ...filterByKeyword(data.play),
+        ...filterByKeyword(data.shop),
+      ],
+    };
+    setFilteredData(filtered);
+    console.log('Filtered Data Set with keyword:', filtered);
+  }, [keyword, data]);
 
   useEffect(() => {
-    filterData();
-  }, [keyword, selectedTypes, data, filterData]);
+    resetFilteredData();  // Reset the data to original before filtering
+    filterDataByTypes();
+  }, [selectedTypes, filterDataByTypes]);
+
+  useEffect(() => {
+    resetFilteredData();  // Reset the data to original before filtering
+    filterDataByKeyword();
+  }, [keyword, filterDataByKeyword]);
 
   useEffect(() => {
     fetchData();
@@ -317,7 +345,7 @@ const DataProvider = ({ children }) => {
     if (selectedDate) {
       const filterEventsByDate = (events, date) => {
         return events.filter(event => {
-          if (!event.start_date) return false; // Remove events without a start date
+          if (!event.start_date) return false;
           const startDate = new Date(event.start_date);
           const endDate = event.end_date ? new Date(event.end_date) : null;
           return (
@@ -331,10 +359,10 @@ const DataProvider = ({ children }) => {
         events: filterEventsByDate(data.events, selectedDate),
       };
       setFilteredData(filtered);
-      console.log('Filtered Data Set with selected date:', filtered); // Log the filtered data set with selected date
+      console.log('Filtered Data Set with selected date:', filtered);
     } else {
       setFilteredData(data);
-      console.log('Filtered Data Set reset to original:', data); // Log the reset to original filtered data set
+      console.log('Filtered Data Set reset to original:', data);
     }
   }, [selectedDate, data]);
 
@@ -354,7 +382,7 @@ const DataProvider = ({ children }) => {
       combined: [...data.combined].sort((a, b) => a.name.localeCompare(b.name) * sortOrder),
     };
     setFilteredData(sortedData);
-    console.log('Filtered Data Set after sort:', sortedData); // Log the filtered data set after sort
+    console.log('Filtered Data Set after sort:', sortedData);
   }, [data]);
 
   const resetSortOrder = useCallback(() => {

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, forwardRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import SlidingMenu from './SlidingMenu';
 import SortMenu from './SortMenu.js';
@@ -11,8 +11,8 @@ import { useOrientation } from '../../hooks/OrientationContext';
 import { useDataContext } from '../../hooks/DataContext';
 import { useResettingNavigate } from '../../hooks/useResettingNavigate';
 
-function Header() {
-  const { headerRef, headerHeight } = useHeightContext();
+const Header = forwardRef((props, ref) => {
+  const { headerHeight, updateHeights } = useHeightContext();
   const [menuOpen, setMenuOpen] = useState(false);
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
   const { setKeyword, resetKeyword, sortData, isAscending, setIsAscending, setSelectedDate, handleNearMe, setNearMe, resetFilteredData, typeNames, setSelectedTypes } = useDataContext();
@@ -23,6 +23,10 @@ function Header() {
   const navigate = useResettingNavigate();
   const [selectedDate, setDate] = useState(null);
   const [dropdownItem, setDropdownItem] = useState(null);
+
+  useEffect(() => {
+    updateHeights();
+  }, [updateHeights]);
 
   const handleKeywordChange = (e) => {
     setKeyword(e.target.value);
@@ -83,6 +87,7 @@ function Header() {
       default:
         break;
     }
+    setSortMenuOpen(false); // Close the sort menu
   };
 
   const getDropdownLabel = () => {
@@ -170,7 +175,7 @@ function Header() {
   ];
 
   return (
-    <header ref={headerRef}>
+    <header ref={ref}>
       <div className="header-container">
         <Link to="/itinerary" className="square-button-link">
           <button className="square-button" to="/itinerary">
@@ -238,6 +243,6 @@ function Header() {
       />
     </header>
   );
-}
+});
 
 export default Header;

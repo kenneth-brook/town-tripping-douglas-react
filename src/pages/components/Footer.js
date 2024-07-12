@@ -35,6 +35,7 @@ const Footer = forwardRef(({ showCircles = false }, ref) => {
   const navigate = useResettingNavigate(); // Use the custom hook for navigation
   const location = useLocation();
   const { setFooterHeight } = useHeightContext();
+  const { updateHeights } = useHeightContext();
   const { data } = useDataContext();
   const { isMapView, setIsMapView } = useViewMode();
 
@@ -55,10 +56,8 @@ const Footer = forwardRef(({ showCircles = false }, ref) => {
   const mapButtonLabel = isMapView ? 'List' : 'Map';
 
   useEffect(() => {
-    if (ref && ref.current) {
-      setFooterHeight(ref.current.offsetHeight);
-    }
-  }, [ref, setFooterHeight]);
+    updateHeights();
+  }, [updateHeights]);
 
   return (
     <footer ref={ref}>
