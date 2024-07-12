@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import { ReactComponent as EventsIcon } from '../assets/icos/events.svg'
@@ -12,13 +12,17 @@ import { useNavigate } from 'react-router-dom'
 import DetailViewCard from './components/DetailViewCard' // Don't forget to import DetailViewCard
 
 const Events = ({ pageTitle }) => {
-  const { headerRef, footerRef, headerHeight, footerHeight } = useHeightContext();
+  const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext();
   const { data, loading, error } = useDataContext()
   const { isMapView } = useViewMode()
   const navigate = useNavigate()
   const orientation = useOrientation()
 
   const [sortOrder, setSortOrder] = useState('asc')
+
+  useEffect(() => {
+    updateHeights();
+  }, [headerRef, footerRef, updateHeights]);
 
   const sortedEventsData = useMemo(() => {
     return data.events.slice().sort((a, b) => {
@@ -103,7 +107,7 @@ const Events = ({ pageTitle }) => {
                         )}
                         <button
                           className="more-button"
-                          onClick={() => navigate(`/shop/${item.id}`)}
+                          onClick={() => navigate(`/events/${item.id}`)}
                         >
                           more
                         </button>
