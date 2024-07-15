@@ -1,33 +1,90 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { useHeightContext } from '../hooks/HeightContext';
 import { useOrientation } from '../hooks/OrientationContext';
+import { useAuth } from '../hooks/AuthContext';
 import '../sass/componentsass/LoginPage.scss';
 
 const LoginPage = () => {
   const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext();
   const orientation = useOrientation();
   const [mode, setMode] = useState('login');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [repeatPassword, setRepeatPassword] = useState('');
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const { login } = useAuth();
 
   useEffect(() => {
     updateHeights();
   }, [headerRef, footerRef, updateHeights]);
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError(null);
+  
+    if (mode === 'register' && password !== repeatPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+  
+    const url = mode === 'login' 
+      ? 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/Prod/auth/login' 
+      : 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/Prod/auth/register';
+  
+    const payload = { email, password };
+  
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        credentials: 'include' // Include credentials
+      });
+  
+      if (!response.ok) {
+        const errorMessage = await response.text();
+        setError(errorMessage);
+        return;
+      }
+  
+      if (mode === 'login') {
+        // Navigate to the itinerary page after successful login
+        login();
+        navigate('/itinerary');
+      } else {
+        setMode('login');
+      }
+    } catch (error) {
+      setError('An error occurred. Please try again later.');
+    }
+  };
+  
+
   const renderForm = () => {
-    switch (mode) {
-      case 'login':
-        return (
+    return (
+      <>
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        </div>
+        {mode === 'register' && (
+          <div className="form-group">
+            <label htmlFor="repeat-password">Repeat Password</label>
+            <input type="password" id="repeat-password" value={repeatPassword} onChange={(e) => setRepeatPassword(e.target.value)} required />
+          </div>
+        )}
+        <button type="submit">{mode === 'login' ? 'Login' : 'Register'}</button>
+        {error && <p className="error">{error}</p>}
+        {mode === 'login' ? (
           <>
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input type="email" id="email" required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input type="password" id="password" required />
-            </div>
-            <button type="submit">Login</button>
             <p>
               Don't have an account? <span className="register-link" onClick={() => setMode('register')}>Register</span>
             </p>
@@ -35,53 +92,16 @@ const LoginPage = () => {
               Can't remember your password? <span className="reset-link" onClick={() => setMode('reset')}>Reset</span>
             </p>
           </>
-        );
-      case 'register':
-        return (
-          <>
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input type="email" id="email" required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input type="password" id="password" required />
-            </div>
-            <div className="form-group">
-              <label htmlFor="repeat-password">Repeat</label>
-              <input type="password" id="repeat-password" required />
-            </div>
-            <button type="submit">Register</button>
-            <p>
-              Already have an account? <span className="login-link" onClick={() => setMode('login')}>Login</span>
-            </p>
-          </>
-        );
-      case 'reset':
-        return (
-          <>
-            <div className="form-group">
-              <label htmlFor="email">Email</label>
-              <input type="email" id="email" required />
-            </div>
-            <button type="submit">Reset Password</button>
-            <p>
-              Remembered your password? <span className="login-link" onClick={() => setMode('login')}>Login</span>
-            </p>
-          </>
-        );
-      default:
-        return null;
-    }
+        ) : (
+          <p>
+            Already have an account? <span className="login-link" onClick={() => setMode('login')}>Login</span>
+          </p>
+        )}
+      </>
+    );
   };
 
   const pageTitle = mode === 'login' ? 'Login' : mode === 'register' ? 'Register' : 'Reset Password';
-
-  const pageTitleContent = (
-    <div className="page-title">
-      <h1>{pageTitle}</h1>
-    </div>
-  );
 
   return (
     <div
@@ -102,9 +122,11 @@ const LoginPage = () => {
           paddingBottom: `calc(${footerHeight}px + 50px)`,
         }}
       >
-        {pageTitleContent}
+        <div className="page-title">
+          <h1>{pageTitle}</h1>
+        </div>
         <div className="login-container">
-          <form>
+          <form onSubmit={handleSubmit}>
             {renderForm()}
           </form>
         </div>
