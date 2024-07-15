@@ -38,7 +38,7 @@ function SlidingMenu({
           transform: isOpen ? 'translateX(0)' : 'translateX(-110%)',
         }
       : {
-          top: `${top}px`,
+          top: `calc(${top}px + 30px)`,
           transform: isOpen ? 'translateY(0)' : 'translateY(-110%)',
         };
 
