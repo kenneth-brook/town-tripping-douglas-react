@@ -16,7 +16,9 @@ function SlidingMenu({
   const navigate = useNavigate();
 
   const handleNavigation = (link, onClick) => {
-    if (!link && onClick) {
+    console.log('handleNavigation called with link:', link, 'onClick:', onClick);
+    if (onClick) {
+      console.log('Executing onClick handler');
       onClick();
     } else if (link === '/all') {
       setIsMapView(true);
@@ -59,7 +61,10 @@ function SlidingMenu({
                   <div
                     key={index}
                     className="menu-item"
-                    onClick={() => handleNavigation(item.link, item.onClick)}
+                    onClick={() => {
+                      console.log('Menu item clicked:', item.label);
+                      handleNavigation(item.link, item.onClick);
+                    }}
                   >
                     <Triangle />
                     {item.label}
@@ -73,7 +78,10 @@ function SlidingMenu({
                   <div
                     key={index + Math.ceil(menuContent.length / 2)}
                     className="menu-item"
-                    onClick={() => handleNavigation(item.link, item.onClick)}
+                    onClick={() => {
+                      console.log('Menu item clicked:', item.label);
+                      handleNavigation(item.link, item.onClick);
+                    }}
                   >
                     <Triangle />
                     {item.label}
@@ -86,7 +94,10 @@ function SlidingMenu({
             <div
               key={index}
               className="menu-item"
-              onClick={() => handleNavigation(item.link, item.onClick)}
+              onClick={() => {
+                console.log('Menu item clicked:', item.label);
+                handleNavigation(item.link, item.onClick);
+              }}
             >
               <Triangle />
               {item.label}

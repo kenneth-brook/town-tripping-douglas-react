@@ -10,6 +10,7 @@ import { useHeightContext } from '../../hooks/HeightContext.js';
 import { useOrientation } from '../../hooks/OrientationContext';
 import { useDataContext } from '../../hooks/DataContext';
 import { useResettingNavigate } from '../../hooks/useResettingNavigate';
+import { useAuth } from '../../hooks/AuthContext'; // Import AuthContext
 
 const Header = forwardRef((props, ref) => {
   const { headerHeight, updateHeights } = useHeightContext();
@@ -23,6 +24,7 @@ const Header = forwardRef((props, ref) => {
   const navigate = useResettingNavigate();
   const [selectedDate, setDate] = useState(null);
   const [dropdownItem, setDropdownItem] = useState(null);
+  const { isAuthenticated, logout } = useAuth(); // Use AuthContext
 
   useEffect(() => {
     updateHeights();
@@ -162,7 +164,19 @@ const Header = forwardRef((props, ref) => {
     dropdownItem,
   ].filter(Boolean);
 
+  const handleAuthClick = () => {
+    if (isAuthenticated) {
+      console.log('Logging out'); // Debugging
+      logout();
+      navigate('/');
+    } else {
+      console.log('Navigating to login'); // Debugging
+      navigate('/login', { state: { from: location.pathname } });
+    }
+  };
+
   const menuContent = [
+    { label: isAuthenticated ? 'Logout' : 'Login', link: '#', onClick: handleAuthClick },
     { label: 'Stay', link: '/stay' },
     { label: 'Play', link: '/play' },
     { label: 'Dine', link: '/dine' },

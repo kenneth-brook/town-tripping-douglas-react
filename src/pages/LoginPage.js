@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { useHeightContext } from '../hooks/HeightContext';
@@ -16,53 +16,90 @@ const LoginPage = () => {
   const [repeatPassword, setRepeatPassword] = useState('');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const location = useLocation();
+  const { isAuthenticated, login } = useAuth();
 
   useEffect(() => {
     updateHeights();
   }, [headerRef, footerRef, updateHeights]);
 
+  useEffect(() => {
+    const getToken = () => {
+      const name = 'token=';
+      const decodedCookie = decodeURIComponent(document.cookie);
+      const ca = decodedCookie.split(';');
+      for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') {
+          c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+          return c.substring(name.length, c.length);
+        }
+      }
+      return null;
+    };
+
+    const token = getToken();
+    console.log('Decoded Cookie:', document.cookie);
+    if (token) {
+      console.log('Token on landing (plain JS):', token);
+    } else {
+      console.log('No token here (plain JS)');
+    }
+
+    if (isAuthenticated) {
+      const redirectTo = location.state?.from || '/itinerary';
+      navigate(redirectTo);
+    }
+  }, [isAuthenticated, navigate, location.state]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError(null);
-  
+
     if (mode === 'register' && password !== repeatPassword) {
       setError('Passwords do not match');
       return;
     }
-  
+
     const url = mode === 'login' 
       ? 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/Prod/auth/login' 
       : 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/Prod/auth/register';
-  
+
     const payload = { email, password };
-  
+
     try {
       const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
-        credentials: 'include' // Include credentials
+        credentials: 'include', // Include credentials
       });
-  
+
       if (!response.ok) {
         const errorMessage = await response.text();
+        console.error('Error from server:', errorMessage);
         setError(errorMessage);
         return;
       }
-  
+
+      const data = await response.json();
+      console.log('Token received:', data.token);
+
+      // Manually set the token in the cookie
+      document.cookie = `token=${data.token}; path=/; max-age=86400;`;
+
       if (mode === 'login') {
-        // Navigate to the itinerary page after successful login
         login();
-        navigate('/itinerary');
       } else {
         setMode('login');
       }
     } catch (error) {
+      console.error('Login error:', error); // Log error to the console for debugging
       setError('An error occurred. Please try again later.');
     }
   };
-  
 
   const renderForm = () => {
     return (
