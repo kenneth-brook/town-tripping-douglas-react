@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useOrientation } from '../../hooks/OrientationContext';
 import { useHeightContext } from '../../hooks/HeightContext';
 import { useDataContext } from '../../hooks/DataContext';
-import { useItineraryContext } from '../../hooks/ItineraryContext';
+import { useNavigate } from 'react-router-dom';
 import { ReactComponent as Location } from '../../assets/icos/location.svg';
 import { ReactComponent as DateIcon } from '../../assets/icos/date.svg';
 import { ReactComponent as TimeIcon } from '../../assets/icos/time.svg';
@@ -15,6 +15,8 @@ import { ReactComponent as BackArrow } from '../../assets/icos/back-arrow.svg';
 import Header from './Header';
 import Footer from './Footer';
 import styles from '../../sass/componentsass/DetailView.scss';
+import { useItineraryContext } from '../../hooks/ItineraryContext';
+import { useAuth } from '../../hooks/AuthContext';
 
 const DetailView = () => {
   const { category, id } = useParams();
@@ -23,7 +25,8 @@ const DetailView = () => {
   const orientation = useOrientation();
   const [item, setItem] = useState(null);
   const navigate = useNavigate();
-  const { addToItinerary } = useItineraryContext();
+  const { addToItinerary, saveItinerary } = useItineraryContext();
+  const { userId, isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (data) {
@@ -49,11 +52,15 @@ const DetailView = () => {
     return (
       <>
         {Array.from({ length: fullStars }, (_, i) => (
-          <span key={i} className="star full">★</span>
+          <span key={i} className="star full">
+            ★
+          </span>
         ))}
         {halfStar === 1 && <span className="star half">☆</span>}
         {Array.from({ length: emptyStars }, (_, i) => (
-          <span key={i} className="star empty">☆</span>
+          <span key={i} className="star empty">
+            ☆
+          </span>
         ))}
       </>
     );
@@ -72,21 +79,29 @@ const DetailView = () => {
     navigate(-1);
   };
 
-  const handleAddToItinerary = () => {
-    addToItinerary(item);
-  };
-
   const { date, time } = formatDate(item.start_date);
 
+  const handleAddToItinerary = () => {
+    if (isAuthenticated && userId) {
+      addToItinerary(item);
+      saveItinerary(userId, 'My Itinerary', [item]); // Update 'My Itinerary' to a proper name
+      console.log('Itinerary added:', item);
+    } else {
+      console.log('User not authenticated or userId is null.');
+    }
+  };
+
   return (
-    <div className={`app-container ${
-      orientation === 'landscape-primary' ||
-      orientation === 'landscape-secondary'
-        ? 'landscape'
-        : orientation === 'desktop'
-        ? 'desktop internal-desktop'
-        : 'portrait'
-    }`}>
+    <div
+      className={`app-container ${
+        orientation === 'landscape-primary' ||
+        orientation === 'landscape-secondary'
+          ? 'landscape'
+          : orientation === 'desktop'
+          ? 'desktop internal-desktop'
+          : 'portrait'
+      }`}
+    >
       <Header />
       <main
         className="internal-content"
@@ -111,7 +126,9 @@ const DetailView = () => {
                   <BackArrow />
                   back
                 </a>
-              ) : ('')}
+              ) : (
+                ''
+              )}
             </div>
 
             {orientation === 'landscape-primary' ? (
@@ -143,7 +160,9 @@ const DetailView = () => {
                   </a>
                 </div>
               </div>
-            ) : ('')}
+            ) : (
+              ''
+            )}
           </div>
 
           <div className="text-container">
@@ -153,12 +172,14 @@ const DetailView = () => {
               {`${item.street_address}, ${item.city}, ${item.state} ${item.zip}`}
             </p>
             {item.start_date && item.start_time && (
-              <div className="date-container">
+              <div className="date-container ">
                 <p>
                   <DateIcon />
                   {date}
                 </p>
-                {time === '00:00' ? ('') : (
+                {time === '00:00' ? (
+                  ''
+                ) : (
                   <p>
                     <TimeIcon />
                     {time}
@@ -169,7 +190,9 @@ const DetailView = () => {
             <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
           </div>
 
-          {orientation === 'landscape-primary' ? ('') : (
+          {orientation === 'landscape-primary' ? (
+            ''
+          ) : (
             <div className="contact-container">
               <div className="web-back">
                 {item.web && item.web.length > 0 && (

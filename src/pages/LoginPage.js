@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import { useHeightContext } from '../hooks/HeightContext';
 import { useOrientation } from '../hooks/OrientationContext';
 import { useAuth } from '../hooks/AuthContext';
+import Cookies from 'js-cookie';
 import '../sass/componentsass/LoginPage.scss';
 
 const LoginPage = () => {
@@ -17,40 +18,21 @@ const LoginPage = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated, login } = useAuth();
+  const { isAuthenticated, login, userId } = useAuth();
 
   useEffect(() => {
     updateHeights();
   }, [headerRef, footerRef, updateHeights]);
 
   useEffect(() => {
-    const getToken = () => {
-      const name = 'token=';
-      const decodedCookie = decodeURIComponent(document.cookie);
-      const ca = decodedCookie.split(';');
-      for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) === ' ') {
-          c = c.substring(1);
-        }
-        if (c.indexOf(name) === 0) {
-          return c.substring(name.length, c.length);
-        }
-      }
-      return null;
-    };
-
-    const token = getToken();
-    console.log('Decoded Cookie:', document.cookie);
-    if (token) {
-      console.log('Token on landing (plain JS):', token);
-    } else {
-      console.log('No token here (plain JS)');
-    }
-
-    if (isAuthenticated) {
+    const token = Cookies.get('token');
+    const storedUserId = Cookies.get('userId');
+    if (token && storedUserId && isAuthenticated) {
       const redirectTo = location.state?.from || '/itinerary';
+      console.log('Redirecting to:', redirectTo);
       navigate(redirectTo);
+    } else {
+      console.log('No token or userId or not authenticated');
     }
   }, [isAuthenticated, navigate, location.state]);
 
@@ -63,9 +45,9 @@ const LoginPage = () => {
       return;
     }
 
-    const url = mode === 'login' 
-      ? 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/Prod/auth/login' 
-      : 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/Prod/auth/register';
+    const url = mode === 'login'
+      ? 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/aws-test/auth/login'
+      : 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/aws-test/auth/register';
 
     const payload = { email, password };
 
@@ -74,7 +56,7 @@ const LoginPage = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
-        credentials: 'include', // Include credentials
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -86,17 +68,16 @@ const LoginPage = () => {
 
       const data = await response.json();
       console.log('Token received:', data.token);
+      console.log('User ID received:', data.userId);
 
-      // Manually set the token in the cookie
-      document.cookie = `token=${data.token}; path=/; max-age=86400;`;
+      login(data.userId, data.token);
 
-      if (mode === 'login') {
-        login();
-      } else {
-        setMode('login');
-      }
+      // Redirect immediately after login
+      const redirectTo = location.state?.from || '/itinerary';
+      console.log('Redirecting to:', redirectTo);
+      navigate(redirectTo);
     } catch (error) {
-      console.error('Login error:', error); // Log error to the console for debugging
+      console.error('Login error:', error);
       setError('An error occurred. Please try again later.');
     }
   };
