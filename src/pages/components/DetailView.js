@@ -1,96 +1,92 @@
-import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
-import { useOrientation } from '../../hooks/OrientationContext'
-import { useHeightContext } from '../../hooks/HeightContext'
-import { useDataContext } from '../../hooks/DataContext'
-import { useNavigate } from 'react-router-dom'
-import { ReactComponent as Location } from '../../assets/icos/location.svg'
-import { ReactComponent as DateIcon } from '../../assets/icos/date.svg'
-import { ReactComponent as TimeIcon } from '../../assets/icos/time.svg'
-import { ReactComponent as Phone } from '../../assets/icos/phone.svg'
-import { ReactComponent as MapIcon } from '../../assets/icos/map-icon.svg'
-import { ReactComponent as Share } from '../../assets/icos/share-icon.svg'
-import { ReactComponent as AddItinerary } from '../../assets/icos/add-itinerary.svg'
-import { ReactComponent as BackArrow } from '../../assets/icos/back-arrow.svg'
-import Header from './Header'
-import Footer from './Footer'
-import styles from '../../sass/componentsass/DetailView.scss'
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useOrientation } from '../../hooks/OrientationContext';
+import { useHeightContext } from '../../hooks/HeightContext';
+import { useDataContext } from '../../hooks/DataContext';
+import { useItineraryContext } from '../../hooks/ItineraryContext';
+import { ReactComponent as Location } from '../../assets/icos/location.svg';
+import { ReactComponent as DateIcon } from '../../assets/icos/date.svg';
+import { ReactComponent as TimeIcon } from '../../assets/icos/time.svg';
+import { ReactComponent as Phone } from '../../assets/icos/phone.svg';
+import { ReactComponent as MapIcon } from '../../assets/icos/map-icon.svg';
+import { ReactComponent as Share } from '../../assets/icos/share-icon.svg';
+import { ReactComponent as AddItinerary } from '../../assets/icos/add-itinerary.svg';
+import { ReactComponent as BackArrow } from '../../assets/icos/back-arrow.svg';
+import Header from './Header';
+import Footer from './Footer';
+import styles from '../../sass/componentsass/DetailView.scss';
 
 const DetailView = () => {
-  const { category, id } = useParams()
-  const { data, loading, error } = useDataContext()
-  const { headerHeight, footerHeight, footerRef } = useHeightContext()
-  const orientation = useOrientation()
-  const [item, setItem] = useState(null)
-  const navigate = useNavigate()
+  const { category, id } = useParams();
+  const { data, loading, error } = useDataContext();
+  const { headerHeight, footerHeight, footerRef } = useHeightContext();
+  const orientation = useOrientation();
+  const [item, setItem] = useState(null);
+  const navigate = useNavigate();
+  const { addToItinerary } = useItineraryContext();
 
   useEffect(() => {
     if (data) {
-      const actualCategory = category === 'dine' ? 'eat' : category
+      const actualCategory = category === 'dine' ? 'eat' : category;
       if (data[actualCategory]) {
         const selectedItem = data[actualCategory].find(
           (item) => item.id.toString() === id
-        )
-        setItem(selectedItem)
+        );
+        setItem(selectedItem);
       }
     }
-  }, [data, category, id])
+  }, [data, category, id]);
 
-  if (loading) return <div className="loader"></div>
-  if (error) return <p>{error}</p>
-  if (!item) return <p>Not found</p>
+  if (loading) return <div className="loader"></div>;
+  if (error) return <p>{error}</p>;
+  if (!item) return <p>Not found</p>;
 
   const renderStars = (rating) => {
-    const fullStars = Math.floor(rating)
-    const halfStar = rating % 1 !== 0 ? 1 : 0
-    const emptyStars = 5 - fullStars - halfStar
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 !== 0 ? 1 : 0;
+    const emptyStars = 5 - fullStars - halfStar;
 
     return (
       <>
         {Array.from({ length: fullStars }, (_, i) => (
-          <span key={i} className="star full">
-            ★
-          </span>
+          <span key={i} className="star full">★</span>
         ))}
         {halfStar === 1 && <span className="star half">☆</span>}
         {Array.from({ length: emptyStars }, (_, i) => (
-          <span key={i} className="star empty">
-            ☆
-          </span>
+          <span key={i} className="star empty">☆</span>
         ))}
       </>
-    )
-  }
+    );
+  };
 
-  const googleMapsLink = `https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.long}`
+  const googleMapsLink = `https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.long}`;
 
   const formatDate = (dateTime) => {
-    if (!dateTime) return { date: 'N/A', time: 'N/A' }
-    const [date, time] = dateTime.split('T')
-    const [hours, minutes] = time.split(':')
-    return { date, time: `${hours}:${minutes}` }
-  }
+    if (!dateTime) return { date: 'N/A', time: 'N/A' };
+    const [date, time] = dateTime.split('T');
+    const [hours, minutes] = time.split(':');
+    return { date, time: `${hours}:${minutes}` };
+  };
 
   const handleBack = () => {
-    navigate(-1)
-  }
+    navigate(-1);
+  };
 
-  const { date, time } = formatDate(item.start_date)
+  const handleAddToItinerary = () => {
+    addToItinerary(item);
+  };
 
-  console.log('Formatted Date: ', date)
-  console.log('Formatted Time: ', time)
+  const { date, time } = formatDate(item.start_date);
 
   return (
-    <div
-      className={`app-container ${
-        orientation === 'landscape-primary' ||
-        orientation === 'landscape-secondary'
-          ? 'landscape'
-          : orientation === 'desktop'
-          ? 'desktop internal-desktop'
-          : 'portrait'
-      }`}
-    >
+    <div className={`app-container ${
+      orientation === 'landscape-primary' ||
+      orientation === 'landscape-secondary'
+        ? 'landscape'
+        : orientation === 'desktop'
+        ? 'desktop internal-desktop'
+        : 'portrait'
+    }`}>
       <Header />
       <main
         className="internal-content"
@@ -115,9 +111,7 @@ const DetailView = () => {
                   <BackArrow />
                   back
                 </a>
-              ) : (
-                ''
-              )}
+              ) : ('')}
             </div>
 
             {orientation === 'landscape-primary' ? (
@@ -149,9 +143,7 @@ const DetailView = () => {
                   </a>
                 </div>
               </div>
-            ) : (
-              ''
-            )}
+            ) : ('')}
           </div>
 
           <div className="text-container">
@@ -161,14 +153,12 @@ const DetailView = () => {
               {`${item.street_address}, ${item.city}, ${item.state} ${item.zip}`}
             </p>
             {item.start_date && item.start_time && (
-              <div className="date-container ">
+              <div className="date-container">
                 <p>
                   <DateIcon />
                   {date}
                 </p>
-                {time === '00:00' ? (
-                  ''
-                ) : (
+                {time === '00:00' ? ('') : (
                   <p>
                     <TimeIcon />
                     {time}
@@ -179,9 +169,7 @@ const DetailView = () => {
             <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
           </div>
 
-          {orientation === 'landscape-primary' ? (
-            ''
-          ) : (
+          {orientation === 'landscape-primary' ? ('') : (
             <div className="contact-container">
               <div className="web-back">
                 {item.web && item.web.length > 0 && (
@@ -235,7 +223,7 @@ const DetailView = () => {
               <MapIcon />
               Map
             </button>
-            <button>
+            <button onClick={handleAddToItinerary}>
               <AddItinerary />
               Add to Itinerary
             </button>
@@ -244,7 +232,7 @@ const DetailView = () => {
       </main>
       <Footer ref={footerRef} showCircles={true} />
     </div>
-  )
-}
+  );
+};
 
-export default DetailView
+export default DetailView;

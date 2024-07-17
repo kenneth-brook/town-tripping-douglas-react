@@ -71,11 +71,11 @@ const DataProvider = ({ children }) => {
     console.log('Fetching data...');
     try {
       const endpoints = {
-        eat: 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/Prod/data/eat',
-        stay: 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/Prod/data/stay',
-        play: 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/Prod/data/play',
-        shop: 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/Prod/data/shop',
-        events: 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/Prod/get-events'
+        eat: 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/aws-test/data/eat',
+        stay: 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/aws-test/data/stay',
+        play: 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/aws-test/data/play',
+        shop: 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/aws-test/data/shop',
+        events: 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/aws-test/get-events'
       };
 
       const fetchEndpointData = async (endpoint) => {
@@ -186,7 +186,7 @@ const DataProvider = ({ children }) => {
       setUserLocation(userLocation);
       console.log('Data fetched and set:', dataMap, 'User Location:', userLocation);
 
-      const response = await fetch('https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/Prod/type-names/fetch-type-names', {
+      const response = await fetch('https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/aws-test/type-names/fetch-type-names', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
