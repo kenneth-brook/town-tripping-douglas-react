@@ -38,3 +38,127 @@
   width: 12px;
   height: 15px;
 }
+
+.location-item {
+  display: flex;
+  padding: 10px 0;
+}
+
+.left-side {
+  width: 23%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px;
+}
+
+.day-box {
+  background-color: #888888;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.day-label {
+  font-weight: bold;
+  color: white;
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.day-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+}
+
+.date-box, .time-box {
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.date-value, .time-value {
+  font-size: 1.1rem;
+  color: #29ABE2;
+  font-weight: bold;
+}
+
+.details-button {
+  background-color: #cccccc;
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.details-button:hover {
+  background-color: #999999;
+}
+
+.right-side {
+  width: 77%;
+  padding: 10px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  background-color: #fff;
+}
+
+.right-side-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.edit-button {
+  background: none;
+  border: none;
+  color: #29ABE2;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.right-side h3 {
+  margin-top: 0;
+  color: #007037;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.button-group button {
+  flex: 1;
+  background-color: #29ABE2;
+  border: none;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button-group button:hover {
+  background-color: #007037;
+}
+
+.edit-box {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border: 1px solid #ddd;
+  margin-top: 10px;
+}
+
+.edit-box label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.edit-box button {
+  margin-top: 10px;
+  margin-right: 5px;
+}

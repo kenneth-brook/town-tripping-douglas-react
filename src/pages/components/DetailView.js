@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { useOrientation } from '../../hooks/OrientationContext';
 import { useHeightContext } from '../../hooks/HeightContext';
@@ -25,8 +25,14 @@ const DetailView = () => {
   const orientation = useOrientation();
   const [item, setItem] = useState(null);
   const navigate = useNavigate();
-  const { addToItinerary, saveItinerary } = useItineraryContext();
+  const { addToItinerary, fetchItineraries, itineraries } = useItineraryContext();
   const { userId, isAuthenticated } = useAuth();
+
+  const fetchUserItineraries = useCallback(() => {
+    if (isAuthenticated && userId && !itineraries.length) {
+      fetchItineraries(userId);
+    }
+  }, [isAuthenticated, userId, fetchItineraries, itineraries.length]);
 
   useEffect(() => {
     if (data) {
@@ -39,6 +45,10 @@ const DetailView = () => {
       }
     }
   }, [data, category, id]);
+
+  useEffect(() => {
+    fetchUserItineraries();
+  }, [fetchUserItineraries]);
 
   if (loading) return <div className="loader"></div>;
   if (error) return <p>{error}</p>;
@@ -84,7 +94,6 @@ const DetailView = () => {
   const handleAddToItinerary = () => {
     if (isAuthenticated && userId) {
       addToItinerary(item);
-      saveItinerary(userId, 'My Itinerary', [item]); // Update 'My Itinerary' to a proper name
       console.log('Itinerary added:', item);
     } else {
       console.log('User not authenticated or userId is null.');
