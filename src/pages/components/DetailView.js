@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
 import { useOrientation } from '../../hooks/OrientationContext';
 import { useHeightContext } from '../../hooks/HeightContext';
 import { useDataContext } from '../../hooks/DataContext';
@@ -15,27 +15,21 @@ import { ReactComponent as BackArrow } from '../../assets/icos/back-arrow.svg';
 import Header from './Header';
 import Footer from './Footer';
 import styles from '../../sass/componentsass/DetailView.scss';
-import { useItineraryContext } from '../../hooks/ItineraryContext';
-import { useAuth } from '../../hooks/AuthContext';
 
 const DetailView = () => {
-  const { category, id } = useParams();
+  const { id } = useParams();
+  const { state } = useLocation();
+  const { category } = state?.location || {}; // Get category from state if available
   const { data, loading, error } = useDataContext();
   const { headerHeight, footerHeight, footerRef } = useHeightContext();
   const orientation = useOrientation();
   const [item, setItem] = useState(null);
   const navigate = useNavigate();
-  const { addToItinerary, fetchItineraries, itineraries } = useItineraryContext();
-  const { userId, isAuthenticated } = useAuth();
-
-  const fetchUserItineraries = useCallback(() => {
-    if (isAuthenticated && userId && !itineraries.length) {
-      fetchItineraries(userId);
-    }
-  }, [isAuthenticated, userId, fetchItineraries, itineraries.length]);
 
   useEffect(() => {
-    if (data) {
+    if (state?.location) {
+      setItem(state.location);
+    } else if (data) {
       const actualCategory = category === 'dine' ? 'eat' : category;
       if (data[actualCategory]) {
         const selectedItem = data[actualCategory].find(
@@ -44,11 +38,7 @@ const DetailView = () => {
         setItem(selectedItem);
       }
     }
-  }, [data, category, id]);
-
-  useEffect(() => {
-    fetchUserItineraries();
-  }, [fetchUserItineraries]);
+  }, [state, data, category, id]);
 
   if (loading) return <div className="loader"></div>;
   if (error) return <p>{error}</p>;
@@ -91,14 +81,8 @@ const DetailView = () => {
 
   const { date, time } = formatDate(item.start_date);
 
-  const handleAddToItinerary = () => {
-    if (isAuthenticated && userId) {
-      addToItinerary(item);
-      console.log('Itinerary added:', item);
-    } else {
-      console.log('User not authenticated or userId is null.');
-    }
-  };
+  console.log('Formatted Date: ', date);
+  console.log('Formatted Time: ', time);
 
   return (
     <div
@@ -255,7 +239,7 @@ const DetailView = () => {
               <MapIcon />
               Map
             </button>
-            <button onClick={handleAddToItinerary}>
+            <button>
               <AddItinerary />
               Add to Itinerary
             </button>
@@ -265,6 +249,6 @@ const DetailView = () => {
       <Footer ref={footerRef} showCircles={true} />
     </div>
   );
-};
+}
 
 export default DetailView;

@@ -8,10 +8,17 @@ import { useHeightContext } from '../hooks/HeightContext';
 import { useOrientation } from '../hooks/OrientationContext';
 import { useAuth } from '../hooks/AuthContext';
 import { useItineraryContext } from '../hooks/ItineraryContext';
+import { ReactComponent as EyeIcon } from '../assets/icos/eye.svg';
+import { ReactComponent as ShareIcon } from '../assets/icos/share-icon2.svg';
+import { ReactComponent as PhoneIcon } from '../assets/icos/phone2.svg';
+import { ReactComponent as WebIcon } from '../assets/icos/web.svg';
+import { ReactComponent as MapIcon } from '../assets/icos/maps.svg';
+import { ReactComponent as EditIcon } from '../assets/icos/edit.svg';
 import '../sass/componentsass/Itinerary.scss';
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
+  date.setMinutes(date.getMinutes() + date.getTimezoneOffset()); // Adjust for timezone offset
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   const year = date.getFullYear().toString().slice(-2);
@@ -165,6 +172,10 @@ const Itinerary = ({ pageTitle }) => {
     }
   };
 
+  const handleDetails = (location) => {
+    navigate(`/detail/${location.id}`, { state: { location } });
+  };
+
   const renderLocationItem = (location, index, dayCount) => (
     <div key={index} className="location-item">
       <div className="left-side">
@@ -178,19 +189,39 @@ const Itinerary = ({ pageTitle }) => {
         <div className="time-box">
           <div className="time-value">{location.visitTime ? formatTime(location.visitTime) : '--:--'}</div>
         </div>
-        <button className="details-button">Details</button>
+        <button className="details-button" onClick={() => handleDetails(location)}>
+          <EyeIcon />
+          Details
+        </button>
       </div>
       <div className="right-side">
         <div className="right-side-header">
-          <h3>{location.name}</h3>
-          <button className="edit-button" onClick={() => handleEditLocation(location)}>Edit</button>
+          <div className='textBlock'>
+            <h3>{location.name}</h3>
+            <p>{location.street_address},</p>
+            <p>{location.city}, {location.state} {location.zip}</p>
+          </div>
+          <button className="edit-button" onClick={() => handleEditLocation(location)}>
+            <EditIcon />Edit</button>
         </div>
-        <p>{location.street_address}, {location.city}, {location.state} {location.zip}</p>
+        
         <div className="button-group">
-          <button className="share-button">Share</button>
-          <button className="call-button">Call</button>
-          <button className="web-button">Web</button>
-          <button className="map-button">Map</button>
+          <button>
+            <ShareIcon />
+            Share
+          </button>
+          <button>
+            <PhoneIcon />
+            Call
+          </button>
+          <button>
+            <WebIcon />
+            Web
+          </button>
+          <button>
+            <MapIcon />
+            Map
+          </button>
         </div>
         {editLocationId === location.id && (
           <div className="edit-box">
