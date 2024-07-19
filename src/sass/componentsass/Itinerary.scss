@@ -171,7 +171,7 @@
 
 .button-group {
   display: flex;
-  gap: 8px;
+  justify-content: space-between;
   margin-top: auto;
 }
 
@@ -188,10 +188,16 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  max-width: 23%;
   
   svg {
     fill: white;
     width: 70%;
+  }
+
+  a {
+    text-decoration: none;
+    color: white;
   }
 }
 

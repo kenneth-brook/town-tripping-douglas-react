@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useOrientation } from '../../hooks/OrientationContext';
 import { useHeightContext } from '../../hooks/HeightContext';
 import { useDataContext } from '../../hooks/DataContext';
-import { useNavigate } from 'react-router-dom';
 import { ReactComponent as Location } from '../../assets/icos/location.svg';
 import { ReactComponent as DateIcon } from '../../assets/icos/date.svg';
 import { ReactComponent as TimeIcon } from '../../assets/icos/time.svg';
@@ -18,17 +17,17 @@ import styles from '../../sass/componentsass/DetailView.scss';
 
 const DetailView = () => {
   const { id } = useParams();
-  const { state } = useLocation();
-  const { category } = state?.location || {}; // Get category from state if available
+  const location = useLocation();
+  const navigate = useNavigate();
   const { data, loading, error } = useDataContext();
   const { headerHeight, footerHeight, footerRef } = useHeightContext();
   const orientation = useOrientation();
   const [item, setItem] = useState(null);
-  const navigate = useNavigate();
+  const category = location.pathname.split('/')[1]; // Infer category from URL
 
   useEffect(() => {
-    if (state?.location) {
-      setItem(state.location);
+    if (location.state?.location) {
+      setItem(location.state.location);
     } else if (data) {
       const actualCategory = category === 'dine' ? 'eat' : category;
       if (data[actualCategory]) {
@@ -38,7 +37,7 @@ const DetailView = () => {
         setItem(selectedItem);
       }
     }
-  }, [state, data, category, id]);
+  }, [location.state, data, category, id]);
 
   if (loading) return <div className="loader"></div>;
   if (error) return <p>{error}</p>;
@@ -80,9 +79,6 @@ const DetailView = () => {
   };
 
   const { date, time } = formatDate(item.start_date);
-
-  console.log('Formatted Date: ', date);
-  console.log('Formatted Time: ', time);
 
   return (
     <div
@@ -249,6 +245,6 @@ const DetailView = () => {
       <Footer ref={footerRef} showCircles={true} />
     </div>
   );
-}
+};
 
 export default DetailView;

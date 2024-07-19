@@ -18,7 +18,6 @@ import '../sass/componentsass/Itinerary.scss';
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-  date.setMinutes(date.getMinutes() + date.getTimezoneOffset()); // Adjust for timezone offset
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
   const year = date.getFullYear().toString().slice(-2);
@@ -172,10 +171,6 @@ const Itinerary = ({ pageTitle }) => {
     }
   };
 
-  const handleDetails = (location) => {
-    navigate(`/detail/${location.id}`, { state: { location } });
-  };
-
   const renderLocationItem = (location, index, dayCount) => (
     <div key={index} className="location-item">
       <div className="left-side">
@@ -189,7 +184,7 @@ const Itinerary = ({ pageTitle }) => {
         <div className="time-box">
           <div className="time-value">{location.visitTime ? formatTime(location.visitTime) : '--:--'}</div>
         </div>
-        <button className="details-button" onClick={() => handleDetails(location)}>
+        <button className="details-button" onClick={() => navigate(`/detail/${location.id}`, { state: { location, category: location.category } })}>
           <EyeIcon />
           Details
         </button>
@@ -206,17 +201,21 @@ const Itinerary = ({ pageTitle }) => {
         </div>
         
         <div className="button-group">
+          {location.web && (
+            <button onClick={() => window.open(location.web, '_blank')}>
+              <WebIcon />
+              Web
+            </button>
+          )}
+          {location.phone && (
+            <button onClick={() => window.open(`tel:${location.phone}`, '_blank')}>
+              <PhoneIcon />
+              Call
+            </button>
+          )}
           <button>
             <ShareIcon />
             Share
-          </button>
-          <button>
-            <PhoneIcon />
-            Call
-          </button>
-          <button>
-            <WebIcon />
-            Web
           </button>
           <button>
             <MapIcon />
