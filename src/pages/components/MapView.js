@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { useLocation } from 'react-router-dom'
-import Map, { Marker, Popup } from 'react-map-gl'
-import mapboxgl from 'mapbox-gl'
-import { useDataContext } from '../../hooks/DataContext'
-import { ReactComponent as Phone } from '../../assets/icos/phone2.svg'
-import { ReactComponent as Share } from '../../assets/icos/share-icon2.svg'
-import { ReactComponent as AddItinerary } from '../../assets/icos/add-itinerary2.svg'
+// MapView.js
+import React, { useState, useEffect, useRef } from 'react';
+import Map, { Marker, Popup } from 'react-map-gl';
+import mapboxgl from 'mapbox-gl';
+import { useDataContext } from '../../hooks/DataContext';
+import { ReactComponent as Phone } from '../../assets/icos/phone2.svg';
+import { ReactComponent as Share } from '../../assets/icos/share-icon2.svg';
+import { ReactComponent as AddItinerary } from '../../assets/icos/add-itinerary2.svg';
 
 // Import PNG markers
-import eatPin from '../../assets/icos/eatPin.png'
-import shopPin from '../../assets/icos/shopPin.png'
-import stayPin from '../../assets/icos/stayPin.png'
-import playPin from '../../assets/icos/playPin.png'
-import eventPin from '../../assets/icos/eventPin.png'
+import eatPin from '../../assets/icos/eatPin.png';
+import shopPin from '../../assets/icos/shopPin.png';
+import stayPin from '../../assets/icos/stayPin.png';
+import playPin from '../../assets/icos/playPin.png';
+import eventPin from '../../assets/icos/eventPin.png';
 
 const markerIcons = {
   eat: eatPin,
@@ -20,98 +20,97 @@ const markerIcons = {
   stay: stayPin,
   play: playPin,
   events: eventPin,
-}
+};
 
 const isValidCoordinate = (lat, lon) => {
-  const latNum = parseFloat(lat)
-  const lonNum = parseFloat(lon)
+  const latNum = parseFloat(lat);
+  const lonNum = parseFloat(lon);
   const valid =
     !isNaN(latNum) &&
     !isNaN(lonNum) &&
     latNum >= -90 &&
     latNum <= 90 &&
     lonNum >= -180 &&
-    lonNum <= 180
+    lonNum <= 180;
   if (!valid) {
-    console.error(`Invalid coordinates: lat=${lat}, lon=${lon}`)
+    console.error(`Invalid coordinates: lat=${lat}, lon=${lon}`);
   }
-  return valid
-}
+  return valid;
+};
 
 const centerMap = (map, data, userLocation, nearMe) => {
   if (nearMe && userLocation) {
-    const lat = parseFloat(userLocation.lat)
-    const lon = parseFloat(userLocation.lon)
+    const lat = parseFloat(userLocation.lat);
+    const lon = parseFloat(userLocation.lon);
     if (!isNaN(lat) && !isNaN(lon)) {
-      console.log('Centering map on user location:', { lat, lon })
+      console.log('Centering map on user location:', { lat, lon });
 
-      // Find the nearest marker to the user location
-      let nearestMarker = null
-      let minDistance = Infinity
+      let nearestMarker = null;
+      let minDistance = Infinity;
 
       data.forEach((item) => {
         if (item.valid) {
-          const itemLat = parseFloat(item.lat)
-          const itemLon = parseFloat(item.long)
+          const itemLat = parseFloat(item.lat);
+          const itemLon = parseFloat(item.long);
           const distance = Math.sqrt(
             (lat - itemLat) ** 2 + (lon - itemLon) ** 2
-          )
+          );
           if (distance < minDistance) {
-            minDistance = distance
-            nearestMarker = { lat: itemLat, lon: itemLon }
+            minDistance = distance;
+            nearestMarker = { lat: itemLat, lon: itemLon };
           }
         }
-      })
+      });
 
       if (nearestMarker) {
-        const bounds = new mapboxgl.LngLatBounds()
-        bounds.extend([lon, lat])
-        bounds.extend([nearestMarker.lon, nearestMarker.lat])
+        const bounds = new mapboxgl.LngLatBounds();
+        bounds.extend([lon, lat]);
+        bounds.extend([nearestMarker.lon, nearestMarker.lat]);
         map.fitBounds(bounds, {
           padding: { top: 50, bottom: 50, left: 50, right: 50 },
           maxZoom: 14,
-          duration: 500, // Reduced duration for faster transition
-        })
+          duration: 500,
+        });
       } else {
         map.flyTo({
           center: [lon, lat],
           zoom: 14,
-          speed: 2, // Increased speed for faster transition
+          speed: 2,
           offset: [0, 0],
-        })
+        });
       }
     } else {
-      console.error('Parsed user location resulted in NaN:', { lat, lon })
+      console.error('Parsed user location resulted in NaN:', { lat, lon });
     }
   } else {
-    const bounds = new mapboxgl.LngLatBounds()
+    const bounds = new mapboxgl.LngLatBounds();
     data.forEach((item) => {
       if (item.valid) {
-        bounds.extend([parseFloat(item.long), parseFloat(item.lat)])
+        bounds.extend([parseFloat(item.long), parseFloat(item.lat)]);
       } else {
         console.error(
           `Invalid item coordinates for ${item.name}: (${item.lat}, ${item.long})`
-        )
+        );
       }
-    })
+    });
 
     if (!bounds.isEmpty()) {
-      console.log('Fitting map bounds to markers.')
+      console.log('Fitting map bounds to markers.');
       map.fitBounds(bounds, {
         padding: { top: 50, bottom: 50, left: 50, right: 50 },
         maxZoom: 15,
-        duration: 500, // Reduced duration for faster transition
-      })
+        duration: 500,
+      });
     } else {
-      console.error('Bounds are empty, cannot fit map to bounds.')
+      console.error('Bounds are empty, cannot fit map to bounds.');
     }
   }
-}
+};
 
 const addMarkers = (data, handleMarkerClick) => {
   return data.map((item) => {
-    const lat = parseFloat(item.lat)
-    const lon = parseFloat(item.long)
+    const lat = parseFloat(item.lat);
+    const lon = parseFloat(item.long);
     if (!isNaN(lat) && !isNaN(lon)) {
       return (
         <Marker
@@ -127,19 +126,19 @@ const addMarkers = (data, handleMarkerClick) => {
             className="marker-icon"
           />
         </Marker>
-      )
+      );
     } else {
       console.error(
         `Skipping marker for ${item.name} due to invalid coordinates: lat=${lat}, lon=${lon}`
-      )
-      return null
+      );
+      return null;
     }
-  })
-}
+  });
+};
 
 const renderPopup = (selectedPlace, setSelectedPlace) => {
-  const lat = parseFloat(selectedPlace.lat)
-  const lon = parseFloat(selectedPlace.long)
+  const lat = parseFloat(selectedPlace.lat);
+  const lon = parseFloat(selectedPlace.long);
   if (!isNaN(lat) && !isNaN(lon)) {
     return (
       <Popup
@@ -147,8 +146,8 @@ const renderPopup = (selectedPlace, setSelectedPlace) => {
         longitude={selectedPlace.long}
         latitude={selectedPlace.lat}
         onClose={() => {
-          console.log('Popup closed')
-          setSelectedPlace(null)
+          console.log('Popup closed');
+          setSelectedPlace(null);
         }}
         closeOnClick={false}
         anchor="top"
@@ -191,64 +190,75 @@ const renderPopup = (selectedPlace, setSelectedPlace) => {
           </div>
         </div>
       </Popup>
-    )
+    );
   } else {
-    console.error(`Invalid coordinates for popup: lat=${lat}, lon=${lon}`)
-    return null
+    console.error(`Invalid coordinates for popup: lat=${lat}, lon=${lon}`);
+    return null;
   }
-}
+};
 
-const MapView = ({ data, type }) => {
-  const [selectedPlace, setSelectedPlace] = useState(null)
-  const mapRef = useRef()
-  const { nearMe, userLocation } = useDataContext()
-  const [userPin, setUserPin] = useState(null)
-  const [mapLoaded, setMapLoaded] = useState(false)
+const MapView = ({ data, type, selectedLocation }) => {
+  const [selectedPlace, setSelectedPlace] = useState(selectedLocation || null);
+  const mapRef = useRef();
+  const { nearMe, userLocation } = useDataContext();
+  const [userPin, setUserPin] = useState(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
-  // Validate coordinates once and add the result to the data
   const validatedData = data.map((item) => ({
     ...item,
     valid: isValidCoordinate(item.lat, item.long),
-  }))
+  }));
 
   useEffect(() => {
     if (mapLoaded) {
-      const map = mapRef.current.getMap()
-      centerMap(map, validatedData, userLocation, nearMe)
-      console.log('Markers added to map:', validatedData.length)
+      const map = mapRef.current.getMap();
+      if (selectedLocation && isValidCoordinate(selectedLocation.lat, selectedLocation.long)) {
+        const lat = parseFloat(selectedLocation.lat);
+        const lon = parseFloat(selectedLocation.long);
+        map.flyTo({
+          center: [lon, lat],
+          zoom: 14,
+          speed: 2,
+          offset: [0, -240],
+        });
+        setSelectedPlace(selectedLocation);
+      } else {
+        centerMap(map, validatedData, userLocation, nearMe);
+      }
+      console.log('Markers added to map:', validatedData.length);
     }
-  }, [validatedData, userLocation, nearMe, mapLoaded])
+  }, [validatedData, userLocation, nearMe, mapLoaded, selectedLocation]);
 
   useEffect(() => {
     if (nearMe && userLocation) {
-      const lat = parseFloat(userLocation.lat)
-      const lon = parseFloat(userLocation.lon)
+      const lat = parseFloat(userLocation.lat);
+      const lon = parseFloat(userLocation.lon);
       if (!isNaN(lat) && !isNaN(lon)) {
-        setUserPin({ lat, lon })
+        setUserPin({ lat, lon });
       } else {
-        setUserPin(null)
+        setUserPin(null);
       }
     }
-  }, [nearMe, userLocation])
+  }, [nearMe, userLocation]);
 
   const handleMarkerClick = (item) => {
-    setSelectedPlace(item)
+    setSelectedPlace(item);
     if (mapRef.current) {
-      const map = mapRef.current.getMap()
+      const map = mapRef.current.getMap();
       if (item.valid) {
         map.flyTo({
           center: [parseFloat(item.long), parseFloat(item.lat)],
           zoom: 14,
-          speed: 2, // Increased speed for faster transition
-          offset: [0, -window.innerHeight / 4], // Adjust offset to center the marker
-        })
+          speed: 2,
+          offset: [0, 0],
+        });
       } else {
         console.error(
           `Invalid coordinates for marker click: (${item.lat}, ${item.long})`
-        )
+        );
       }
     }
-  }
+  };
 
   return (
     <div style={{ height: '100%', width: '100%' }}>
@@ -287,7 +297,7 @@ const MapView = ({ data, type }) => {
         )}
       </Map>
     </div>
-  )
-}
+  );
+};
 
-export default MapView
+export default MapView;

@@ -1,32 +1,33 @@
+// Play.js
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'
-import Header from './components/Header'
-import Footer from './components/Footer'
-import { ReactComponent as PlayIcon } from '../assets/icos/play.svg'
-import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg'
-import { useHeightContext } from '../hooks/HeightContext'
-import { useOrientation } from '../hooks/OrientationContext'
-import { useDataContext } from '../hooks/DataContext'
-import { useViewMode } from '../hooks/ViewModeContext'
-import MapView from './components/MapView' // Import the MapView component
-import DetailViewCard from './components/DetailViewCard'
+import { useNavigate } from 'react-router-dom';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import { ReactComponent as PlayIcon } from '../assets/icos/play.svg';
+import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg';
+import { useHeightContext } from '../hooks/HeightContext';
+import { useOrientation } from '../hooks/OrientationContext';
+import { useDataContext } from '../hooks/DataContext';
+import { useViewMode } from '../hooks/ViewModeContext';
+import MapView from './components/MapView';
+import DetailViewCard from './components/DetailViewCard';
 
 const Play = ({ pageTitle }) => {
-  const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext()
-  const { data, loading, error } = useDataContext()
-  const { isMapView } = useViewMode()
-  const playData = data.play
-  const navigate = useNavigate()
-  const orientation = useOrientation()
+  const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext();
+  const { data, loading, error } = useDataContext();
+  const { isMapView, setIsMapView } = useViewMode();
+  const playData = data.play;
+  const navigate = useNavigate();
+  const orientation = useOrientation();
 
   useEffect(() => {
     updateHeights();
   }, [headerRef, footerRef, updateHeights]);
 
   const renderStars = (rating) => {
-    const fullStars = Math.floor(rating)
-    const halfStar = rating % 1 !== 0 ? 1 : 0
-    const emptyStars = 5 - fullStars - halfStar
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 !== 0 ? 1 : 0;
+    const emptyStars = 5 - fullStars - halfStar;
 
     return (
       <>
@@ -42,8 +43,8 @@ const Play = ({ pageTitle }) => {
           </span>
         ))}
       </>
-    )
-  }
+    );
+  };
 
   const pageTitleContent = (
     <div className="page-title">
@@ -53,7 +54,7 @@ const Play = ({ pageTitle }) => {
       </h1>
       {isMapView && <MapsIcon className="icon-svg" />}
     </div>
-  )
+  );
 
   const renderPlayContent = () => (
     <div className="two-column-layout">
@@ -91,7 +92,7 @@ const Play = ({ pageTitle }) => {
         </div>
       ))}
     </div>
-  )
+  );
 
   const renderPlayDesktopContent = () => (
     <div className="two-column-layout-desk">
@@ -104,7 +105,7 @@ const Play = ({ pageTitle }) => {
         />
       ))}
     </div>
-  )
+  );
 
   return (
     <div
@@ -142,7 +143,7 @@ const Play = ({ pageTitle }) => {
       </main>
       <Footer ref={footerRef} showCircles={true} />
     </div>
-  )
-}
+  );
+};
 
-export default Play
+export default Play;

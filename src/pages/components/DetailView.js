@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+// DetailView.js
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useOrientation } from '../../hooks/OrientationContext';
 import { useHeightContext } from '../../hooks/HeightContext';
@@ -13,17 +14,29 @@ import { ReactComponent as AddItinerary } from '../../assets/icos/add-itinerary.
 import { ReactComponent as BackArrow } from '../../assets/icos/back-arrow.svg';
 import Header from './Header';
 import Footer from './Footer';
+import MapView from './MapView';
 import styles from '../../sass/componentsass/DetailView.scss';
+import { useViewMode } from '../../hooks/ViewModeContext';
+
 
 const DetailView = () => {
   const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const { data, loading, error } = useDataContext();
-  const { headerHeight, footerHeight, footerRef } = useHeightContext();
+  const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext();
   const orientation = useOrientation();
   const [item, setItem] = useState(null);
+  const { isMapView, setIsMapView } = useViewMode(); // Import useViewMode hook
   const category = location.pathname.split('/')[1]; // Infer category from URL
+
+  const updateComponentHeights = useCallback(() => {
+    updateHeights();
+  }, [updateHeights]);
+
+  useEffect(() => {
+    updateComponentHeights();
+  }, [updateComponentHeights]);
 
   useEffect(() => {
     if (location.state?.location) {
@@ -78,6 +91,16 @@ const DetailView = () => {
     navigate(-1);
   };
 
+  const handleMapView = () => {
+    setIsMapView(true);
+    navigate(`/${category}/${item.id}`, { state: { location: item } });
+  };
+
+  const handleListView = () => {
+    setIsMapView(false);
+    navigate(`/${category}/${item.id}`, { state: { location: item } });
+  };
+
   const { date, time } = formatDate(item.start_date);
 
   return (
@@ -91,7 +114,7 @@ const DetailView = () => {
           : 'portrait'
       }`}
     >
-      <Header />
+      <Header ref={headerRef} />
       <main
         className="internal-content"
         style={{
@@ -99,39 +122,109 @@ const DetailView = () => {
           paddingBottom: `calc(${footerHeight}px + 50px)`,
         }}
       >
-        <div className="view-card">
-          <div className="top-image">
-            <div className="img-back">
-              {item.images && item.images.length > 0 && (
-                <div className="image-container">
-                  <img
-                    src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
-                    alt={item.name}
-                  />
-                </div>
-              )}
+        {isMapView ? (
+          <MapView data={[item]} type={category} selectedLocation={item} />
+        ) : (
+          <div className="view-card">
+            <div className="top-image">
+              <div className="img-back">
+                {item.images && item.images.length > 0 && (
+                  <div className="image-container">
+                    <img
+                      src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
+                      alt={item.name}
+                    />
+                  </div>
+                )}
+                {orientation === 'landscape-primary' ? (
+                  <a onClick={handleBack} className="web-button-landscape">
+                    <BackArrow />
+                    back
+                  </a>
+                ) : (
+                  ''
+                )}
+              </div>
+
               {orientation === 'landscape-primary' ? (
-                <a onClick={handleBack} className="web-button-landscape">
-                  <BackArrow />
-                  back
-                </a>
+                <div className="contact-container">
+                  {item.web && item.web.length > 0 && (
+                    <a
+                      href={item.web}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="web-button"
+                    >
+                      Website
+                    </a>
+                  )}
+
+                  <div className="contact-btn">
+                    {item.phone && item.phone.length > 0 && (
+                      <a href={`tel:${item.phone}`} className="phone-button">
+                        <Phone /> {item.phone}
+                      </a>
+                    )}
+                    <a
+                      href={googleMapsLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="map-button"
+                    >
+                      <MapIcon /> Get Directions
+                    </a>
+                  </div>
+                </div>
               ) : (
                 ''
               )}
             </div>
 
+            <div className="text-container">
+              <h2>{item.name}</h2>
+              <p className={category === 'events' ? 'events-text' : ''}>
+                {category === 'events' && <Location />}
+                {`${item.street_address}, ${item.city}, ${item.state} ${item.zip}`}
+              </p>
+              {item.start_date && item.start_time && (
+                <div className="date-container ">
+                  <p>
+                    <DateIcon />
+                    {date}
+                  </p>
+                  {time === '00:00' ? (
+                    ''
+                  ) : (
+                    <p>
+                      <TimeIcon />
+                      {time}
+                    </p>
+                  )}
+                </div>
+              )}
+              <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
+            </div>
+
             {orientation === 'landscape-primary' ? (
+              ''
+            ) : (
               <div className="contact-container">
-                {item.web && item.web.length > 0 && (
-                  <a
-                    href={item.web}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="web-button"
-                  >
-                    Website
+                <div className="web-back">
+                  {item.web && item.web.length > 0 && (
+                    <a
+                      href={item.web}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="web-button"
+                    >
+                      Website
+                    </a>
+                  )}
+                  <a onClick={handleBack} className="web-button">
+                    <BackArrow />
+                    Back
                   </a>
-                )}
+                </div>
 
                 <div className="contact-btn">
                   {item.phone && item.phone.length > 0 && (
@@ -145,102 +238,36 @@ const DetailView = () => {
                     rel="noopener noreferrer"
                     className="map-button"
                   >
-                    <MapIcon /> Get Direction
+                    <MapIcon /> Get Directions
                   </a>
                 </div>
               </div>
-            ) : (
-              ''
             )}
-          </div>
 
-          <div className="text-container">
-            <h2>{item.name}</h2>
-            <p className={category === 'events' ? 'events-text' : ''}>
-              {category === 'events' && <Location />}
-              {`${item.street_address}, ${item.city}, ${item.state} ${item.zip}`}
-            </p>
-            {item.start_date && item.start_time && (
-              <div className="date-container ">
-                <p>
-                  <DateIcon />
-                  {date}
+            {item.rating && (
+              <div className="reviews-block">
+                <div className="stars">{renderStars(item.rating)}</div>
+                <p className="reviews-text">
+                  {item.rating.toFixed(1)} Google reviews
                 </p>
-                {time === '00:00' ? (
-                  ''
-                ) : (
-                  <p>
-                    <TimeIcon />
-                    {time}
-                  </p>
-                )}
               </div>
             )}
-            <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
-          </div>
-
-          {orientation === 'landscape-primary' ? (
-            ''
-          ) : (
-            <div className="contact-container">
-              <div className="web-back">
-                {item.web && item.web.length > 0 && (
-                  <a
-                    href={item.web}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="web-button"
-                  >
-                    Website
-                  </a>
-                )}
-                <a onClick={handleBack} className="web-button">
-                  <BackArrow />
-                  Back
-                </a>
-              </div>
-
-              <div className="contact-btn">
-                {item.phone && item.phone.length > 0 && (
-                  <a href={`tel:${item.phone}`} className="phone-button">
-                    <Phone /> {item.phone}
-                  </a>
-                )}
-                <a
-                  href={googleMapsLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="map-button"
-                >
-                  <MapIcon /> Get Direction
-                </a>
-              </div>
+            <div className="bottom-button">
+              <button>
+                <Share />
+                Share
+              </button>
+              <button onClick={handleMapView}>
+                <MapIcon />
+                Map
+              </button>
+              <button>
+                <AddItinerary />
+                Add to Itinerary
+              </button>
             </div>
-          )}
-
-          {item.rating && (
-            <div className="reviews-block">
-              <div className="stars">{renderStars(item.rating)}</div>
-              <p className="reviews-text">
-                {item.rating.toFixed(1)} Google reviews
-              </p>
-            </div>
-          )}
-          <div className="bottom-button">
-            <button>
-              <Share />
-              Share
-            </button>
-            <button>
-              <MapIcon />
-              Map
-            </button>
-            <button>
-              <AddItinerary />
-              Add to Itinerary
-            </button>
           </div>
-        </div>
+        )}
       </main>
       <Footer ref={footerRef} showCircles={true} />
     </div>

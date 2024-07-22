@@ -1,29 +1,29 @@
-import React, { useState, useMemo, useEffect } from 'react'
-import Header from './components/Header'
-import Footer from './components/Footer'
-import { ReactComponent as ShopIcon } from '../assets/icos/shop.svg'
-import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg'
-import { useHeightContext } from '../hooks/HeightContext'
-import { useOrientation } from '../hooks/OrientationContext'
-import { useDataContext } from '../hooks/DataContext'
-import { useViewMode } from '../hooks/ViewModeContext'
-import MapView from './components/MapView'
-import { useNavigate } from 'react-router-dom'
-import DetailViewCard from './components/DetailViewCard'
+// Shop.js
+import React, { useState, useMemo, useEffect } from 'react';
+import Header from './components/Header';
+import Footer from './components/Footer';
+import { ReactComponent as ShopIcon } from '../assets/icos/shop.svg';
+import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg';
+import { useHeightContext } from '../hooks/HeightContext';
+import { useOrientation } from '../hooks/OrientationContext';
+import { useDataContext } from '../hooks/DataContext';
+import { useViewMode } from '../hooks/ViewModeContext';
+import MapView from './components/MapView';
+import { useNavigate } from 'react-router-dom';
+import DetailViewCard from './components/DetailViewCard';
 
 const Shop = ({ pageTitle }) => {
-  const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext()
-  const { data, loading, error } = useDataContext()
-  const { isMapView } = useViewMode()
-  const navigate = useNavigate()
+  const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext();
+  const { data, loading, error } = useDataContext();
+  const { isMapView, setIsMapView } = useViewMode();
+  const navigate = useNavigate();
 
-  const [sortOrder, setSortOrder] = useState('asc') // State for sorting order
-  const [filterText, setFilterText] = useState('') // State for filter text
+  const [sortOrder, setSortOrder] = useState('asc'); // State for sorting order
+  const [filterText, setFilterText] = useState(''); // State for filter text
 
   useEffect(() => {
     updateHeights();
   }, [headerRef, footerRef, updateHeights]);
- 
 
   const shopData = useMemo(() => {
     return data.shop
@@ -32,17 +32,17 @@ const Shop = ({ pageTitle }) => {
       ) // Filter logic
       .sort((a, b) => {
         if (sortOrder === 'asc') {
-          return a.name.localeCompare(b.name)
+          return a.name.localeCompare(b.name);
         } else {
-          return b.name.localeCompare(a.name)
+          return b.name.localeCompare(a.name);
         }
-      })
-  }, [data.shop, sortOrder, filterText])
+      });
+  }, [data.shop, sortOrder, filterText]);
 
   const renderStars = (rating) => {
-    const fullStars = Math.floor(rating)
-    const halfStar = rating % 1 !== 0 ? 1 : 0
-    const emptyStars = 5 - fullStars - halfStar
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 !== 0 ? 1 : 0;
+    const emptyStars = 5 - fullStars - halfStar;
 
     return (
       <>
@@ -58,10 +58,10 @@ const Shop = ({ pageTitle }) => {
           </span>
         ))}
       </>
-    )
-  }
+    );
+  };
 
-  const orientation = useOrientation()
+  const orientation = useOrientation();
 
   const pageTitleContent = (
     <div className="page-title">
@@ -71,7 +71,7 @@ const Shop = ({ pageTitle }) => {
       </h1>
       {isMapView && <MapsIcon className="icon-svg" />}
     </div>
-  )
+  );
 
   const renderShopContent = () => (
     <div className="two-column-layout">
@@ -109,7 +109,7 @@ const Shop = ({ pageTitle }) => {
         </div>
       ))}
     </div>
-  )
+  );
 
   const renderShopDesktopContent = () => (
     <div className="two-column-layout-desk">
@@ -122,7 +122,7 @@ const Shop = ({ pageTitle }) => {
         />
       ))}
     </div>
-  )
+  );
 
   return (
     <div
@@ -160,7 +160,7 @@ const Shop = ({ pageTitle }) => {
       </main>
       <Footer ref={footerRef} showCircles={true} />
     </div>
-  )
-}
+  );
+};
 
-export default Shop
+export default Shop;

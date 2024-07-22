@@ -1,32 +1,33 @@
+// Stay.js
 import React, { useEffect } from 'react';
-import Header from './components/Header'
-import Footer from './components/Footer'
-import { ReactComponent as StayIcon } from '../assets/icos/stay.svg'
-import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg'
-import { useHeightContext } from '../hooks/HeightContext'
-import { useOrientation } from '../hooks/OrientationContext'
-import { useDataContext } from '../hooks/DataContext'
-import { useViewMode } from '../hooks/ViewModeContext'
-import MapView from './components/MapView' // Import the MapView component
-import { useNavigate } from 'react-router-dom'
-import DetailViewCard from './components/DetailViewCard'
+import Header from './components/Header';
+import Footer from './components/Footer';
+import { ReactComponent as StayIcon } from '../assets/icos/stay.svg';
+import { ReactComponent as MapsIcon } from '../assets/icos/maps.svg';
+import { useHeightContext } from '../hooks/HeightContext';
+import { useOrientation } from '../hooks/OrientationContext';
+import { useDataContext } from '../hooks/DataContext';
+import { useViewMode } from '../hooks/ViewModeContext';
+import MapView from './components/MapView';
+import { useNavigate } from 'react-router-dom';
+import DetailViewCard from './components/DetailViewCard';
 
 const Stay = ({ pageTitle }) => {
-  const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext()
-  const { data, loading, error } = useDataContext()
-  const { isMapView } = useViewMode()
-  const stayData = data.stay
-  const navigate = useNavigate()
-  const orientation = useOrientation()
+  const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext();
+  const { data, loading, error } = useDataContext();
+  const { isMapView, setIsMapView } = useViewMode();
+  const stayData = data.stay;
+  const navigate = useNavigate();
+  const orientation = useOrientation();
 
   useEffect(() => {
     updateHeights();
   }, [headerRef, footerRef, updateHeights]);
 
   const renderStars = (rating) => {
-    const fullStars = Math.floor(rating)
-    const halfStar = rating % 1 !== 0 ? 1 : 0
-    const emptyStars = 5 - fullStars - halfStar
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 !== 0 ? 1 : 0;
+    const emptyStars = 5 - fullStars - halfStar;
 
     return (
       <>
@@ -42,8 +43,8 @@ const Stay = ({ pageTitle }) => {
           </span>
         ))}
       </>
-    )
-  }
+    );
+  };
 
   const pageTitleContent = (
     <div className="page-title">
@@ -53,7 +54,7 @@ const Stay = ({ pageTitle }) => {
       </h1>
       {isMapView && <MapsIcon className="icon-svg" />}
     </div>
-  )
+  );
 
   const renderStayContent = () => (
     <div className="two-column-layout">
@@ -91,7 +92,7 @@ const Stay = ({ pageTitle }) => {
         </div>
       ))}
     </div>
-  )
+  );
 
   const renderStayDesktopContent = () => (
     <div className="two-column-layout-desk">
@@ -104,7 +105,7 @@ const Stay = ({ pageTitle }) => {
         />
       ))}
     </div>
-  )
+  );
 
   return (
     <div
@@ -142,7 +143,7 @@ const Stay = ({ pageTitle }) => {
       </main>
       <Footer ref={footerRef} showCircles={true} />
     </div>
-  )
-}
+  );
+};
 
-export default Stay
+export default Stay;

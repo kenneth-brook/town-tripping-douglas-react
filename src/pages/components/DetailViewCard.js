@@ -13,15 +13,6 @@ const DetailViewCard = ({ item, category, navigate }) => {
     return <div>Loading...</div>
   }
 
-  const formatDate = (dateTime) => {
-    if (!dateTime) return { date: 'N/A', time: 'N/A' }
-    const [date, time] = dateTime.split('T')
-    const [hours, minutes] = time.split(':')
-    return { date, time: `${hours}:${minutes}` }
-  }
-
-  const { date, time } = formatDate(item.start_date)
-
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating)
     const halfStar = rating % 1 !== 0 ? 1 : 0
@@ -49,6 +40,15 @@ const DetailViewCard = ({ item, category, navigate }) => {
       ? `https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.long}`
       : '#'
 
+
+      const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const month = date.getMonth() + 1; // Months are zero-indexed
+        const day = date.getDate();
+        const year = date.getFullYear();
+        return `${month}/${day}/${year}`;
+      };
+
   return (
     <div className="content-item">
       <div className="top-container">
@@ -62,6 +62,7 @@ const DetailViewCard = ({ item, category, navigate }) => {
         )}
         <div className="text-container">
           <h2>{item.name}</h2>
+          <h3>{formatDate(item.start_date)}</h3>
           <div className="content-box">
             <div className="text-box">
               <p dangerouslySetInnerHTML={{ __html: item.description }}></p>

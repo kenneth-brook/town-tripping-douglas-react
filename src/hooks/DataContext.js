@@ -77,7 +77,7 @@ const DataProvider = ({ children }) => {
         shop: 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/aws-test/data/shop',
         events: 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/aws-test/get-events'
       };
-
+  
       const fetchEndpointData = async (endpoint) => {
         const response = await fetch(endpoint);
         if (!response.ok) {
@@ -85,10 +85,10 @@ const DataProvider = ({ children }) => {
         }
         return response.json();
       };
-
+  
       const removeQuotesFromName = (name) => name.replace(/['"]/g, '');
-
-      const [results, userLocation] = await Promise.all([
+  
+      const [results] = await Promise.all([
         Promise.all(
           Object.keys(endpoints).map(async (key) => {
             try {
@@ -119,7 +119,8 @@ const DataProvider = ({ children }) => {
                 const updatedEventsData = result.map(item => ({
                   ...item,
                   type: 'events',
-                  name: removeQuotesFromName(item.name) // Remove quotes from name here
+                  name: removeQuotesFromName(item.name), // Remove quotes from name here
+                  start_date: new Date(item.start_date) // Convert start_date to Date object
                 }));
                 return { key, data: updatedEventsData };
               }
@@ -129,31 +130,30 @@ const DataProvider = ({ children }) => {
             }
           })
         ),
-        //fetchUserLocation()
       ]);
-
+  
       const dataMap = results.reduce((acc, { key, data }) => {
         if (key === 'events') {
           const today = new Date();
           acc[key] = data
             .filter(event => {
-              const startDate = new Date(event.start_date);
+              const startDate = event.start_date;
               return startDate >= today; // Filter out past events
             })
-            .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+            .sort((a, b) => a.start_date - b.start_date); // Sort events by start_date
         } else {
           acc[key] = data.sort((a, b) => a.name.localeCompare(b.name));
         }
         return acc;
       }, {});
-
+  
       dataMap.combined = [
         ...dataMap.eat,
         ...dataMap.stay,
         ...dataMap.play,
         ...dataMap.shop,
       ].sort((a, b) => a.name.localeCompare(b.name));
-
+  
       const collectTypes = (data, typeKey) => {
         const typeCounts = {};
         data.forEach(item => {
@@ -169,23 +169,21 @@ const DataProvider = ({ children }) => {
         });
         return typeCounts;
       };
-
+  
       const newTypeCounts = {
         menu_types: collectTypes(dataMap.eat, 'menu_types'),
         play_types: collectTypes(dataMap.play, 'play_types'),
         stay_types: collectTypes(dataMap.stay, 'stay_types'),
         shop_types: collectTypes(dataMap.shop, 'shop_types'),
       };
-
+  
       console.log('Data fetched and type counts set:', newTypeCounts);
-
+  
       setData(dataMap);
       setFilteredData(dataMap);
       setTypeCounts(newTypeCounts);
       console.log('Filtered Data Set:', dataMap);
-      setUserLocation(userLocation);
-      console.log('Data fetched and set:', dataMap, 'User Location:', userLocation);
-
+  
       const response = await fetch('https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/aws-test/type-names/fetch-type-names', {
         method: 'POST',
         headers: {
@@ -193,22 +191,22 @@ const DataProvider = ({ children }) => {
         },
         body: JSON.stringify({ typeCounts: newTypeCounts }),
       });
-
+  
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
+  
       const typeNamesData = await response.json();
       setTypeNames(typeNamesData);
       console.log('Type names fetched:', typeNamesData);
-
+  
     } catch (error) {
       setError(`Failed to fetch data: ${error.message}`);
       console.error(error);
     } finally {
       setLoading(false);
     }
-  }, [fetchUserLocation]);
+  }, []);
 
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
     const toRad = (value) => (value * Math.PI) / 180;
@@ -378,7 +376,7 @@ const DataProvider = ({ children }) => {
       stay: [...data.stay].sort((a, b) => a.name.localeCompare(b.name) * sortOrder),
       play: [...data.play].sort((a, b) => a.name.localeCompare(b.name) * sortOrder),
       shop: [...data.shop].sort((a, b) => a.name.localeCompare(b.name) * sortOrder),
-      events: [...data.events].sort((a, b) => a.name.localeCompare(b.name) * sortOrder),
+      events: [...data.events].sort((a, b) => (new Date(a.start_date) - new Date(b.start_date)) * sortOrder),
       combined: [...data.combined].sort((a, b) => a.name.localeCompare(b.name) * sortOrder),
     };
     setFilteredData(sortedData);

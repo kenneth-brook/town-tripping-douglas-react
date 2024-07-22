@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+// Dine.js
+import React, { useEffect, useState } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { ReactComponent as DineIcon } from '../assets/icos/dine.svg';
@@ -14,7 +15,8 @@ import DetailViewCard from './components/DetailViewCard';
 const Dine = ({ pageTitle }) => {
   const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext();
   const { data, loading, error } = useDataContext();
-  const { isMapView } = useViewMode();
+  const { isMapView, setIsMapView } = useViewMode();
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const dineData = data.eat;
   const navigate = useNavigate();
   const orientation = useOrientation();
@@ -131,7 +133,7 @@ const Dine = ({ pageTitle }) => {
         {!loading && !error && (
           <div className="content">
             {isMapView ? (
-              <MapView data={dineData} type="eat" />
+              <MapView data={dineData} type="eat" selectedLocation={selectedLocation} />
             ) : orientation === 'desktop' ? (
               renderDineDesktopContent()
             ) : (
