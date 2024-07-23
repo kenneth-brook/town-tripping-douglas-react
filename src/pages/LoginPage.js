@@ -7,6 +7,7 @@ import { useOrientation } from '../hooks/OrientationContext';
 import { useAuth } from '../hooks/AuthContext';
 import Cookies from 'js-cookie';
 import '../sass/componentsass/LoginPage.scss';
+import { useDataContext } from '../hooks/DataContext';
 
 const LoginPage = () => {
   const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext();
@@ -19,6 +20,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated, login, userId } = useAuth();
+  const { stage } = useDataContext();
 
   useEffect(() => {
     updateHeights();
@@ -46,8 +48,8 @@ const LoginPage = () => {
     }
 
     const url = mode === 'login'
-      ? 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/aws-test/auth/login'
-      : 'https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/aws-test/auth/register';
+      ? `https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/${stage}/auth/login`
+      : `https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/${stage}/auth/register`;
 
     const payload = { email, password };
 

@@ -15,6 +15,8 @@ import { ReactComponent as WebIcon } from '../assets/icos/web.svg';
 import { ReactComponent as MapIcon } from '../assets/icos/maps.svg';
 import { ReactComponent as EditIcon } from '../assets/icos/edit.svg';
 import '../sass/componentsass/Itinerary.scss';
+import { useViewMode } from '../hooks/ViewModeContext';
+import MapView from './components/MapView';
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -44,6 +46,7 @@ const Itinerary = ({ pageTitle }) => {
   const [editDate, setEditDate] = useState('');
   const [editTime, setEditTime] = useState('');
   const [unsavedChanges, setUnsavedChanges] = useState(false);
+  const { isMapView, setIsMapView } = useViewMode();
 
   const updateComponentHeights = useCallback(() => {
     updateHeights();
@@ -171,6 +174,15 @@ const Itinerary = ({ pageTitle }) => {
     }
   };
 
+  const handleMapView = (location) => {
+    setIsMapView(true);
+    navigate(`/${location.category}/${location.id}`, { state: { location } });
+  };
+
+  const handleFooterMapView = () => {
+    setIsMapView(true);
+  };
+
   const renderLocationItem = (location, index, dayCount) => (
     <div key={index} className="location-item">
       <div className="left-side">
@@ -217,7 +229,7 @@ const Itinerary = ({ pageTitle }) => {
             <ShareIcon />
             Share
           </button>
-          <button>
+          <button onClick={() => handleMapView(location)}>
             <MapIcon />
             Map
           </button>
@@ -317,49 +329,55 @@ const Itinerary = ({ pageTitle }) => {
           paddingBottom: `calc(${footerHeight}px + 50px)`,
         }}
       >
-        {pageTitleContent}
-        <div className="itinerary-header">
-          {itineraries.length > 1 && (
-            <>
-              <select value={selectedItineraryId} onChange={handleSelectItineraryChange}>
-                <option value="">Select your itinerary</option>
-                {itineraries.map(itinerary => (
-                  <option key={itinerary.id} value={itinerary.id}>
-                    {itinerary.itinerary_name}
-                  </option>
-                ))}
-              </select>
-              <button onClick={handleSelectItinerary}>Select</button>
-            </>
-          )}
-          <input
-            type="text"
-            value={newItineraryName}
-            onChange={handleItineraryNameChange}
-            placeholder={selectedItinerary ? selectedItinerary.itinerary_name : 'Name your itinerary'}
-          />
-          <button onClick={handleNewItinerary}>New</button>
-          <button onClick={handleSaveItinerary}>Save</button>
-        </div>
-        {showNewItineraryWarning && (
-          <div className="warning">
-            <p>All changes will be lost. Do you want to continue?</p>
-            <button onClick={handleConfirmNewItinerary}>Yes</button>
-            <button onClick={() => setShowNewItineraryWarning(false)}>No</button>
-          </div>
+        {isMapView ? (
+          <MapView data={selectedItinerary?.itinerary_data || []} />
+        ) : (
+          <>
+            {pageTitleContent}
+            <div className="itinerary-header">
+              {itineraries.length > 1 && (
+                <>
+                  <select value={selectedItineraryId} onChange={handleSelectItineraryChange}>
+                    <option value="">Select your itinerary</option>
+                    {itineraries.map(itinerary => (
+                      <option key={itinerary.id} value={itinerary.id}>
+                        {itinerary.itinerary_name}
+                      </option>
+                    ))}
+                  </select>
+                  <button onClick={handleSelectItinerary}>Select</button>
+                </>
+              )}
+              <input
+                type="text"
+                value={newItineraryName}
+                onChange={handleItineraryNameChange}
+                placeholder={selectedItinerary ? selectedItinerary.itinerary_name : 'Name your itinerary'}
+              />
+              <button onClick={handleNewItinerary}>New</button>
+              <button onClick={handleSaveItinerary}>Save</button>
+            </div>
+            {showNewItineraryWarning && (
+              <div className="warning">
+                <p>All changes will be lost. Do you want to continue?</p>
+                <button onClick={handleConfirmNewItinerary}>Yes</button>
+                <button onClick={() => setShowNewItineraryWarning(false)}>No</button>
+              </div>
+            )}
+            <div className="itinerary-content">
+              {selectedItinerary && selectedItinerary.itinerary_data.length > 0 ? (
+                sortItineraryData(selectedItinerary.itinerary_data).map((location, index) => {
+                  const dayCounts = getDayCounts(sortItineraryData(selectedItinerary.itinerary_data));
+                  return renderLocationItem(location, index, dayCounts[index]);
+                })
+              ) : (
+                <p>No itinerary selected or itinerary is empty.</p>
+              )}
+            </div>
+          </>
         )}
-        <div className="itinerary-content">
-          {selectedItinerary && selectedItinerary.itinerary_data.length > 0 ? (
-            sortItineraryData(selectedItinerary.itinerary_data).map((location, index) => {
-              const dayCounts = getDayCounts(sortItineraryData(selectedItinerary.itinerary_data));
-              return renderLocationItem(location, index, dayCounts[index]);
-            })
-          ) : (
-            <p>No itinerary selected or itinerary is empty.</p>
-          )}
-        </div>
       </main>
-      <Footer ref={footerRef} showCircles={true} />
+      <Footer ref={footerRef} showCircles={true} handleMapView={handleFooterMapView} />
     </div>
   );
 }

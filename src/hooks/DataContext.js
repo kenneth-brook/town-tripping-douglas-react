@@ -3,6 +3,7 @@ import { getGoogleReviews } from '../pages/components/googleReviews'; // Adjust 
 
 const DataContext = createContext();
 
+//const stage = "aws-test"
 const stage = "Prod"
 
 export const useDataContext = () => useContext(DataContext);
@@ -410,7 +411,8 @@ const DataProvider = ({ children }) => {
       typeCounts, 
       typeNames, 
       selectedTypes,
-      setSelectedTypes
+      setSelectedTypes,
+      stage
     }}>
       {children}
     </DataContext.Provider>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect, useCallback } from 'react';
 import { ReactComponent as Location } from '../../assets/icos/location.svg'
 import { ReactComponent as DateIcon } from '../../assets/icos/date.svg'
 import { ReactComponent as TimeIcon } from '../../assets/icos/time.svg'
@@ -7,11 +7,19 @@ import { ReactComponent as MapIcon } from '../../assets/icos/map-icon.svg'
 import { ReactComponent as Share } from '../../assets/icos/share-icon.svg'
 import { ReactComponent as AddItinerary } from '../../assets/icos/add-itinerary.svg'
 import '../../sass/componentsass/DetailViewCard.scss'
+import { useViewMode } from '../../hooks/ViewModeContext';
 
 const DetailViewCard = ({ item, category, navigate }) => {
+  const { isMapView, setIsMapView } = useViewMode();
+
   if (!item) {
     return <div>Loading...</div>
   }
+
+  const handleMapView = () => {
+    setIsMapView(true);
+    navigate(`/${category}/${item.id}`, { state: { location: item } });
+  };
 
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating)
@@ -132,7 +140,7 @@ const DetailViewCard = ({ item, category, navigate }) => {
             <Share />
             Share
           </button>
-          <button>
+          <button onClick={handleMapView}>
             <MapIcon />
             Map
           </button>
