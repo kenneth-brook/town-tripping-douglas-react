@@ -62,7 +62,7 @@ const DetailViewCard = ({ item, category, navigate }) => {
         )}
         <div className="text-container">
           <h2>{item.name}</h2>
-          <h3>{formatDate(item.start_date)}</h3>
+          {item.start_date && <h3>{formatDate(item.start_date)}</h3>}
           <div className="content-box">
             <div className="text-box">
               <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
