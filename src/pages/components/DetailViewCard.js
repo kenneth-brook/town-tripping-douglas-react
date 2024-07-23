@@ -1,20 +1,25 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { ReactComponent as Location } from '../../assets/icos/location.svg'
-import { ReactComponent as DateIcon } from '../../assets/icos/date.svg'
-import { ReactComponent as TimeIcon } from '../../assets/icos/time.svg'
+import React from 'react';
 import { ReactComponent as Phone } from '../../assets/icos/phone.svg'
 import { ReactComponent as MapIcon } from '../../assets/icos/map-icon.svg'
 import { ReactComponent as Share } from '../../assets/icos/share-icon.svg'
 import { ReactComponent as AddItinerary } from '../../assets/icos/add-itinerary.svg'
 import '../../sass/componentsass/DetailViewCard.scss'
 import { useViewMode } from '../../hooks/ViewModeContext';
+import { useItineraryContext } from '../../hooks/ItineraryContext';
 
 const DetailViewCard = ({ item, category, navigate }) => {
   const { isMapView, setIsMapView } = useViewMode();
+  const { addToItinerary } = useItineraryContext();
+  //const navigate = useNavigate();
 
   if (!item) {
     return <div>Loading...</div>
   }
+
+  const handleAddToItinerary = () => {
+    addToItinerary(item);
+    navigate('/itinerary')
+  };
 
   const handleMapView = () => {
     setIsMapView(true);
@@ -144,7 +149,7 @@ const DetailViewCard = ({ item, category, navigate }) => {
             <MapIcon />
             Map
           </button>
-          <button>
+          <button onClick={handleAddToItinerary}>
             <AddItinerary />
             Add to Itinerary
           </button>

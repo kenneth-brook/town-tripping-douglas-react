@@ -4,6 +4,7 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useOrientation } from '../../hooks/OrientationContext';
 import { useHeightContext } from '../../hooks/HeightContext';
 import { useDataContext } from '../../hooks/DataContext';
+import { useItineraryContext } from '../../hooks/ItineraryContext';
 import { ReactComponent as Location } from '../../assets/icos/location.svg';
 import { ReactComponent as DateIcon } from '../../assets/icos/date.svg';
 import { ReactComponent as TimeIcon } from '../../assets/icos/time.svg';
@@ -29,6 +30,7 @@ const DetailView = () => {
   const [item, setItem] = useState(null);
   const { isMapView, setIsMapView } = useViewMode(); // Import useViewMode hook
   const category = location.pathname.split('/')[1]; // Infer category from URL
+  const { addToItinerary } = useItineraryContext();
 
   const updateComponentHeights = useCallback(() => {
     updateHeights();
@@ -89,6 +91,11 @@ const DetailView = () => {
 
   const handleBack = () => {
     navigate(-1);
+  };
+
+  const handleAddToItinerary = () => {
+    addToItinerary(item);
+    navigate('/itinerary')
   };
 
   const handleMapView = () => {
@@ -261,7 +268,7 @@ const DetailView = () => {
                 <MapIcon />
                 Map
               </button>
-              <button>
+              <button onClick={handleAddToItinerary}>
                 <AddItinerary />
                 Add to Itinerary
               </button>

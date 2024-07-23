@@ -1,6 +1,8 @@
 // MapView.js
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Map, { Marker, Popup } from 'react-map-gl';
+import { useItineraryContext } from '../../hooks/ItineraryContext';
 import mapboxgl from 'mapbox-gl';
 import { useDataContext } from '../../hooks/DataContext';
 import { ReactComponent as Phone } from '../../assets/icos/phone2.svg';
@@ -136,7 +138,11 @@ const addMarkers = (data, handleMarkerClick) => {
   });
 };
 
-const renderPopup = (selectedPlace, setSelectedPlace) => {
+const renderPopup = (selectedPlace, setSelectedPlace, addToItinerary, navigate) => {
+  const handleAddToItinerary = () => {
+    addToItinerary(selectedPlace);
+    navigate('/itinerary')
+  };
   const lat = parseFloat(selectedPlace.lat);
   const lon = parseFloat(selectedPlace.long);
   if (!isNaN(lat) && !isNaN(lon)) {
@@ -169,11 +175,13 @@ const renderPopup = (selectedPlace, setSelectedPlace) => {
             </p>
           </div>
           <div className="popButtonsWrap">
-            <div className="popButtonDevide">
-              <div className="popButton">
-                <Phone />
-              </div>
-              <p>CALL</p>
+          <div className="popButtonDevide">
+              <a href={`tel:${selectedPlace.phone}`} className="popButtonLink">
+                <div className="popButton">
+                  <Phone />
+                </div>
+                <p>CALL</p>
+              </a>
             </div>
             <div className="popButtonDevide">
               <div className="popButton">
@@ -181,7 +189,7 @@ const renderPopup = (selectedPlace, setSelectedPlace) => {
               </div>
               <p>SHARE</p>
             </div>
-            <div className="popButtonDevide">
+            <div className="popButtonDevide" onClick={handleAddToItinerary}>
               <div className="popButton">
                 <AddItinerary />
               </div>
@@ -203,6 +211,8 @@ const MapView = ({ data, type, selectedLocation }) => {
   const { nearMe, userLocation } = useDataContext();
   const [userPin, setUserPin] = useState(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const { addToItinerary } = useItineraryContext();
+  const navigate = useNavigate();
 
   const validatedData = data.map((item) => ({
     ...item,
@@ -275,7 +285,7 @@ const MapView = ({ data, type, selectedLocation }) => {
         onLoad={() => setMapLoaded(true)}
       >
         {addMarkers(validatedData, handleMarkerClick)}
-        {selectedPlace && renderPopup(selectedPlace, setSelectedPlace)}
+        {selectedPlace && renderPopup(selectedPlace, setSelectedPlace, addToItinerary, navigate)}
         {userPin && (
           <>
             {console.log(
