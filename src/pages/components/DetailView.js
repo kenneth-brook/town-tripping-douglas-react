@@ -16,7 +16,7 @@ import { ReactComponent as BackArrow } from '../../assets/icos/back-arrow.svg';
 import Header from './Header';
 import Footer from './Footer';
 import MapView from './MapView';
-import styles from '../../sass/componentsass/DetailView.scss';
+import '../../sass/componentsass/DetailView.scss';
 import { useViewMode } from '../../hooks/ViewModeContext';
 
 
