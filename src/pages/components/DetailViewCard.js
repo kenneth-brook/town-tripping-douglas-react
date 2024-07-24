@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ReactComponent as Phone } from '../../assets/icos/phone.svg'
 import { ReactComponent as MapIcon } from '../../assets/icos/map-icon.svg'
 import { ReactComponent as Share } from '../../assets/icos/share-icon.svg'
@@ -10,7 +11,7 @@ import { useItineraryContext } from '../../hooks/ItineraryContext';
 const DetailViewCard = ({ item, category, navigate }) => {
   const { isMapView, setIsMapView } = useViewMode();
   const { addToItinerary } = useItineraryContext();
-  //const navigate = useNavigate();
+  const nav = useNavigate();
 
   if (!item) {
     return <div>Loading...</div>
@@ -18,7 +19,7 @@ const DetailViewCard = ({ item, category, navigate }) => {
 
   const handleAddToItinerary = () => {
     addToItinerary(item);
-    navigate('/itinerary')
+    nav('/itinerary')
   };
 
   const handleMapView = () => {
