@@ -1,12 +1,12 @@
 import axios from 'axios';
 
-const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
+//const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
 const GOOGLE_API_KEY = 'AIzaSyAGefyRhxQki08cpUEvDe4dTBh0N8YGArc';
 
 const getPlaceId = async (lat, lng, name) => {
   try {
     const encodedName = encodeURIComponent(name);
-    const url = `${CORS_PROXY}https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=50&type=restaurant&keyword=${encodedName}&key=${GOOGLE_API_KEY}`;
+    const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=50&type=restaurant&keyword=${encodedName}&key=${GOOGLE_API_KEY}`;
     console.log(`Requesting Place ID for ${name} at ${lat}, ${lng}`);
     const response = await axios.get(url);
     console.log('Place ID response:', response.data);
@@ -28,7 +28,7 @@ const getPlaceId = async (lat, lng, name) => {
 
 const getPlaceDetails = async (placeId) => {
   try {
-    const url = `${CORS_PROXY}https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${GOOGLE_API_KEY}`;
+    const url = `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${GOOGLE_API_KEY}`;
     console.log(`Requesting Place Details for Place ID: ${placeId}`);
     const response = await axios.get(url);
     console.log('Place details response:', response.data);

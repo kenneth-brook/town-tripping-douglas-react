@@ -127,7 +127,7 @@ const DetailViewCard = ({ item, category, navigate }) => {
                 rel="noopener noreferrer"
                 className="map-button"
               >
-                <MapIcon /> Get Direction
+                <MapIcon /> Get Directions
               </a>
             )}
           </div>
