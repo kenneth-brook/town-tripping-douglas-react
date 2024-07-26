@@ -1,10 +1,11 @@
 import React, { createContext, useState, useContext, useCallback } from 'react';
 import axios from 'axios';
-import { stage } from './DataContext';
+import { useDataContext } from './DataContext';
 
 const ItineraryContext = createContext();
 
 export const ItineraryProvider = ({ children }) => {
+  const { stage } = useDataContext();
   const [itineraries, setItineraries] = useState([]); 
   const [selectedItinerary, setSelectedItinerary] = useState(null);
 
