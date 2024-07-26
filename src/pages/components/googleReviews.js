@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 //const CORS_PROXY = 'https://cors-anywhere.herokuapp.com/';
-const GOOGLE_API_KEY = 'AIzaSyAGefyRhxQki08cpUEvDe4dTBh0N8YGArc';
+const GOOGLE_API_KEY = 'AIzaSyDTbjk-yo62bU2t2IGKCmb0AEgqtm2Pem0';
 
 const getPlaceId = async (lat, lng, name) => {
   try {
