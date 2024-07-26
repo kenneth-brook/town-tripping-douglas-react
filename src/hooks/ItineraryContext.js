@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useCallback } from 'react';
 import axios from 'axios';
+import { stage } from './DataContext';
 
 const ItineraryContext = createContext();
 
@@ -9,7 +10,7 @@ export const ItineraryProvider = ({ children }) => {
 
   const fetchItineraries = useCallback(async (userId) => {
     try {
-      const response = await axios.get(`https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/aws-test/itinerary/user/${userId}`);
+      const response = await axios.get(`https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/${stage}/itinerary/user/${userId}`);
       setItineraries(response.data);
     } catch (error) {
       console.error('Error fetching itineraries:', error);
@@ -18,7 +19,7 @@ export const ItineraryProvider = ({ children }) => {
 
   const saveItinerary = useCallback(async (userId, itineraryName, itineraryData) => {
     try {
-      const response = await axios.post('https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/aws-test/itinerary/save', {
+      const response = await axios.post(`https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/${stage}/itinerary/save`, {
         userId,
         itineraryName,
         itineraryData
@@ -31,7 +32,7 @@ export const ItineraryProvider = ({ children }) => {
 
   const updateItinerary = useCallback(async (itineraryId, itineraryData, itineraryName = null) => {
     try {
-      const response = await axios.put(`https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/aws-test/itinerary/update/${itineraryId}`, {
+      const response = await axios.put(`https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/${stage}/itinerary/update/${itineraryId}`, {
         itineraryData,
         itineraryName,
       });
