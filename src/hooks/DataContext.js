@@ -3,9 +3,9 @@ import { getGoogleReviews } from '../pages/components/googleReviews'; // Adjust 
 
 const DataContext = createContext();
 
-//const stage = "aws-test"
+const stage = "aws-test"
 //const stage = "Prod"
-const stage = "live"
+//const stage = "live"
 
 export const useDataContext = () => useContext(DataContext);
 
