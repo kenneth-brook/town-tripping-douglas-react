@@ -1,25 +1,25 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ReactComponent as Phone } from '../../assets/icos/phone.svg'
-import { ReactComponent as MapIcon } from '../../assets/icos/map-icon.svg'
-import { ReactComponent as Share } from '../../assets/icos/share-icon.svg'
-import { ReactComponent as AddItinerary } from '../../assets/icos/add-itinerary.svg'
-import '../../sass/componentsass/DetailViewCard.scss'
+import { ReactComponent as Phone } from '../../assets/icos/phone.svg';
+import { ReactComponent as MapIcon } from '../../assets/icos/map-icon.svg';
+import { ReactComponent as Share } from '../../assets/icos/share-icon.svg';
+import { ReactComponent as AddItinerary } from '../../assets/icos/add-itinerary.svg';
+import '../../sass/componentsass/DetailViewCard.scss';
 import { useViewMode } from '../../hooks/ViewModeContext';
 import { useItineraryContext } from '../../hooks/ItineraryContext';
 
-const DetailViewCard = ({ item, category, navigate }) => {
+const DetailViewCard = ({ item, category, handleShare }) => {
   const { isMapView, setIsMapView } = useViewMode();
   const { addToItinerary } = useItineraryContext();
-  const nav = useNavigate();
+  const navigate = useNavigate();
 
   if (!item) {
-    return <div>Loading...</div>
+    return <div>Loading...</div>;
   }
 
   const handleAddToItinerary = () => {
     addToItinerary(item);
-    nav('/itinerary')
+    navigate('/itinerary');
   };
 
   const handleMapView = () => {
@@ -28,9 +28,9 @@ const DetailViewCard = ({ item, category, navigate }) => {
   };
 
   const renderStars = (rating) => {
-    const fullStars = Math.floor(rating)
-    const halfStar = rating % 1 !== 0 ? 1 : 0
-    const emptyStars = 5 - fullStars - halfStar
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 !== 0 ? 1 : 0;
+    const emptyStars = 5 - fullStars - halfStar;
 
     return (
       <>
@@ -46,25 +46,23 @@ const DetailViewCard = ({ item, category, navigate }) => {
           </span>
         ))}
       </>
-    )
-  }
+    );
+  };
 
   const googleMapsLink =
     item.lat && item.long
       ? `https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.long}`
-      : '#'
+      : '#';
 
-
-      const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const [year, month, day] = [
-          date.getUTCFullYear(),
-          date.getUTCMonth() + 1, // Months are zero-indexed
-          date.getUTCDate()
-        ];
-        return `${month}/${day}/${year}`;
-      };
-      
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const [year, month, day] = [
+      date.getUTCFullYear(),
+      date.getUTCMonth() + 1, // Months are zero-indexed
+      date.getUTCDate(),
+    ];
+    return `${month}/${day}/${year}`;
+  };
 
   return (
     <div className="content-item">
@@ -136,7 +134,7 @@ const DetailViewCard = ({ item, category, navigate }) => {
           </div>
         </div>
         <div className="bottom-button">
-          <button>
+          <button onClick={() => handleShare(window.location.href, item.name)}>
             <Share />
             Share
           </button>
@@ -151,7 +149,7 @@ const DetailViewCard = ({ item, category, navigate }) => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DetailViewCard
+export default DetailViewCard;

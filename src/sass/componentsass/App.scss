@@ -741,3 +741,33 @@ main {
   border-bottom: 1px solid #aaaaaa;
     border-top: 1px solid #aaaaaa;
 }
+
+.share-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px; /* Adjust gap between buttons if needed */
+  width: 100%;
+  max-width: 400px; /* Adjust as needed */
+  margin: 20px 0;
+}
+
+.share-button {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.close-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  background-color: #0056b3;
+}

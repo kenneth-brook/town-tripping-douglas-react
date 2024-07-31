@@ -225,10 +225,7 @@ const Itinerary = ({ pageTitle }) => {
               Call
             </button>
           )}
-          <button>
-            <ShareIcon />
-            Share
-          </button>
+          
           <button onClick={() => handleMapView(location)}>
             <MapIcon />
             Map
@@ -256,6 +253,8 @@ const Itinerary = ({ pageTitle }) => {
       </div>
     </div>
   );
+
+  const cardShareBack = "<button><ShareIcon />Share</button>"
 
   const sortItineraryData = (data) => {
     return data.sort((a, b) => {
@@ -295,18 +294,15 @@ const Itinerary = ({ pageTitle }) => {
     return dayCounts;
   };
 
+  const shareButtonCode = "<div className='right-button'><button><Share /><span>Share Itinerary</span></button></div>"
+
   const pageTitleContent = (
     <div className="page-title">
       <div className="itinerery-title">
         <Intinerery />
         <h1>{pageTitle}</h1>
       </div>
-      <div className="right-button">
-        <button>
-          <Share />
-          <span>Share Itinerary</span>
-        </button>
-      </div>
+      
     </div>
   );
 

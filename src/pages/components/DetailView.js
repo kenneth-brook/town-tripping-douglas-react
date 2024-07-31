@@ -1,4 +1,3 @@
-// DetailView.js
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useOrientation } from '../../hooks/OrientationContext';
@@ -18,7 +17,7 @@ import Footer from './Footer';
 import MapView from './MapView';
 import '../../sass/componentsass/DetailView.scss';
 import { useViewMode } from '../../hooks/ViewModeContext';
-
+import ShareModal from './ShareModal'; // Import the ShareModal component
 
 const DetailView = () => {
   const { id } = useParams();
@@ -31,6 +30,7 @@ const DetailView = () => {
   const { isMapView, setIsMapView } = useViewMode(); // Import useViewMode hook
   const category = location.pathname.split('/')[1]; // Infer category from URL
   const { addToItinerary } = useItineraryContext();
+  const [modalIsOpen, setModalIsOpen] = useState(false); // State for modal
 
   const updateComponentHeights = useCallback(() => {
     updateHeights();
@@ -104,7 +104,7 @@ const DetailView = () => {
 
   const handleAddToItinerary = () => {
     addToItinerary(item);
-    navigate('/itinerary')
+    navigate('/itinerary');
   };
 
   const handleMapView = () => {
@@ -115,6 +115,10 @@ const DetailView = () => {
   const handleListView = () => {
     setIsMapView(false);
     navigate(`/${category}/${item.id}`, { state: { location: item } });
+  };
+
+  const handleShare = () => {
+    setModalIsOpen(true);
   };
 
   const { date, time } = formatDate(item.start_date);
@@ -262,16 +266,16 @@ const DetailView = () => {
 
             {item.rating && (
               <div className="reviews-container">
-              <div className="reviews-block">
-                <div className="stars">{renderStars(item.rating)}</div>
-                <p className="reviews-text">
-                  {item.rating.toFixed(1)} - Google review
-                </p>
-              </div>
+                <div className="reviews-block">
+                  <div className="stars">{renderStars(item.rating)}</div>
+                  <p className="reviews-text">
+                    {item.rating.toFixed(1)} - Google review
+                  </p>
+                </div>
               </div>
             )}
             <div className="bottom-button">
-              <button>
+              <button onClick={handleShare}>
                 <Share />
                 Share
               </button>
@@ -288,6 +292,12 @@ const DetailView = () => {
         )}
       </main>
       <Footer ref={footerRef} showCircles={true} />
+      <ShareModal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+        url={window.location.href}
+        title={item.name}
+      />
     </div>
   );
 };

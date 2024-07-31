@@ -1,4 +1,3 @@
-// Dine.js
 import React, { useEffect, useState } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -11,12 +10,16 @@ import { useViewMode } from '../hooks/ViewModeContext';
 import MapView from './components/MapView';
 import { useNavigate } from 'react-router-dom';
 import DetailViewCard from './components/DetailViewCard';
+import ShareModal from './components/ShareModal'; // Import ShareModal
 
 const Dine = ({ pageTitle }) => {
   const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext();
   const { data, loading, error } = useDataContext();
   const { isMapView, setIsMapView } = useViewMode();
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
+  const [shareTitle, setShareTitle] = useState('');
   const dineData = data.eat;
   const navigate = useNavigate();
   const orientation = useOrientation();
@@ -24,6 +27,12 @@ const Dine = ({ pageTitle }) => {
   useEffect(() => {
     updateHeights();
   }, [headerRef, footerRef, updateHeights]);
+
+  const handleShare = (url, title) => {
+    setShareUrl(url);
+    setShareTitle(title);
+    setModalIsOpen(true);
+  };
 
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
@@ -91,7 +100,6 @@ const Dine = ({ pageTitle }) => {
                   more
                 </button>
               </div>
-            
           </div>
         </div>
       ))}
@@ -106,6 +114,7 @@ const Dine = ({ pageTitle }) => {
           item={item}
           category="eat"
           navigate={navigate}
+          handleShare={handleShare} // Pass handleShare function
         />
       ))}
     </div>
@@ -146,6 +155,12 @@ const Dine = ({ pageTitle }) => {
         )}
       </main>
       <Footer ref={footerRef} showCircles={true} />
+      <ShareModal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+        url={shareUrl}
+        title={shareTitle}
+      />
     </div>
   );
 };
