@@ -132,7 +132,7 @@ const DetailView = () => {
         {isMapView ? (
           <MapView data={[item]} type={category} selectedLocation={item} />
         ) : (
-          <div className="view-card">
+          <div className="view-card content-item">
             <div className="top-image">
               <div className="img-back">
                 {item.images && item.images.length > 0 && (
@@ -252,11 +252,13 @@ const DetailView = () => {
             )}
 
             {item.rating && (
+              <div className="reviews-container">
               <div className="reviews-block">
                 <div className="stars">{renderStars(item.rating)}</div>
                 <p className="reviews-text">
-                  {item.rating.toFixed(1)} Google reviews
+                  {item.rating.toFixed(1)} - Google review
                 </p>
+              </div>
               </div>
             )}
             <div className="bottom-button">

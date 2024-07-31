@@ -87,12 +87,10 @@
   .content-item {
     width: calc(50% - 20px);
     background-color: #fff;
-    height: 370px;
     padding: 0;
     margin: 0;
     border: thin solid #707070;
-    padding-left: 5px;
-    padding-top: 5px;
+    padding: 5px 0 15px 5px
   }
 
   .content-item:nth-child(odd) {

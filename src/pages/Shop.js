@@ -77,8 +77,9 @@ const Shop = ({ pageTitle }) => {
     <div className="two-column-layout">
       {shopData.map((item) => (
         <div key={item.id} className="content-item">
-          <h2>{item.name}</h2>
-          <div className="content-box">
+        <h2>{item.name}</h2>
+        <div className="content-box">
+          <div className='box-top'>
             {item.images && item.images.length > 0 && (
               <img
                 src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
@@ -88,27 +89,29 @@ const Shop = ({ pageTitle }) => {
             )}
             <div className="text-box">
               <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
-              <div className="reviews-container">
-                {item.rating && (
-                  <div className="reviews-block">
-                    <div className="stars">{renderStars(item.rating)}</div>
-                    <p className="reviews-text">
-                      {item.rating.toFixed(1)} Google reviews
-                    </p>
-                  </div>
-                )}
-                <button
-                  className="more-button"
-                  onClick={() => navigate(`/shop/${item.id}`)}
-                >
-                  more
-                </button>
-              </div>
             </div>
           </div>
+            <div className="reviews-container">
+              {item.rating && (
+                <div className="reviews-block">
+                  <div className="stars">{renderStars(item.rating)}</div>
+                  <p className="reviews-text">
+                    {item.rating.toFixed(1)} Google review
+                  </p>
+                </div>
+              )}
+              <button
+                className="more-button"
+                onClick={() => navigate(`/shop/${item.id}`)}
+              >
+                more
+              </button>
+            </div>
+          
         </div>
-      ))}
-    </div>
+      </div>
+    ))}
+  </div>
   );
 
   const renderShopDesktopContent = () => (

@@ -85,7 +85,7 @@ const DetailViewCard = ({ item, category, navigate }) => {
                   <div className="reviews-block">
                     <div className="stars">{renderStars(item.rating)}</div>
                     <p className="reviews-text">
-                      {item.rating.toFixed(1)} Google reviews
+                      {item.rating.toFixed(1)} Google review
                     </p>
                   </div>
                 )}
@@ -132,15 +132,6 @@ const DetailViewCard = ({ item, category, navigate }) => {
             )}
           </div>
         </div>
-
-        {item.rating && (
-          <div className="reviews-block">
-            <div className="stars">{renderStars(item.rating)}</div>
-            <p className="reviews-text">
-              {item.rating.toFixed(1)} Google reviews
-            </p>
-          </div>
-        )}
         <div className="bottom-button">
           <button>
             <Share />

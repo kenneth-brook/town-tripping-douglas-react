@@ -60,8 +60,9 @@ const Play = ({ pageTitle }) => {
     <div className="two-column-layout">
       {playData.map((item) => (
         <div key={item.id} className="content-item">
-          <h2>{item.name}</h2>
-          <div className="content-box">
+        <h2>{item.name}</h2>
+        <div className="content-box">
+          <div className='box-top'>
             {item.images && item.images.length > 0 && (
               <img
                 src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
@@ -70,28 +71,30 @@ const Play = ({ pageTitle }) => {
               />
             )}
             <div className="text-box">
-              <div dangerouslySetInnerHTML={{ __html: item.description }}></div>
-              <div className="reviews-container">
-                {item.rating && (
-                  <div className="reviews-block">
-                    <div className="stars">{renderStars(item.rating)}</div>
-                    <p className="reviews-text">
-                      {item.rating.toFixed(1)} Google reviews
-                    </p>
-                  </div>
-                )}
-                <button
-                  className="more-button"
-                  onClick={() => navigate(`/play/${item.id}`)}
-                >
-                  more
-                </button>
-              </div>
+              <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
             </div>
           </div>
+            <div className="reviews-container">
+              {item.rating && (
+                <div className="reviews-block">
+                  <div className="stars">{renderStars(item.rating)}</div>
+                  <p className="reviews-text">
+                    {item.rating.toFixed(1)} Google review
+                  </p>
+                </div>
+              )}
+              <button
+                className="more-button"
+                onClick={() => navigate(`/play/${item.id}`)}
+              >
+                more
+              </button>
+            </div>
+          
         </div>
-      ))}
-    </div>
+      </div>
+    ))}
+  </div>
   );
 
   const renderPlayDesktopContent = () => (
