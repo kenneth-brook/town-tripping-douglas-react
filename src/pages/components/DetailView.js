@@ -84,9 +84,18 @@ const DetailView = () => {
 
   const formatDate = (dateTime) => {
     if (!dateTime) return { date: 'N/A', time: 'N/A' };
-    const [date, time] = dateTime.split('T');
-    const [hours, minutes] = time.split(':');
-    return { date, time: `${hours}:${minutes}` };
+  
+    const date = new Date(dateTime);
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const year = date.getUTCFullYear();
+    const hours = String(date.getUTCHours()).padStart(2, '0');
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+  
+    const formattedDate = `${month}/${day}/${year}`;
+    const formattedTime = `${hours}:${minutes}`;
+  
+    return { date: formattedDate, time: formattedTime };
   };
 
   const handleBack = () => {

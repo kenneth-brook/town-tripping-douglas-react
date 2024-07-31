@@ -57,11 +57,14 @@ const DetailViewCard = ({ item, category, navigate }) => {
 
       const formatDate = (dateString) => {
         const date = new Date(dateString);
-        const month = date.getMonth() + 1; // Months are zero-indexed
-        const day = date.getDate();
-        const year = date.getFullYear();
+        const [year, month, day] = [
+          date.getUTCFullYear(),
+          date.getUTCMonth() + 1, // Months are zero-indexed
+          date.getUTCDate()
+        ];
         return `${month}/${day}/${year}`;
       };
+      
 
   return (
     <div className="content-item">
