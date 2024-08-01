@@ -1,5 +1,4 @@
-// Play.js
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -11,18 +10,30 @@ import { useDataContext } from '../hooks/DataContext';
 import { useViewMode } from '../hooks/ViewModeContext';
 import MapView from './components/MapView';
 import DetailViewCard from './components/DetailViewCard';
+import ShareModal from './components/ShareModal'; // Import ShareModal
 
 const Play = ({ pageTitle }) => {
   const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext();
   const { data, loading, error } = useDataContext();
   const { isMapView, setIsMapView } = useViewMode();
-  const playData = data.play;
   const navigate = useNavigate();
   const orientation = useOrientation();
+  const playData = data.play;
+
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
+  const [shareTitle, setShareTitle] = useState('');
 
   useEffect(() => {
     updateHeights();
   }, [headerRef, footerRef, updateHeights]);
+
+  const handleShare = (url, title) => {
+    console.log('handleShare called with:', { url, title }); // Log the URL and title
+    setShareUrl(url);
+    setShareTitle(title);
+    setModalIsOpen(true);
+  };
 
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
@@ -60,20 +71,20 @@ const Play = ({ pageTitle }) => {
     <div className="two-column-layout">
       {playData.map((item) => (
         <div key={item.id} className="content-item">
-        <h2>{item.name}</h2>
-        <div className="content-box">
-          <div className='box-top'>
-            {item.images && item.images.length > 0 && (
-              <img
-                src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
-                alt={item.name}
-                className="content-image"
-              />
-            )}
-            <div className="text-box">
-              <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
+          <h2>{item.name}</h2>
+          <div className="content-box">
+            <div className='box-top'>
+              {item.images && item.images.length > 0 && (
+                <img
+                  src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
+                  alt={item.name}
+                  className="content-image"
+                />
+              )}
+              <div className="text-box">
+                <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
+              </div>
             </div>
-          </div>
             <div className="reviews-container">
               {item.rating && (
                 <div className="reviews-block">
@@ -90,11 +101,10 @@ const Play = ({ pageTitle }) => {
                 more
               </button>
             </div>
-          
+          </div>
         </div>
-      </div>
-    ))}
-  </div>
+      ))}
+    </div>
   );
 
   const renderPlayDesktopContent = () => (
@@ -105,6 +115,7 @@ const Play = ({ pageTitle }) => {
           item={item}
           category="play"
           navigate={navigate}
+          handleShare={orientation === 'desktop' ? handleShare : null} // Pass handleShare function conditionally
         />
       ))}
     </div>
@@ -145,6 +156,12 @@ const Play = ({ pageTitle }) => {
         )}
       </main>
       <Footer ref={footerRef} showCircles={true} />
+      <ShareModal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+        url={shareUrl}
+        title={shareTitle}
+      />
     </div>
   );
 };

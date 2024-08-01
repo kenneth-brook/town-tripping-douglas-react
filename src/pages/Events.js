@@ -1,4 +1,3 @@
-// Events.js
 import React, { useState, useMemo, useEffect } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -11,6 +10,7 @@ import { useViewMode } from '../hooks/ViewModeContext';
 import MapView from './components/MapView';
 import { useNavigate } from 'react-router-dom';
 import DetailViewCard from './components/DetailViewCard';
+import ShareModal from './components/ShareModal'; // Import ShareModal
 
 const Events = ({ pageTitle }) => {
   const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext();
@@ -20,6 +20,9 @@ const Events = ({ pageTitle }) => {
   const orientation = useOrientation();
 
   const [sortOrder, setSortOrder] = useState('asc');
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
+  const [shareTitle, setShareTitle] = useState('');
 
   useEffect(() => {
     updateHeights();
@@ -36,6 +39,13 @@ const Events = ({ pageTitle }) => {
       }
     });
   }, [data.events, sortOrder]);
+
+  const handleShare = (url, title) => {
+    console.log('handleShare called with:', { url, title }); // Log the URL and title
+    setShareUrl(url);
+    setShareTitle(title);
+    setModalIsOpen(true);
+  };
 
   const pageTitleContent = (
     <div className="page-title">
@@ -54,7 +64,7 @@ const Events = ({ pageTitle }) => {
     const year = date.getFullYear();
     return `${month}/${day}/${year}`;
   };
-  
+
   const renderEventsContent = () => (
     <div className="two-column-layout">
       {sortedEventsData.map((item) => (
@@ -96,6 +106,7 @@ const Events = ({ pageTitle }) => {
           item={item}
           category="events"
           navigate={navigate}
+          handleShare={orientation === 'desktop' ? handleShare : null} // Pass handleShare function conditionally
         />
       ))}
     </div>
@@ -136,6 +147,12 @@ const Events = ({ pageTitle }) => {
         )}
       </main>
       <Footer ref={footerRef} showCircles={true} />
+      <ShareModal
+        isOpen={modalIsOpen}
+        onRequestClose={() => setModalIsOpen(false)}
+        url={shareUrl}
+        title={shareTitle}
+      />
     </div>
   );
 };

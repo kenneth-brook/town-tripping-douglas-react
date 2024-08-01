@@ -136,8 +136,10 @@ const DetailViewCard = ({ item, category, handleShare }) => {
         <div className="bottom-button">
           {handleShare && (
             <button onClick={() => {
+              const baseUrl = window.location.origin;
+              const shareUrl = `${baseUrl}/${category}/${item.id}`;
               console.log('Share button clicked'); // Log when button is clicked
-              handleShare(`http://localhost:3000/dine/${item.id}`, item.name); // Pass item id in the URL
+              handleShare(shareUrl, item.name); // Pass item id in the URL
             }}>
               <Share />
               Share
