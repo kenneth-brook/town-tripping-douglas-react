@@ -221,3 +221,45 @@
   margin-top: 10px;
   margin-right: 5px;
 }
+
+.itinHeaderRow {
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+
+  select, input, button {
+    font-size: 1.2rem;
+  }
+}
+
+.desktop {
+
+  .itin {
+
+    .itinerary-content {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 15px;
+
+      .location-item {
+        width: 49%;
+        border: 1px solid #777777;
+        background-color: white;
+
+        .edit-box {
+
+          input, button {
+            font-size: 1.2rem;
+            margin-top: 0;
+          }
+
+          label {
+            margin-top: 10px;
+            font-size: 1.2rem;
+          }
+        }
+      }
+    }
+  }
+}  

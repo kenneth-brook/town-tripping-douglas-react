@@ -319,7 +319,7 @@ const Itinerary = ({ pageTitle }) => {
     >
       <Header ref={headerRef} />
       <main
-        className="internal-content"
+        className="internal-content itin"
         style={{
           paddingTop: `calc(${headerHeight}px + 30px)`,
           paddingBottom: `calc(${footerHeight}px + 50px)`,
@@ -332,7 +332,7 @@ const Itinerary = ({ pageTitle }) => {
             {pageTitleContent}
             <div className="itinerary-header">
               {itineraries.length > 1 && (
-                <>
+                <div className='itinHeaderRow'>
                   <select value={selectedItineraryId} onChange={handleSelectItineraryChange}>
                     <option value="">Select your itinerary</option>
                     {itineraries.map(itinerary => (
@@ -342,8 +342,9 @@ const Itinerary = ({ pageTitle }) => {
                     ))}
                   </select>
                   <button onClick={handleSelectItinerary}>Select</button>
-                </>
+                </div>
               )}
+              <div className='itinHeaderRow'>
               <input
                 type="text"
                 value={newItineraryName}
@@ -352,6 +353,7 @@ const Itinerary = ({ pageTitle }) => {
               />
               <button onClick={handleNewItinerary}>New</button>
               <button onClick={handleSaveItinerary}>Save</button>
+            </div>
             </div>
             {showNewItineraryWarning && (
               <div className="warning">

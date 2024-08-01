@@ -17,7 +17,7 @@ function SortMenu({ isOpen, top, menuList = [], orientation, toggleMenu2, select
         }
       : {
           top: `calc(${top}px + 30px)`,
-          transform: isOpen ? 'translateY(0)' : 'translateY(-110%)',
+          transform: isOpen ? 'translateY(0)' : 'translateY(-125%)',
         };
 
   const icons = {

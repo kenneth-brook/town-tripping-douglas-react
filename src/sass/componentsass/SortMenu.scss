@@ -1,18 +1,26 @@
 .sort-menu {
-    display: flex;
-    align-items: flex-start;
-    flex-direction: column;
-    width: 55%;
-    position: fixed;
-    top: 3px;
-    right: 0;
-    transition: transform 0.5s ease-in-out;
-    background-color: #fff;
-    border-bottom-left-radius: 12px;
-    box-shadow: -4px 4px 8px #000;
-    border: none;
-    padding: 10px 20px;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  width: 59%;
+  position: fixed;
+  top: 3px;
+  right: 0;
+  transition: transform 0.5s ease-in-out;
+  background-color: #fff;
+  border-bottom-left-radius: 12px;
+  box-shadow: -4px 4px 8px #000;
+  border: none;
+  padding: 10px 20px;
+
+  .s-menu-item {
+    width: 100%;
+
+    select {
+      width: 80%;
+    } 
   }
+}
   
   .s-menu-item {
     font-size: 19px;
