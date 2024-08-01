@@ -134,10 +134,15 @@ const DetailViewCard = ({ item, category, handleShare }) => {
           </div>
         </div>
         <div className="bottom-button">
-          <button onClick={() => handleShare(window.location.href, item.name)}>
-            <Share />
-            Share
-          </button>
+          {handleShare && (
+            <button onClick={() => {
+              console.log('Share button clicked'); // Log when button is clicked
+              handleShare(`http://localhost:3000/dine/${item.id}`, item.name); // Pass item id in the URL
+            }}>
+              <Share />
+              Share
+            </button>
+          )}
           <button onClick={handleMapView}>
             <MapIcon />
             Map

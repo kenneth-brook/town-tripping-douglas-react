@@ -29,6 +29,7 @@ const Dine = ({ pageTitle }) => {
   }, [headerRef, footerRef, updateHeights]);
 
   const handleShare = (url, title) => {
+    console.log('handleShare called with:', { url, title }); // Log the URL and title
     setShareUrl(url);
     setShareTitle(title);
     setModalIsOpen(true);
@@ -114,7 +115,7 @@ const Dine = ({ pageTitle }) => {
           item={item}
           category="eat"
           navigate={navigate}
-          handleShare={handleShare} // Pass handleShare function
+          handleShare={orientation === 'desktop' ? handleShare : null} // Pass handleShare function conditionally
         />
       ))}
     </div>
