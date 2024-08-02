@@ -4,13 +4,15 @@ html {
   margin: 0;
   padding: 0;
   height: 100%;
-  width: 100%;
+  //width: 100%;
   //display: flex;
   //justify-content: center;
   //align-items: center;
   //position: fixed;
   object-fit: contain;
   font-family: 'Segoe UI', sans-serif;
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 :root {
@@ -19,7 +21,8 @@ html {
 
 #root {
   display: flex;
-  width: 100%;
+  //width: 99.99%;
+  object-fit: contain;
 }
 
 // .app {
@@ -770,4 +773,8 @@ main {
 
 .close-button:hover {
   background-color: #0056b3;
+}
+
+.none {
+  display: none;
 }

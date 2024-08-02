@@ -183,7 +183,7 @@ const renderPopup = (selectedPlace, setSelectedPlace, addToItinerary, navigate) 
                 <p>CALL</p>
               </a>
             </div>
-            <div className="popButtonDevide">
+            <div className="popButtonDevide none">
               <div className="popButton">
                 <Share />
               </div>
