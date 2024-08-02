@@ -45,8 +45,6 @@ const centerMap = (map, data, userLocation, nearMe) => {
     const lat = parseFloat(userLocation.lat);
     const lon = parseFloat(userLocation.lon);
     if (!isNaN(lat) && !isNaN(lon)) {
-      console.log('Centering map on user location:', { lat, lon });
-
       let nearestMarker = null;
       let minDistance = Infinity;
 
@@ -97,7 +95,6 @@ const centerMap = (map, data, userLocation, nearMe) => {
     });
 
     if (!bounds.isEmpty()) {
-      console.log('Fitting map bounds to markers.');
       map.fitBounds(bounds, {
         padding: { top: 50, bottom: 50, left: 50, right: 50 },
         maxZoom: 15,
@@ -152,7 +149,6 @@ const renderPopup = (selectedPlace, setSelectedPlace, addToItinerary, navigate) 
         longitude={selectedPlace.long}
         latitude={selectedPlace.lat}
         onClose={() => {
-          console.log('Popup closed');
           setSelectedPlace(null);
         }}
         closeOnClick={false}
@@ -288,20 +284,12 @@ const MapView = ({ data, type, selectedLocation }) => {
         {selectedPlace && renderPopup(selectedPlace, setSelectedPlace, addToItinerary, navigate)}
         {userPin && (
           <>
-            {console.log(
-              `Attempting to place user pin at lat: ${userPin.lat}, lon: ${
-                userPin.lon
-              } (lat type: ${typeof userPin.lat}, lon type: ${typeof userPin.lon})`
-            )}
             <Marker
               longitude={userPin.lon}
               latitude={userPin.lat}
               anchor="bottom"
               color="red"
             >
-              {console.log(
-                `Rendering user pin at lat: ${userPin.lat}, lon: ${userPin.lon}`
-              )}
             </Marker>
           </>
         )}

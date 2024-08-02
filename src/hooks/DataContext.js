@@ -3,9 +3,8 @@ import { getGoogleReviews } from '../pages/components/googleReviews'; // Adjust 
 
 const DataContext = createContext();
 
-const stage = "aws-test"
-//const stage = "Prod"
-//const stage = "live"
+//const stage = "aws-test"
+const stage = "live"
 
 export const useDataContext = () => useContext(DataContext);
 
@@ -67,7 +66,6 @@ const DataProvider = ({ children }) => {
               lat: parseFloat(position.coords.latitude),
               lon: parseFloat(position.coords.longitude),
             };
-            console.log('User Location:', userLocation); // Debugging log
             if (isValidCoordinate(userLocation.lat, userLocation.lon)) {
               resolve(userLocation);
             } else {
@@ -85,7 +83,6 @@ const DataProvider = ({ children }) => {
   }, []);
 
   const fetchData = useCallback(async () => {
-    console.log('Fetching data...');
     try {
       const endpoints = {
         eat: `https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/${stage}/data/eat`,
@@ -119,14 +116,14 @@ const DataProvider = ({ children }) => {
                         ...item, 
                         ...details, 
                         type: key, 
-                        name: removeQuotesFromName(item.name) // Remove quotes from name here
+                        name: removeQuotesFromName(item.name)
                       };
                     } catch (error) {
                       console.error(`Failed to fetch Google reviews for ${item.name}`, error);
                       return { 
                         ...item, 
                         type: key, 
-                        name: removeQuotesFromName(item.name) // Remove quotes from name here
+                        name: removeQuotesFromName(item.name)
                       };
                     }
                   })
@@ -136,8 +133,8 @@ const DataProvider = ({ children }) => {
                 const updatedEventsData = result.map(item => ({
                   ...item,
                   type: 'events',
-                  name: removeQuotesFromName(item.name), // Remove quotes from name here
-                  start_date: new Date(item.start_date) // Convert start_date to Date object
+                  name: removeQuotesFromName(item.name),
+                  start_date: new Date(item.start_date)
                 }));
                 return { key, data: updatedEventsData };
               }
@@ -194,8 +191,6 @@ const DataProvider = ({ children }) => {
         shop_types: collectTypes(dataMap.shop, 'shop_types'),
       };
 
-      console.log('Data fetched and type counts set:', newTypeCounts);
-
       setData(dataMap);
       setFilteredData(dataMap);
       setTypeCounts(newTypeCounts);
@@ -215,8 +210,6 @@ const DataProvider = ({ children }) => {
 
       const typeNamesData = await response.json();
       setTypeNames(typeNamesData);
-      console.log('Type names fetched:', typeNamesData);
-
     } catch (error) {
       setError(`Failed to fetch data: ${error.message}`);
       console.error(error);
@@ -266,7 +259,6 @@ const DataProvider = ({ children }) => {
         combined: sortByProximity(data.combined, userLocation),
       };
       setFilteredData(sortedData);
-      console.log('Filtered Data Set after Near Me:', sortedData);
     } else {
       console.error("Invalid or missing user coordinates:", userLocation);
     }
@@ -303,7 +295,6 @@ const DataProvider = ({ children }) => {
   }, [selectedTypes, data]);
 
   const filterDataByKeyword = useCallback(() => {
-    console.log(`Filtering data with keyword: ${keyword}`);
     const filterByKeyword = (data) => {
       return data.filter(item => 
         Object.values(item).some(value => 
@@ -326,7 +317,6 @@ const DataProvider = ({ children }) => {
       ],
     };
     setFilteredData(filtered);
-    console.log('Filtered Data Set with keyword:', filtered);
   }, [keyword, data]);
 
   useEffect(() => {
@@ -361,15 +351,12 @@ const DataProvider = ({ children }) => {
         events: filterEventsByDate(data.events, selectedDate),
       };
       setFilteredData(filtered);
-      console.log('Filtered Data Set with selected date:', filtered);
     } else {
       setFilteredData(data);
-      console.log('Filtered Data Set reset to original:', data);
     }
   }, [selectedDate, data]);
 
   const resetKeyword = () => {
-    console.log('Keyword reset');
     setKeyword('');
   };
 
@@ -384,7 +371,6 @@ const DataProvider = ({ children }) => {
       combined: [...data.combined].sort((a, b) => a.name.localeCompare(b.name) * sortOrder),
     };
     setFilteredData(sortedData);
-    console.log('Filtered Data Set after sort:', sortedData);
   }, [data]);
 
   const resetSortOrder = useCallback(() => {

@@ -17,7 +17,7 @@ import Footer from './Footer';
 import MapView from './MapView';
 import '../../sass/componentsass/DetailView.scss';
 import { useViewMode } from '../../hooks/ViewModeContext';
-import ShareModal from './ShareModal'; // Import the ShareModal component
+import ShareModal from './ShareModal';
 
 const DetailView = () => {
   const { id } = useParams();
@@ -27,10 +27,10 @@ const DetailView = () => {
   const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext();
   const orientation = useOrientation();
   const [item, setItem] = useState(null);
-  const { isMapView, setIsMapView } = useViewMode(); // Import useViewMode hook
-  const category = location.pathname.split('/')[1]; // Infer category from URL
+  const { isMapView, setIsMapView } = useViewMode();
+  const category = location.pathname.split('/')[1];
   const { addToItinerary } = useItineraryContext();
-  const [modalIsOpen, setModalIsOpen] = useState(false); // State for modal
+  const [modalIsOpen, setModalIsOpen] = useState(false);
 
   const updateComponentHeights = useCallback(() => {
     updateHeights();
@@ -91,7 +91,6 @@ const DetailView = () => {
     const year = date.getUTCFullYear();
     const hours = String(date.getUTCHours()).padStart(2, '0');
     const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-  
     const formattedDate = `${month}/${day}/${year}`;
     const formattedTime = `${hours}:${minutes}`;
   
