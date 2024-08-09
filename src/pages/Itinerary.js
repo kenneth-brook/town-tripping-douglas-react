@@ -2,21 +2,24 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import { ReactComponent as Intinerery } from '../assets/icos/intinerery.svg';
-import { ReactComponent as Share } from '../assets/icos/share-icon.svg';
 import { useHeightContext } from '../hooks/HeightContext';
 import { useOrientation } from '../hooks/OrientationContext';
 import { useAuth } from '../hooks/AuthContext';
 import { useItineraryContext } from '../hooks/ItineraryContext';
+import { useViewMode } from '../hooks/ViewModeContext';
+import { ReactComponent as Intinerery } from '../assets/icos/intinerery.svg';
 import { ReactComponent as EyeIcon } from '../assets/icos/eye.svg';
-import { ReactComponent as ShareIcon } from '../assets/icos/share-icon2.svg';
 import { ReactComponent as PhoneIcon } from '../assets/icos/phone2.svg';
 import { ReactComponent as WebIcon } from '../assets/icos/web.svg';
 import { ReactComponent as MapIcon } from '../assets/icos/maps.svg';
 import { ReactComponent as EditIcon } from '../assets/icos/edit.svg';
+// import { ReactComponent as ShareIcon } from '../assets/icos/share.svg';  // Commented out since the file might be missing.
 import '../sass/componentsass/Itinerary.scss';
-import { useViewMode } from '../hooks/ViewModeContext';
 import MapView from './components/MapView';
+import Cookies from 'js-cookie';
+import Modal from 'react-modal';
+
+Modal.setAppElement('#root'); // Ensure the app element is set for accessibility
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
@@ -37,15 +40,16 @@ const Itinerary = ({ pageTitle }) => {
   const navigate = useNavigate();
   const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext();
   const orientation = useOrientation();
-  const { userId, isAuthenticated } = useAuth();
-  const { itineraries, selectedItinerary, setSelectedItinerary, fetchItineraries, saveItinerary, updateItinerary, removeFromItinerary, addToItinerary } = useItineraryContext();
+  const { userId, isAuthenticated, setUserId } = useAuth();
+  const { itineraries, selectedItinerary, setSelectedItinerary, fetchItineraries, saveItinerary, updateItinerary, removeFromItinerary } = useItineraryContext();
   const [selectedItineraryId, setSelectedItineraryId] = useState(localStorage.getItem('selectedItineraryId') || '');
   const [newItineraryName, setNewItineraryName] = useState('');
-  const [showNewItineraryWarning, setShowNewItineraryWarning] = useState(false);
+  const [showNewItineraryPopup, setShowNewItineraryPopup] = useState(false);
+  const [showEditItineraryPopup, setShowEditItineraryPopup] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [editLocationId, setEditLocationId] = useState(null);
   const [editDate, setEditDate] = useState('');
   const [editTime, setEditTime] = useState('');
-  const [unsavedChanges, setUnsavedChanges] = useState(false);
   const { isMapView, setIsMapView } = useViewMode();
 
   const updateComponentHeights = useCallback(() => {
@@ -69,22 +73,6 @@ const Itinerary = ({ pageTitle }) => {
     }
   }, [selectedItineraryId, itineraries, setSelectedItinerary]);
 
-  useEffect(() => {
-    const handleBeforeUnload = (e) => {
-      if (unsavedChanges) {
-        const message = 'You have unsaved changes, do you really want to leave?';
-        e.returnValue = message;
-        return message;
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [unsavedChanges]);
-
   const handleSelectItineraryChange = (e) => {
     const itineraryId = e.target.value;
     setSelectedItineraryId(itineraryId);
@@ -92,49 +80,91 @@ const Itinerary = ({ pageTitle }) => {
   };
 
   const handleSelectItinerary = () => {
-    const itinerary = itineraries.find(it => it.id === parseInt(selectedItineraryId));
-    setSelectedItinerary(itinerary);
+    if (selectedItineraryId === 'new') {
+      setShowNewItineraryPopup(true);
+    } else {
+      const itinerary = itineraries.find(it => it.id === parseInt(selectedItineraryId));
+      setSelectedItinerary(itinerary);
+    }
   };
 
-  const handleNewItinerary = () => {
-    if (selectedItinerary && selectedItinerary.itinerary_data.length > 0) {
-      setShowNewItineraryWarning(true);
-    } else {
-      setSelectedItinerary({ id: null, itinerary_name: '', itinerary_data: [] });
+  const handleNewItinerarySave = async () => {
+    try {
+      if (selectedItinerary && selectedItinerary.id) {
+        // Updating an existing itinerary's name
+        const updatedItinerary = { ...selectedItinerary, itinerary_name: newItineraryName };
+        await updateItinerary(updatedItinerary.id, updatedItinerary.itinerary_data, updatedItinerary.itinerary_name);
+  
+        // Update state with the new name
+        setSelectedItinerary(updatedItinerary);
+        setSelectedItineraryId(updatedItinerary.id.toString());
+      } else {
+        // Saving a new itinerary
+        const savedItinerary = await saveItinerary(userId, newItineraryName, []);
+  
+        if (savedItinerary && savedItinerary.id) {
+          setSelectedItinerary(savedItinerary);
+          setSelectedItineraryId(savedItinerary.id.toString());
+        }
+      }
+  
+      setShowNewItineraryPopup(false);
       setNewItineraryName('');
-      setUnsavedChanges(true);
+      fetchItineraries(userId);  // Refresh the list of itineraries
+    } catch (error) {
+      console.error('Error saving or updating itinerary:', error);
     }
   };
 
-  const handleConfirmNewItinerary = () => {
-    setShowNewItineraryWarning(false);
-    setSelectedItinerary({ id: null, itinerary_name: '', itinerary_data: [] });
-    setNewItineraryName('');
-    setUnsavedChanges(true);
+  const handleNewItineraryCancel = () => {
+    setShowNewItineraryPopup(false);
+    setNewItineraryName(''); // Reset the name input
   };
 
-  const handleSaveItinerary = async () => {
-    if (selectedItinerary.id) {
-      await updateItinerary(selectedItinerary.id, selectedItinerary.itinerary_data, selectedItinerary.itinerary_name);
-    } else {
-      await saveItinerary(userId, newItineraryName, selectedItinerary.itinerary_data);
-    }
-    setUnsavedChanges(false);
+  const handleEditItinerary = () => {
+    setShowEditItineraryPopup(true);
   };
 
-  const handleItineraryNameChange = (e) => {
-    const newName = e.target.value;
-    setNewItineraryName(newName);
-    if (selectedItinerary) {
-      setSelectedItinerary({ ...selectedItinerary, itinerary_name: newName });
-    }
-    setUnsavedChanges(true);
+  const handleDeleteItinerary = () => {
+    setShowDeleteConfirmation(true);
   };
 
-  const handleEditLocation = (location) => {
+  const confirmDeleteItinerary = async () => {
+    await removeFromItinerary(selectedItinerary.id);
+    setShowDeleteConfirmation(false);
+    setShowEditItineraryPopup(false);
+    fetchItineraries(userId);
+    setSelectedItinerary(null);
+    setSelectedItineraryId('');
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteConfirmation(false);
+    setShowEditItineraryPopup(false);
+  };
+
+  const handleEditName = () => {
+    setNewItineraryName(selectedItinerary.itinerary_name);
+    setShowEditItineraryPopup(false);
+    setShowNewItineraryPopup(true);
+  };
+
+  const handleEditLocation = async (location) => {
     setEditLocationId(location.id);
     setEditDate(location.visitDate || '');
     setEditTime(location.visitTime || '');
+
+    const updatedLocation = {
+      ...location,
+      visitDate: editDate,
+      visitTime: editTime
+    };
+    const updatedData = selectedItinerary.itinerary_data.map(loc =>
+      loc.id === location.id ? updatedLocation : loc
+    );
+    const updatedItinerary = { ...selectedItinerary, itinerary_data: updatedData };
+    setSelectedItinerary(updatedItinerary);
+    await updateItinerary(updatedItinerary.id, updatedItinerary.itinerary_data, updatedItinerary.itinerary_name);
   };
 
   const handleCancelEdit = () => {
@@ -143,44 +173,31 @@ const Itinerary = ({ pageTitle }) => {
     setEditTime('');
   };
 
-  const handleUpdateLocation = (location) => {
+  const handleUpdateLocation = async (location) => {
     const updatedLocation = {
       ...location,
       visitDate: editDate,
       visitTime: editTime
     };
-    const updatedData = selectedItinerary.itinerary_data.map(loc => 
+    const updatedData = selectedItinerary.itinerary_data.map(loc =>
       loc.id === location.id ? updatedLocation : loc
     );
-    setSelectedItinerary({ ...selectedItinerary, itinerary_data: updatedData });
+    const updatedItinerary = { ...selectedItinerary, itinerary_data: updatedData };
+    setSelectedItinerary(updatedItinerary);
+    await updateItinerary(updatedItinerary.id, updatedItinerary.itinerary_data, updatedItinerary.itinerary_name);
     handleCancelEdit();
-    setUnsavedChanges(true);
   };
 
-  const handleRemoveLocation = (locationId) => {
+  const handleRemoveLocation = async (locationId) => {
     const updatedData = selectedItinerary.itinerary_data.filter(loc => loc.id !== locationId);
-    setSelectedItinerary({ ...selectedItinerary, itinerary_data: updatedData });
-    setUnsavedChanges(true);
-  };
-
-  const handleAddLocation = async (location) => {
-    if (selectedItinerary) {
-      await addToItinerary(location);
-      setUnsavedChanges(true);
-      await handleSaveItinerary(); // Ensure the changes are saved before navigating
-      navigate('/itinerary'); // Navigate to itinerary page after adding location
-    } else {
-      // Handle the case where no itinerary is selected
-    }
+    const updatedItinerary = { ...selectedItinerary, itinerary_data: updatedData };
+    setSelectedItinerary(updatedItinerary);
+    await updateItinerary(updatedItinerary.id, updatedItinerary.itinerary_data, updatedItinerary.itinerary_name);
   };
 
   const handleMapView = (location) => {
     setIsMapView(true);
     navigate(`/${location.category}/${location.id}`, { state: { location } });
-  };
-
-  const handleFooterMapView = () => {
-    setIsMapView(true);
   };
 
   const renderLocationItem = (location, index, dayCount) => (
@@ -225,7 +242,11 @@ const Itinerary = ({ pageTitle }) => {
               Call
             </button>
           )}
-          
+          {/* Temporarily removing ShareIcon button since the asset is missing */}
+          {/* <button>
+            <ShareIcon />
+            Share
+          </button> */}
           <button onClick={() => handleMapView(location)}>
             <MapIcon />
             Map
@@ -245,56 +266,14 @@ const Itinerary = ({ pageTitle }) => {
               value={editTime} 
               onChange={e => setEditTime(e.target.value)} 
             />
-            <button onClick={() => handleUpdateLocation(location)}>Update</button>
-            <button onClick={() => handleRemoveLocation(location.id)}>Remove</button>
-            <button onClick={handleCancelEdit}>Cancel</button>
+            <button className="uBut" onClick={() => handleUpdateLocation(location)}>Update</button>
+            <button className="rBut" onClick={() => handleRemoveLocation(location.id)}>Remove</button>
+            <button className="cBut" onClick={handleCancelEdit}>Cancel</button>
           </div>
         )}
       </div>
     </div>
   );
-
-  const cardShareBack = "<button><ShareIcon />Share</button>"
-
-  const sortItineraryData = (data) => {
-    return data.sort((a, b) => {
-      if (a.visitDate && b.visitDate) {
-        if (a.visitDate === b.visitDate) {
-          return a.visitTime.localeCompare(b.visitTime);
-        }
-        return a.visitDate.localeCompare(b.visitDate);
-      }
-      if (a.visitDate) return -1;
-      if (b.visitDate) return 1;
-      return 0;
-    });
-  };
-
-  const getDayCounts = (data) => {
-    let currentDay = 1;
-    let lastDate = null;
-    const dayCounts = [];
-
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].visitDate) {
-        const date = new Date(data[i].visitDate);
-        if (lastDate === null || date.getTime() !== lastDate.getTime()) {
-          const daysBetween = (date - lastDate) / (1000 * 60 * 60 * 24);
-          if (lastDate !== null && daysBetween > 0) {
-            currentDay += Math.ceil(daysBetween);
-          }
-          lastDate = date;
-        }
-        dayCounts.push(currentDay);
-      } else {
-        dayCounts.push(null);
-      }
-    }
-
-    return dayCounts;
-  };
-
-  const shareButtonCode = "<div className='right-button'><button><Share /><span>Share Itinerary</span></button></div>"
 
   const pageTitleContent = (
     <div className="page-title">
@@ -302,7 +281,6 @@ const Itinerary = ({ pageTitle }) => {
         <Intinerery />
         <h1>{pageTitle}</h1>
       </div>
-      
     </div>
   );
 
@@ -325,59 +303,93 @@ const Itinerary = ({ pageTitle }) => {
           paddingBottom: `calc(${footerHeight}px + 50px)`,
         }}
       >
-        {isMapView ? (
-          <MapView data={selectedItinerary?.itinerary_data || []} />
-        ) : (
-          <>
-            {pageTitleContent}
-            <div className="itinerary-header">
-              {itineraries.length > 1 && (
-                <div className='itinHeaderRow'>
-                  <select value={selectedItineraryId} onChange={handleSelectItineraryChange}>
-                    <option value="">Select your itinerary</option>
-                    {itineraries.map(itinerary => (
-                      <option key={itinerary.id} value={itinerary.id}>
-                        {itinerary.itinerary_name}
-                      </option>
-                    ))}
-                  </select>
-                  <button onClick={handleSelectItinerary}>Select</button>
-                </div>
-              )}
-              <div className='itinHeaderRow'>
-              <input
-                type="text"
-                value={newItineraryName}
-                onChange={handleItineraryNameChange}
-                placeholder={selectedItinerary ? selectedItinerary.itinerary_name : 'Name your itinerary'}
-              />
-              <button onClick={handleNewItinerary}>New</button>
-              <button onClick={handleSaveItinerary}>Save</button>
-            </div>
-            </div>
-            {showNewItineraryWarning && (
-              <div className="warning">
-                <p>All changes will be lost. Do you want to continue?</p>
-                <button onClick={handleConfirmNewItinerary}>Yes</button>
-                <button onClick={() => setShowNewItineraryWarning(false)}>No</button>
+        {pageTitleContent}
+        <Modal
+          isOpen={showNewItineraryPopup}
+          onRequestClose={handleNewItineraryCancel}
+          contentLabel="Name your new itinerary"
+          className="itinerary-modal"
+          overlayClassName="itinerary-modal-overlay"
+        >
+          <h2>Please name your new itinerary</h2>
+          <input
+            type="text"
+            value={newItineraryName}
+            onChange={(e) => setNewItineraryName(e.target.value)}
+            placeholder="Itinerary Name"
+          />
+          <div className="itinerary-popup-buttons">
+            <button onClick={handleNewItinerarySave} className="itinerary-save-button">Save</button>
+            <button onClick={handleNewItineraryCancel} className="itinerary-cancel-button">Cancel</button>
+          </div>
+        </Modal>
+        
+        <Modal
+          isOpen={showEditItineraryPopup}
+          onRequestClose={() => setShowEditItineraryPopup(false)}
+          contentLabel="Edit Itinerary"
+          className="itinerary-modal"
+          overlayClassName="itinerary-modal-overlay"
+        >
+          {!showDeleteConfirmation ? (
+            <>
+              <h2>Edit Itinerary</h2>
+              <div className="itinerary-popup-buttons">
+                <button onClick={handleEditName} className="itinerary-save-button">Edit Name</button>
+                <button onClick={handleDeleteItinerary} className="itinerary-delete-button rBut">Delete Itinerary</button>
               </div>
-            )}
-            <div className="itinerary-content">
-              {selectedItinerary && selectedItinerary.itinerary_data.length > 0 ? (
-                sortItineraryData(selectedItinerary.itinerary_data).map((location, index) => {
-                  const dayCounts = getDayCounts(sortItineraryData(selectedItinerary.itinerary_data));
-                  return renderLocationItem(location, index, dayCounts[index]);
-                })
-              ) : (
-                <p>No itinerary selected or itinerary is empty.</p>
-              )}
-            </div>
-          </>
-        )}
+            </>
+          ) : (
+            <>
+              <h2>Are you sure you want to delete this itinerary?</h2>
+              <p>Once deleted, this cannot be undone.</p>
+              <div className="itinerary-popup-buttons">
+                <button onClick={confirmDeleteItinerary} className="itinerary-save-button">Yes</button>
+                <button onClick={handleCancelDelete} className="itinerary-cancel-button">Cancel</button>
+              </div>
+            </>
+          )}
+        </Modal>
+
+        <div className="itinerary-header">
+          <div className="itinHeaderRow itinerary-select-container">
+            <select className="itinerary-select" value={selectedItineraryId} onChange={handleSelectItineraryChange}>
+              <option value="">Please Make A Selection</option>
+              {itineraries.map(itinerary => (
+                <option key={itinerary.id} value={itinerary.id}>
+                  {itinerary.itinerary_name}
+                </option>
+              ))}
+              <option value="new">New Itinerary</option>
+            </select>
+            <button className="itinerary-select-button" onClick={handleSelectItinerary}>Select</button>
+          </div>
+          {selectedItinerary && (
+            <>
+              <h2 className="itinerary-title">{selectedItinerary.itinerary_name}</h2>
+              <button 
+                onClick={handleEditItinerary} 
+                className="edit-itinerary-button" 
+                style={{ backgroundColor: '#006837', color: '#fff', fontSize: '1.2rem', padding: '5px 8px' }}
+              >
+                Edit Itinerary
+              </button>
+            </>
+          )}
+        </div>
+        <div className="itinerary-content">
+          {isMapView ? (
+            <MapView data={selectedItinerary?.itinerary_data || []} />
+          ) : selectedItinerary ? (
+            selectedItinerary.itinerary_data.map((location, index) => renderLocationItem(location, index, index + 1))
+          ) : (
+            <p>Please select an itinerary or start a new one.</p>
+          )}
+        </div>
       </main>
-      <Footer ref={footerRef} showCircles={true} handleMapView={handleFooterMapView} />
+      <Footer ref={footerRef} showCircles={true} handleMapView={() => setIsMapView(true)} />
     </div>
   );
-}
+};
 
 export default Itinerary;

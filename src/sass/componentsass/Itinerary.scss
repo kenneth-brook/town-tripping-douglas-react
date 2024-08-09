@@ -240,6 +240,7 @@
     .itinerary-content {
       display: flex;
       flex-wrap: wrap;
+      flex-direction: row;
       margin-top: 15px;
 
       .location-item {
@@ -263,3 +264,142 @@
     }
   }
 }  
+
+.itinerary-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+
+  .itinerary-select-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 20px; /* Move the top margin to the container to ensure both elements align */
+  }
+
+  .itinerary-select {
+    width: 300px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+
+  .itinerary-select-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    background-color: #8bc43e;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-left: 10px; /* Ensure spacing between dropdown and button */
+
+    &:hover {
+      background-color: darken(#8bc43e, 10%);
+    }
+  }
+
+  .itinerary-title {
+    margin-top: 20px;
+    font-size: 24px;
+    text-align: center;
+  }
+}
+
+.itinerary-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.itinerary-modal-overlay {
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.itinerary-modal {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  outline: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+  h2 {
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+
+  .itinerary-popup-buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .itinerary-save-button {
+    background-color: #006837;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: darken(#006837, 10%);
+    }
+  }
+
+  .itinerary-cancel-button {
+    background-color: #d9534f;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: darken(#d9534f, 10%);
+    }
+  }
+}
+
+.uBut {
+  margin-left: 10px;
+  color: white;
+  background-color: #006837;
+}
+
+.rBut {
+  color: white;
+  background-color: red;
+}
+
+.cBut {
+  color: white;
+  background-color: #bf772f;
+}
