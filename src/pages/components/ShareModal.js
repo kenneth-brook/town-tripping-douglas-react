@@ -40,7 +40,7 @@ const ShareModal = ({ isOpen, onRequestClose, url, title }) => {
       contentLabel="Share Modal"
       ariaHideApp={false} // Ensure this is set correctly
     >
-      <h2>Share this page</h2>
+      <h2 style={{ color: '#006837' }}>Share this page</h2>
       <div className="share-buttons">
         <FacebookShareButton url={url} quote={title} className="share-button">
           <FacebookIcon size={32} round />
@@ -55,9 +55,23 @@ const ShareModal = ({ isOpen, onRequestClose, url, title }) => {
           <EmailIcon size={32} round />
         </EmailShareButton>
       </div>
-      <button onClick={onRequestClose} className="close-button">Close</button>
+      <button
+        onClick={onRequestClose}
+        className="close-button"
+        style={{
+          backgroundColor: '#006837',
+          color: '#fff',
+          padding: '10px 20px',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+        }}
+      >
+        Close
+      </button>
     </Modal>
   );
 };
 
 export default ShareModal;
+

@@ -53,15 +53,19 @@ function SortMenu({ isOpen, top, menuList = [], orientation, toggleMenu2, select
                   ))}
                 </select>
               ) : item.type === 'date' ? (
-                <input
-                  type="date"
-                  value={
-                    selectedDate
-                      ? selectedDate.toISOString().substring(0, 10)
-                      : ''
-                  }
-                  onChange={item.onChange}
-                />
+                <div>
+                  <label htmlFor="event-date">What is happening on?</label>
+                  <input
+                    id="event-date"
+                    type="date"
+                    value={
+                      selectedDate
+                        ? selectedDate.toISOString().substring(0, 10)
+                        : ''
+                    }
+                    onChange={item.onChange}
+                  />
+                </div>
               ) : (
                 <a href={item.link} onClick={item.onClick}>
                   {item.label}

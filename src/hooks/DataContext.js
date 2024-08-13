@@ -3,8 +3,8 @@ import { getGoogleReviews } from '../pages/components/googleReviews'; // Adjust 
 
 const DataContext = createContext();
 
-//const stage = "aws-test"
-const stage = "live"
+const stage = "aws-test";
+// const stage = "live";
 
 export const useDataContext = () => useContext(DataContext);
 
@@ -61,7 +61,7 @@ const DataProvider = ({ children }) => {
     return new Promise((resolve, reject) => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-          position => {
+          (position) => {
             const userLocation = {
               lat: parseFloat(position.coords.latitude),
               lon: parseFloat(position.coords.longitude),
@@ -69,15 +69,15 @@ const DataProvider = ({ children }) => {
             if (isValidCoordinate(userLocation.lat, userLocation.lon)) {
               resolve(userLocation);
             } else {
-              reject(new Error("Invalid user coordinates"));
+              reject(new Error('Invalid user coordinates'));
             }
           },
-          error => {
+          (error) => {
             reject(error);
           }
         );
       } else {
-        reject(new Error("Geolocation is not supported by this browser."));
+        reject(new Error('Geolocation is not supported by this browser.'));
       }
     });
   }, []);
@@ -102,55 +102,53 @@ const DataProvider = ({ children }) => {
 
       const removeQuotesFromName = (name) => name.replace(/['"]/g, '');
 
-      const [results] = await Promise.all([
-        Promise.all(
-          Object.keys(endpoints).map(async (key) => {
-            try {
-              const result = await fetchEndpointData(endpoints[key]);
-              if (key !== 'events') {
-                const updatedData = await Promise.all(
-                  result.map(async (item) => {
-                    try {
-                      const details = await getGoogleReviews(stage, item.lat, item.long, item.name);
-                      return { 
-                        ...item, 
-                        ...details, 
-                        type: key, 
-                        name: removeQuotesFromName(item.name)
-                      };
-                    } catch (error) {
-                      console.error(`Failed to fetch Google reviews for ${item.name}`, error);
-                      return { 
-                        ...item, 
-                        type: key, 
-                        name: removeQuotesFromName(item.name)
-                      };
-                    }
-                  })
-                );
-                return { key, data: updatedData };
-              } else {
-                const updatedEventsData = result.map(item => ({
-                  ...item,
-                  type: 'events',
-                  name: removeQuotesFromName(item.name),
-                  start_date: new Date(item.start_date)
-                }));
-                return { key, data: updatedEventsData };
-              }
-            } catch (error) {
-              console.error(`Failed to fetch data from ${endpoints[key]}`, error);
-              throw error;
+      const results = await Promise.all(
+        Object.keys(endpoints).map(async (key) => {
+          try {
+            const result = await fetchEndpointData(endpoints[key]);
+            if (key !== 'events') {
+              const updatedData = await Promise.all(
+                result.map(async (item) => {
+                  try {
+                    const details = await getGoogleReviews(stage, item.lat, item.long, item.name);
+                    return { 
+                      ...item, 
+                      ...details, 
+                      type: key, 
+                      name: removeQuotesFromName(item.name)
+                    };
+                  } catch (error) {
+                    console.error(`Failed to fetch Google reviews for ${item.name}`, error);
+                    return { 
+                      ...item, 
+                      type: key, 
+                      name: removeQuotesFromName(item.name)
+                    };
+                  }
+                })
+              );
+              return { key, data: updatedData };
+            } else {
+              const updatedEventsData = result.map((item) => ({
+                ...item,
+                type: 'events',
+                name: removeQuotesFromName(item.name),
+                start_date: new Date(item.start_date),
+              }));
+              return { key, data: updatedEventsData };
             }
-          })
-        ),
-      ]);
+          } catch (error) {
+            console.error(`Failed to fetch data from ${endpoints[key]}`, error);
+            throw error;
+          }
+        })
+      );
 
       const dataMap = results.reduce((acc, { key, data }) => {
         if (key === 'events') {
           const today = new Date();
           acc[key] = data
-            .filter(event => {
+            .filter((event) => {
               const startDate = event.start_date;
               return startDate >= today; // Filter out past events
             })
@@ -170,9 +168,9 @@ const DataProvider = ({ children }) => {
 
       const collectTypes = (data, typeKey) => {
         const typeCounts = {};
-        data.forEach(item => {
+        data.forEach((item) => {
           if (item[typeKey]) {
-            item[typeKey].forEach(type => {
+            item[typeKey].forEach((type) => {
               if (typeCounts[type]) {
                 typeCounts[type]++;
               } else {
@@ -194,15 +192,17 @@ const DataProvider = ({ children }) => {
       setData(dataMap);
       setFilteredData(dataMap);
       setTypeCounts(newTypeCounts);
-      console.log('Filtered Data Set:', dataMap);
 
-      const response = await fetch(`https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/${stage}/type-names/fetch-type-names`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ typeCounts: newTypeCounts }),
-      });
+      const response = await fetch(
+        `https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/${stage}/type-names/fetch-type-names`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ typeCounts: newTypeCounts }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -233,16 +233,23 @@ const DataProvider = ({ children }) => {
 
   const sortByProximity = (data, userLocation) => {
     return data
-      .filter(item => {
+      .filter((item) => {
         const valid = isValidCoordinate(item.lat, item.long);
         if (!valid) {
-          console.error(`Invalid item coordinates for ${item.name}: (${item.lat}, ${item.long})`);
+          console.error(
+            `Invalid item coordinates for ${item.name}: (${item.lat}, ${item.long})`
+          );
         }
         return valid;
       })
-      .map(item => ({
+      .map((item) => ({
         ...item,
-        distance: calculateDistance(userLocation.lat, userLocation.lon, parseFloat(item.lat), parseFloat(item.long))
+        distance: calculateDistance(
+          userLocation.lat,
+          userLocation.lon,
+          parseFloat(item.lat),
+          parseFloat(item.long)
+        ),
       }))
       .sort((a, b) => a.distance - b.distance);
   };
@@ -260,7 +267,7 @@ const DataProvider = ({ children }) => {
       };
       setFilteredData(sortedData);
     } else {
-      console.error("Invalid or missing user coordinates:", userLocation);
+      console.error('Invalid or missing user coordinates:', userLocation);
     }
   };
 
@@ -269,10 +276,13 @@ const DataProvider = ({ children }) => {
   };
 
   const filterDataByTypes = useCallback(() => {
-    console.log(`Filtering data by selected types: ${JSON.stringify(selectedTypes)}`);
     const filterByTypes = (data, typeKey) => {
       if (selectedTypes[typeKey]?.length > 0) {
-        return data.filter(item => item[typeKey]?.some(type => selectedTypes[typeKey].includes(parseInt(type))));
+        return data.filter((item) =>
+          item[typeKey]?.some((type) =>
+            selectedTypes[typeKey].includes(parseInt(type))
+          )
+        );
       }
       return data;
     };
@@ -291,14 +301,15 @@ const DataProvider = ({ children }) => {
       ],
     };
     setFilteredData(filtered);
-    console.log('Filtered Data Set by types:', filtered);
   }, [selectedTypes, data]);
 
   const filterDataByKeyword = useCallback(() => {
     const filterByKeyword = (data) => {
-      return data.filter(item => 
-        Object.values(item).some(value => 
-          typeof value === 'string' && value.toLowerCase().includes(keyword.toLowerCase())
+      return data.filter((item) =>
+        Object.values(item).some(
+          (value) =>
+            typeof value === 'string' &&
+            value.toLowerCase().includes(keyword.toLowerCase())
         )
       );
     };
@@ -320,30 +331,42 @@ const DataProvider = ({ children }) => {
   }, [keyword, data]);
 
   useEffect(() => {
-    resetFilteredData();  // Reset the data to original before filtering
-    filterDataByTypes();
-  }, [selectedTypes, filterDataByTypes]);
-
-  useEffect(() => {
-    resetFilteredData();  // Reset the data to original before filtering
-    filterDataByKeyword();
-  }, [keyword, filterDataByKeyword]);
+    fetchUserLocation()
+      .then((location) => {
+        setUserLocation(location);
+        // If you want to automatically sort by proximity after fetching location:
+        // handleNearMe();
+      })
+      .catch((error) => console.error('Failed to fetch user location:', error));
+  }, [fetchUserLocation]);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
   useEffect(() => {
+    resetFilteredData(); // Reset the data to original before filtering
+    filterDataByTypes();
+  }, [selectedTypes, filterDataByTypes]);
+
+  useEffect(() => {
+    resetFilteredData(); // Reset the data to original before filtering
+    filterDataByKeyword();
+  }, [keyword, filterDataByKeyword]);
+
+  useEffect(() => {
     if (selectedDate) {
       const filterEventsByDate = (events, date) => {
-        return events.filter(event => {
-          if (!event.start_date) return false;
-          const startDate = new Date(event.start_date);
-          const endDate = event.end_date ? new Date(event.end_date) : null;
-          return (
-            (endDate ? startDate <= date && endDate >= date : startDate.toDateString() === date.toDateString())
-          );
-        }).sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+        return events
+          .filter((event) => {
+            if (!event.start_date) return false;
+            const startDate = new Date(event.start_date);
+            const endDate = event.end_date ? new Date(event.end_date) : null;
+            return endDate
+              ? startDate <= date && endDate >= date
+              : startDate.toDateString() === date.toDateString();
+          })
+          .sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
       };
 
       const filtered = {
@@ -360,18 +383,21 @@ const DataProvider = ({ children }) => {
     setKeyword('');
   };
 
-  const sortData = useCallback((ascending) => {
-    const sortOrder = ascending ? 1 : -1;
-    const sortedData = {
-      eat: [...data.eat].sort((a, b) => a.name.localeCompare(b.name) * sortOrder),
-      stay: [...data.stay].sort((a, b) => a.name.localeCompare(b.name) * sortOrder),
-      play: [...data.play].sort((a, b) => a.name.localeCompare(b.name) * sortOrder),
-      shop: [...data.shop].sort((a, b) => a.name.localeCompare(b.name) * sortOrder),
-      events: [...data.events].sort((a, b) => (new Date(a.start_date) - new Date(b.start_date)) * sortOrder),
-      combined: [...data.combined].sort((a, b) => a.name.localeCompare(b.name) * sortOrder),
-    };
-    setFilteredData(sortedData);
-  }, [data]);
+  const sortData = useCallback(
+    (ascending) => {
+      const sortOrder = ascending ? 1 : -1;
+      const sortedData = {
+        eat: [...data.eat].sort((a, b) => a.name.localeCompare(b.name) * sortOrder),
+        stay: [...data.stay].sort((a, b) => a.name.localeCompare(b.name) * sortOrder),
+        play: [...data.play].sort((a, b) => a.name.localeCompare(b.name) * sortOrder),
+        shop: [...data.shop].sort((a, b) => a.name.localeCompare(b.name) * sortOrder),
+        events: [...data.events].sort((a, b) => (new Date(a.start_date) - new Date(b.start_date)) * sortOrder),
+        combined: [...data.combined].sort((a, b) => a.name.localeCompare(b.name) * sortOrder),
+      };
+      setFilteredData(sortedData);
+    },
+    [data]
+  );
 
   const resetSortOrder = useCallback(() => {
     setIsAscending(true);
@@ -379,28 +405,30 @@ const DataProvider = ({ children }) => {
   }, [sortData]);
 
   return (
-    <DataContext.Provider value={{ 
-      data: filteredData, 
-      loading, 
-      error, 
-      setKeyword, 
-      resetKeyword, 
-      sortData, 
-      resetSortOrder, 
-      isAscending, 
-      setIsAscending, 
-      setSelectedDate,
-      handleNearMe, 
-      userLocation, 
-      nearMe, 
-      setNearMe, 
-      resetFilteredData, 
-      typeCounts, 
-      typeNames, 
-      selectedTypes,
-      setSelectedTypes,
-      stage
-    }}>
+    <DataContext.Provider
+      value={{
+        data: filteredData,
+        loading,
+        error,
+        setKeyword,
+        resetKeyword,
+        sortData,
+        resetSortOrder,
+        isAscending,
+        setIsAscending,
+        setSelectedDate,
+        handleNearMe,
+        userLocation,
+        nearMe,
+        setNearMe,
+        resetFilteredData,
+        typeCounts,
+        typeNames,
+        selectedTypes,
+        setSelectedTypes,
+        stage,
+      }}
+    >
       {children}
     </DataContext.Provider>
   );

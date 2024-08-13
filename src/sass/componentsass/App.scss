@@ -227,6 +227,7 @@ footer {
   text-align: center;
   padding: 5px;
   margin-top: 5px;
+  overflow: hidden;
 
   h2 {
     color: #007037;
@@ -388,7 +389,6 @@ main {
 
     .sort-menu {
       width: 25%;
-
       border-bottom-right-radius: 12px;
     }
 
@@ -610,7 +610,7 @@ main {
   display: flex;
   align-items: center;
   width: 75%;
-    justify-content: space-around;
+  justify-content: space-around;
 }
 
 .text-box p {
@@ -685,9 +685,15 @@ main {
       display: flex;
       justify-content: space-around;
 
+      a {
+        text-decoration: none;
+        color: black;
+      }
+
       .popButtonDevide {
         width: 20%;
         text-align: center;
+        cursor: pointer;
 
         .popButton {
           width: 100%;
@@ -717,7 +723,7 @@ main {
   width: 100%;
   display: flex;
   border-bottom: 1px solid #aaaaaa;
-    border-top: 1px solid #aaaaaa;
+  border-top: 1px solid #aaaaaa;
 }
 
 .share-buttons {
@@ -752,4 +758,9 @@ main {
 
 .none {
   display: none;
+}
+
+.s-menu-item input {
+  width: 90%;
+  font-size: 1.2rem;
 }

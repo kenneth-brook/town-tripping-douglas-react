@@ -54,6 +54,14 @@ const DetailView = () => {
     }
   }, [location.state, data, category, id]);
 
+  useEffect(() => {
+    console.log('Item:', item);
+    if (item && item.start_date) {
+      console.log('Formatted Date:', formatDate(item.start_date));
+      console.log('Formatted Time:', formatTime(item.start_date));
+    }
+  }, [item]);
+
   if (loading) return <div className="loader"></div>;
   if (error) return <p>{error}</p>;
   if (!item) return <p>Not found</p>;
@@ -83,18 +91,24 @@ const DetailView = () => {
   const googleMapsLink = `https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.long}`;
 
   const formatDate = (dateTime) => {
-    if (!dateTime) return { date: 'N/A', time: 'N/A' };
-  
+    if (!dateTime) return 'N/A';
+
     const date = new Date(dateTime);
     const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-indexed
     const day = String(date.getUTCDate()).padStart(2, '0');
     const year = date.getUTCFullYear();
+
+    return `${month}/${day}/${year}`;
+  };
+
+  const formatTime = (dateTime) => {
+    if (!dateTime) return 'N/A';
+
+    const date = new Date(dateTime);
     const hours = String(date.getUTCHours()).padStart(2, '0');
     const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-    const formattedDate = `${month}/${day}/${year}`;
-    const formattedTime = `${hours}:${minutes}`;
-  
-    return { date: formattedDate, time: formattedTime };
+
+    return `${hours}:${minutes}`;
   };
 
   const handleBack = () => {
@@ -120,7 +134,8 @@ const DetailView = () => {
     setModalIsOpen(true);
   };
 
-  const { date, time } = formatDate(item.start_date);
+  const date = formatDate(item.start_date) || 'Date not available';
+  const time = formatTime(item.start_date) || 'Time not available';
 
   return (
     <div
@@ -205,15 +220,13 @@ const DetailView = () => {
                 {category === 'events' && <Location />}
                 {`${item.street_address}, ${item.city}, ${item.state} ${item.zip}`}
               </p>
-              {item.start_date && item.start_time && (
-                <div className="date-container ">
+              {item.start_date && (
+                <div className="date-container">
                   <p>
                     <DateIcon />
                     {date}
                   </p>
-                  {time === '00:00' ? (
-                    ''
-                  ) : (
+                  {time !== '00:00' && (
                     <p>
                       <TimeIcon />
                       {time}

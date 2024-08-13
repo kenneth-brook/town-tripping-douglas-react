@@ -70,6 +70,7 @@ const Events = ({ pageTitle }) => {
       {sortedEventsData.map((item) => (
         <div key={item.id} className="content-item">
           <h2>{item.name}</h2>
+          <p>{formatDate(item.start_date)}</p>
           <div className="content-box">
             <div className='box-top'>
               {item.images && item.images.length > 0 && (

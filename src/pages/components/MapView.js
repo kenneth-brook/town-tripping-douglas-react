@@ -1,4 +1,3 @@
-// MapView.js
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Map, { Marker, Popup } from 'react-map-gl';
@@ -8,6 +7,7 @@ import { useDataContext } from '../../hooks/DataContext';
 import { ReactComponent as Phone } from '../../assets/icos/phone2.svg';
 import { ReactComponent as Share } from '../../assets/icos/share-icon2.svg';
 import { ReactComponent as AddItinerary } from '../../assets/icos/add-itinerary2.svg';
+import { useViewMode } from '../../hooks/ViewModeContext';
 
 // Import PNG markers
 import eatPin from '../../assets/icos/eatPin.png';
@@ -135,11 +135,13 @@ const addMarkers = (data, handleMarkerClick) => {
   });
 };
 
-const renderPopup = (selectedPlace, setSelectedPlace, addToItinerary, navigate) => {
+const renderPopup = (selectedPlace, setSelectedPlace, addToItinerary, navigate, setIsMapView) => {
   const handleAddToItinerary = () => {
     addToItinerary(selectedPlace);
-    navigate('/itinerary')
+    setIsMapView(false);  // Turn off map view
+    navigate('/itinerary');
   };
+
   const lat = parseFloat(selectedPlace.lat);
   const lon = parseFloat(selectedPlace.long);
   if (!isNaN(lat) && !isNaN(lon)) {
@@ -171,7 +173,7 @@ const renderPopup = (selectedPlace, setSelectedPlace, addToItinerary, navigate) 
             </p>
           </div>
           <div className="popButtonsWrap">
-          <div className="popButtonDevide">
+            <div className="popButtonDevide">
               <a href={`tel:${selectedPlace.phone}`} className="popButtonLink">
                 <div className="popButton">
                   <Phone />
@@ -202,6 +204,8 @@ const renderPopup = (selectedPlace, setSelectedPlace, addToItinerary, navigate) 
 };
 
 const MapView = ({ data, type, selectedLocation }) => {
+  const { setIsMapView } = useViewMode();  // Directly access the context
+
   const [selectedPlace, setSelectedPlace] = useState(selectedLocation || null);
   const mapRef = useRef();
   const { nearMe, userLocation } = useDataContext();
@@ -281,7 +285,7 @@ const MapView = ({ data, type, selectedLocation }) => {
         onLoad={() => setMapLoaded(true)}
       >
         {addMarkers(validatedData, handleMarkerClick)}
-        {selectedPlace && renderPopup(selectedPlace, setSelectedPlace, addToItinerary, navigate)}
+        {selectedPlace && renderPopup(selectedPlace, setSelectedPlace, addToItinerary, navigate, setIsMapView)}
         {userPin && (
           <>
             <Marker

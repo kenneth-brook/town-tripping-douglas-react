@@ -157,7 +157,7 @@ const Header = forwardRef((props, ref) => {
     { label: 'Near Me', onClick: handleNearMeWithClose },
     { label: 'Alphabetical', onClick: handleAlphabeticalSort },
     location.pathname === '/events' && {
-      label: 'Select a Date',
+      label: 'What is happening on?',
       type: 'date',
       onChange: handleDateChange,
     },
