@@ -21,19 +21,54 @@ import Modal from 'react-modal';
 
 Modal.setAppElement('#root'); // Ensure the app element is set for accessibility
 
+// Helper functions for formatting dates and times
 const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const year = date.getFullYear().toString().slice(-2);
-  return `${month}/${day}/${year}`;
+  if (!dateString) {
+    return ''; // Return an empty string if dateString is undefined or null
+  }
+
+  const [year, month, day] = dateString.split('-');
+  const date = new Date(year, month - 1, day); // month is 0-indexed in JS
+  const formattedMonth = String(date.getMonth() + 1).padStart(2, '0');
+  const formattedDay = String(date.getDate()).padStart(2, '0');
+  const yearShort = date.getFullYear().toString().slice(-2);
+  return `${formattedMonth}/${formattedDay}/${yearShort}`;
 };
 
 const formatTime = (timeString) => {
   const [hours, minutes] = timeString.split(':');
-  const hours12 = hours % 12 || 12;
-  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const date = new Date();
+  date.setHours(hours);
+  date.setMinutes(minutes);
+  const hours12 = date.getHours() % 12 || 12;
+  const ampm = date.getHours() >= 12 ? 'PM' : 'AM';
   return `${hours12}:${minutes} ${ampm}`;
+};
+
+// Sorting function for itinerary data
+const sortItineraryData = (data) => {
+  return data.sort((a, b) => {
+    const dateA = a.visitDate ? new Date(a.visitDate) : null;
+    const dateB = b.visitDate ? new Date(b.visitDate) : null;
+
+    // If both dates are present, sort by date
+    if (dateA && dateB) {
+      const dateComparison = dateA - dateB;
+      if (dateComparison !== 0) return dateComparison;
+
+      // If dates are the same, sort by time
+      const timeA = a.visitTime || '';
+      const timeB = b.visitTime || '';
+      return timeA.localeCompare(timeB);
+    }
+
+    // If only one date is present, the one with the date goes first
+    if (dateA) return -1;
+    if (dateB) return 1;
+
+    // If neither date is present, consider them equal
+    return 0;
+  });
 };
 
 const Itinerary = ({ pageTitle }) => {
@@ -90,35 +125,39 @@ const Itinerary = ({ pageTitle }) => {
 
   const handleNewItinerarySave = async () => {
     try {
-      if (selectedItinerary && selectedItinerary.id) {
-        // Updating an existing itinerary's name
-        const updatedItinerary = { ...selectedItinerary, itinerary_name: newItineraryName };
-        await updateItinerary(updatedItinerary.id, updatedItinerary.itinerary_data, updatedItinerary.itinerary_name);
-  
-        // Update state with the new name
-        setSelectedItinerary(updatedItinerary);
-        setSelectedItineraryId(updatedItinerary.id.toString());
-      } else {
-        // Saving a new itinerary
-        const savedItinerary = await saveItinerary(userId, newItineraryName, []);
-  
-        if (savedItinerary && savedItinerary.id) {
-          setSelectedItinerary(savedItinerary);
-          setSelectedItineraryId(savedItinerary.id.toString());
+        let savedItinerary;
+
+        if (selectedItinerary && selectedItinerary.id) {
+            // This is an update to an existing itinerary
+            const updatedItinerary = { ...selectedItinerary, itinerary_name: newItineraryName };
+            savedItinerary = await updateItinerary(updatedItinerary.id, updatedItinerary.itinerary_data, updatedItinerary.itinerary_name);
+        } else {
+            // This is a new itinerary
+            savedItinerary = await saveItinerary(userId, newItineraryName, []);
         }
-      }
-  
-      setShowNewItineraryPopup(false);
-      setNewItineraryName('');
-      fetchItineraries(userId);  // Refresh the list of itineraries
+
+        if (savedItinerary && savedItinerary.id) {
+            await fetchItineraries(userId); // Refresh the itineraries list
+
+            setSelectedItinerary(savedItinerary); // Set the new/updated itinerary as selected
+            setSelectedItineraryId(savedItinerary.id.toString());
+
+            setShowNewItineraryPopup(false); // Close the modal
+            setNewItineraryName(''); // Clear the name input
+        } else {
+            console.error('Failed to save the itinerary or it didn’t return an ID.');
+        }
     } catch (error) {
-      console.error('Error saving or updating itinerary:', error);
+        console.error('Error saving or updating itinerary:', error);
     }
-  };
+};
+
+
+
 
   const handleNewItineraryCancel = () => {
     setShowNewItineraryPopup(false);
-    setNewItineraryName(''); // Reset the name input
+    setNewItineraryName('');
   };
 
   const handleEditItinerary = () => {
@@ -130,12 +169,16 @@ const Itinerary = ({ pageTitle }) => {
   };
 
   const confirmDeleteItinerary = async () => {
-    await removeFromItinerary(selectedItinerary.id);
-    setShowDeleteConfirmation(false);
-    setShowEditItineraryPopup(false);
-    fetchItineraries(userId);
-    setSelectedItinerary(null);
-    setSelectedItineraryId('');
+    if (!selectedItinerary || !selectedItinerary.id) return;
+
+    try {
+      await removeFromItinerary(selectedItinerary.id);
+      setShowDeleteConfirmation(false);
+      setShowEditItineraryPopup(false);
+      setSelectedItineraryId('');
+    } catch (error) {
+      console.error('Error deleting itinerary:', error);
+    }
   };
 
   const handleCancelDelete = () => {
@@ -159,6 +202,10 @@ const Itinerary = ({ pageTitle }) => {
       visitDate: editDate,
       visitTime: editTime
     };
+
+    console.log("Raw visitDate:", location.visitDate);
+    console.log("Formatted visitDate:", formatDate(location.visitDate));
+
     const updatedData = selectedItinerary.itinerary_data.map(loc =>
       loc.id === location.id ? updatedLocation : loc
     );
@@ -200,6 +247,35 @@ const Itinerary = ({ pageTitle }) => {
     navigate(`/${location.category}/${location.id}`, { state: { location } });
   };
 
+  const calculateDayNumbers = (data) => {
+    if (data.length === 0) return [];
+  
+    const firstDate = new Date(data[0].visitDate + 'T00:00:00');
+    let currentDay = 1;
+    let lastDate = firstDate;
+    const dayNumbers = [];
+  
+    data.forEach((item, index) => {
+      if (!item.visitDate) {
+        dayNumbers.push(null);
+        return;
+      }
+  
+      const currentDate = new Date(item.visitDate + 'T00:00:00');
+      const differenceInTime = currentDate - lastDate;
+      const differenceInDays = Math.floor(differenceInTime / (1000 * 3600 * 24));
+  
+      if (differenceInDays > 0) {
+        currentDay += differenceInDays;
+      }
+  
+      dayNumbers.push(currentDay);
+      lastDate = currentDate;
+    });
+  
+    return dayNumbers;
+  };
+
   const renderLocationItem = (location, index, dayCount) => (
     <div key={index} className="location-item">
       <div className="left-side">
@@ -228,7 +304,7 @@ const Itinerary = ({ pageTitle }) => {
           <button className="edit-button" onClick={() => handleEditLocation(location)}>
             <EditIcon />Edit</button>
         </div>
-        
+  
         <div className="button-group">
           {location.web && (
             <button onClick={() => window.open(location.web, '_blank')}>
@@ -242,11 +318,6 @@ const Itinerary = ({ pageTitle }) => {
               Call
             </button>
           )}
-          {/* Temporarily removing ShareIcon button since the asset is missing */}
-          {/* <button>
-            <ShareIcon />
-            Share
-          </button> */}
           <button onClick={() => handleMapView(location)}>
             <MapIcon />
             Map
@@ -283,6 +354,12 @@ const Itinerary = ({ pageTitle }) => {
       </div>
     </div>
   );
+
+  useEffect(() => {
+    if (!showNewItineraryPopup) {
+      console.log('Modal has been closed');
+    }
+  }, [showNewItineraryPopup]);
 
   return (
     <div
@@ -323,7 +400,7 @@ const Itinerary = ({ pageTitle }) => {
             <button onClick={handleNewItineraryCancel} className="itinerary-cancel-button">Cancel</button>
           </div>
         </Modal>
-        
+
         <Modal
           isOpen={showEditItineraryPopup}
           onRequestClose={() => setShowEditItineraryPopup(false)}
@@ -378,14 +455,21 @@ const Itinerary = ({ pageTitle }) => {
           )}
         </div>
         <div className="itinerary-content">
-          {isMapView ? (
-            <MapView data={selectedItinerary?.itinerary_data || []} />
-          ) : selectedItinerary ? (
-            selectedItinerary.itinerary_data.map((location, index) => renderLocationItem(location, index, index + 1))
-          ) : (
-            <p>Please select an itinerary or start a new one.</p>
-          )}
-        </div>
+  {isMapView ? (
+    <MapView data={selectedItinerary?.itinerary_data || []} />
+  ) : selectedItinerary ? (
+    selectedItinerary.itinerary_data.length > 0 ? (
+      sortItineraryData(selectedItinerary.itinerary_data).map((location, index) => {
+        const dayNumbers = calculateDayNumbers(sortItineraryData(selectedItinerary.itinerary_data));
+        return renderLocationItem(location, index, dayNumbers[index]);
+      })
+    ) : (
+      <p>This itinerary is empty.</p>
+    )
+  ) : (
+    <p>Please select an itinerary or start a new one.</p>
+  )}
+</div>
       </main>
       <Footer ref={footerRef} showCircles={true} handleMapView={() => setIsMapView(true)} />
     </div>
