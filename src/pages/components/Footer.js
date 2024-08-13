@@ -94,7 +94,7 @@ const Footer = forwardRef(({ showCircles = false }, ref) => {
           {isHomePage && (
             <div className="footer-content">
               <h3>Get Free Info</h3>
-              <p>at Visitor Information Center</p>
+              <p>at our Visitor Information Center</p>
             </div>
           )}
         </div>

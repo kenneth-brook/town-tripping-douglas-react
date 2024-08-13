@@ -19,7 +19,7 @@ const Header = forwardRef((props, ref) => {
   const { setKeyword, resetKeyword, sortData, isAscending, setIsAscending, setSelectedDate, handleNearMe, setNearMe, resetFilteredData, typeNames, setSelectedTypes } = useDataContext();
   const orientation = useOrientation();
   const location = useLocation();
-  const isNotHomePage = location.pathname !== '/home';
+  const isNotHomePage = location.pathname !== '/home' && location.pathname !== '/itinerary';
   const keywordInputRef = useRef(null);
   const navigate = useResettingNavigate();
   const [selectedDate, setDate] = useState(null);
