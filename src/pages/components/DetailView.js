@@ -19,6 +19,27 @@ import '../../sass/componentsass/DetailView.scss';
 import { useViewMode } from '../../hooks/ViewModeContext';
 import ShareModal from './ShareModal';
 
+const formatDate = (dateTime) => {
+  if (!dateTime) return 'N/A';
+
+  const date = new Date(dateTime);
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const year = date.getUTCFullYear();
+
+  return `${month}/${day}/${year}`;
+};
+
+const formatTime = (dateTime) => {
+  if (!dateTime) return 'N/A';
+
+  const date = new Date(dateTime);
+  const hours = String(date.getUTCHours()).padStart(2, '0');
+  const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+
+  return `${hours}:${minutes}`;
+};
+
 const DetailView = () => {
   const { id } = useParams();
   const location = useLocation();
@@ -90,27 +111,6 @@ const DetailView = () => {
 
   const googleMapsLink = `https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.long}`;
 
-  const formatDate = (dateTime) => {
-    if (!dateTime) return 'N/A';
-
-    const date = new Date(dateTime);
-    const month = String(date.getUTCMonth() + 1).padStart(2, '0'); // Months are zero-indexed
-    const day = String(date.getUTCDate()).padStart(2, '0');
-    const year = date.getUTCFullYear();
-
-    return `${month}/${day}/${year}`;
-  };
-
-  const formatTime = (dateTime) => {
-    if (!dateTime) return 'N/A';
-
-    const date = new Date(dateTime);
-    const hours = String(date.getUTCHours()).padStart(2, '0');
-    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
-
-    return `${hours}:${minutes}`;
-  };
-
   const handleBack = () => {
     navigate(-1);
   };
@@ -152,8 +152,8 @@ const DetailView = () => {
       <main
         className="internal-content"
         style={{
-          paddingTop: `calc(${headerHeight}px + 30px)`,
-          paddingBottom: `calc(${footerHeight}px + 50px)`,
+          paddingTop: `calc(${headerHeight}px)`,
+          paddingBottom: `calc(${footerHeight}px)`,
         }}
       >
         {isMapView ? (

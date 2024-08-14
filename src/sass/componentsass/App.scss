@@ -768,3 +768,11 @@ main {
 .s-menu-item svg {
   fill: rgb(191, 119, 47);
 }
+
+.mapboxgl-ctrl-bottom-right {
+  display: none !important;
+}
+
+.mapboxgl-ctrl-bottom-left {
+  display: none !important;
+}

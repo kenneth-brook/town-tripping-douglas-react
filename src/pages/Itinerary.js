@@ -92,10 +92,13 @@ const Itinerary = ({ pageTitle }) => {
   }, [updateHeights]);
 
   useEffect(() => {
-    if (isAuthenticated && userId) {
+    if (!isAuthenticated || !userId) {
+      console.log('User not authenticated, redirecting to login');
+      navigate('/login');
+    } else {
       fetchItineraries(userId);
     }
-  }, [isAuthenticated, userId, fetchItineraries]);
+  }, [isAuthenticated, userId, fetchItineraries, navigate]);
 
   useEffect(() => {
     updateComponentHeights();

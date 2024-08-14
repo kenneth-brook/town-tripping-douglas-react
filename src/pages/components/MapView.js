@@ -44,24 +44,36 @@ const centerMap = (map, data, userLocation, nearMe) => {
   const padding = window.innerWidth < 768 ? { top: 50, bottom: 150, left: 50, right: 50 } : { top: 50, bottom: 50, left: 50, right: 50 };
   const bounds = new mapboxgl.LngLatBounds();
 
+  // Include user location in the bounds
+  if (nearMe && userLocation) {
+    const userLat = parseFloat(userLocation.lat);
+    const userLon = parseFloat(userLocation.lon);
+
+    if (!isNaN(userLat) && !isNaN(userLon)) {
+      bounds.extend([userLon, userLat]);
+    }
+  }
+
+  // Include all valid location pins in the bounds
   data.forEach((item) => {
     if (item.valid) {
-      bounds.extend([parseFloat(item.long), parseFloat(item.lat)]);
-    } else {
-      console.error(`Invalid item coordinates for ${item.name}: (${item.lat}, ${item.long})`);
+      const itemLat = parseFloat(item.lat);
+      const itemLon = parseFloat(item.long);
+      bounds.extend([itemLon, itemLat]);
     }
   });
 
   if (!bounds.isEmpty()) {
     map.fitBounds(bounds, {
       padding,
-      maxZoom: 15,
+      maxZoom: 14, // Ensure the zoom isn't too close
       duration: 500,
     });
   } else {
     console.error('Bounds are empty, cannot fit map to bounds.');
   }
 };
+
 
 const addMarkers = (data, handleMarkerClick) => {
   return data.map((item) => {

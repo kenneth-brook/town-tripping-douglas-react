@@ -12,6 +12,20 @@ import { useNavigate } from 'react-router-dom';
 import DetailViewCard from './components/DetailViewCard';
 import ShareModal from './components/ShareModal'; // Import ShareModal
 
+// Define the formatDate function
+function formatDate(dateString) {
+  if (!dateString) return ''; // Defensive check for undefined or null dateString
+  const date = new Date(dateString);
+  if (isNaN(date)) return ''; // Check for invalid date
+
+  // Extract the date components in UTC to avoid timezone issues
+  const month = date.getUTCMonth() + 1; // Months are zero-indexed
+  const day = date.getUTCDate();
+  const year = date.getUTCFullYear();
+
+  return `${month}/${day}/${year}`;
+}
+
 const Events = ({ pageTitle }) => {
   const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext();
   const { data, loading, error } = useDataContext();
@@ -29,6 +43,7 @@ const Events = ({ pageTitle }) => {
   }, [headerRef, footerRef, updateHeights]);
 
   const sortedEventsData = useMemo(() => {
+    if (!data || !data.events) return []; // Defensive check for undefined data
     return data.events.slice().sort((a, b) => {
       const dateA = new Date(a.start_date);
       const dateB = new Date(b.start_date);
@@ -38,7 +53,7 @@ const Events = ({ pageTitle }) => {
         return dateB - dateA;
       }
     });
-  }, [data.events, sortOrder]);
+  }, [data, sortOrder]);
 
   const handleShare = (url, title) => {
     console.log('handleShare called with:', { url, title }); // Log the URL and title
@@ -57,33 +72,27 @@ const Events = ({ pageTitle }) => {
     </div>
   );
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const month = date.getMonth() + 1; // Months are zero-indexed
-    const day = date.getDate();
-    const year = date.getFullYear();
-    return `${month}/${day}/${year}`;
-  };
-
-  const renderEventsContent = () => (
-    <div className="two-column-layout">
-      {sortedEventsData.map((item) => (
-        <div key={item.id} className="content-item">
-          <h2>{item.name}</h2>
-          <p>{formatDate(item.start_date)}</p>
-          <div className="content-box">
-            <div className='box-top'>
-              {item.images && item.images.length > 0 && (
-                <img
-                  src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
-                  alt={item.name}
-                  className="content-image"
-                />
-              )}
-              <div className="text-box">
-                <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
+  const renderEventsContent = () => {
+    if (!sortedEventsData || sortedEventsData.length === 0) return null; // Defensive check before rendering
+    return (
+      <div className="two-column-layout">
+        {sortedEventsData.map((item) => (
+          <div key={item.id} className="content-item">
+            <h2>{item.name}</h2>
+            <p>{formatDate(item.start_date)}</p>
+            <div className="content-box">
+              <div className="box-top">
+                {item.images && item.images.length > 0 && (
+                  <img
+                    src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
+                    alt={item.name}
+                    className="content-image"
+                  />
+                )}
+                <div className="text-box">
+                  <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
+                </div>
               </div>
-            </div>
               <div className="reviews-container">
                 <button
                   className="more-button"
@@ -92,26 +101,29 @@ const Events = ({ pageTitle }) => {
                   more
                 </button>
               </div>
-            
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
-  );
+        ))}
+      </div>
+    );
+  };
 
-  const renderEventsDesktopContent = () => (
-    <div className="two-column-layout-desk">
-      {sortedEventsData.map((item) => (
-        <DetailViewCard
-          key={item.id}
-          item={item}
-          category="events"
-          navigate={navigate}
-          handleShare={orientation === 'desktop' ? handleShare : null} // Pass handleShare function conditionally
-        />
-      ))}
-    </div>
-  );
+  const renderEventsDesktopContent = () => {
+    if (!sortedEventsData || sortedEventsData.length === 0) return null; // Defensive check before rendering
+    return (
+      <div className="two-column-layout-desk">
+        {sortedEventsData.map((item) => (
+          <DetailViewCard
+            key={item.id}
+            item={item}
+            category="events"
+            navigate={navigate}
+            handleShare={orientation === 'desktop' ? handleShare : null} // Pass handleShare function conditionally
+          />
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div
@@ -135,7 +147,7 @@ const Events = ({ pageTitle }) => {
         {pageTitleContent}
         {loading && <div className="loader"></div>}
         {error && <p>{error}</p>}
-        {!loading && !error && (
+        {!loading && !error && sortedEventsData.length > 0 && (
           <div className="content">
             {isMapView ? (
               <MapView data={sortedEventsData} type="events" />

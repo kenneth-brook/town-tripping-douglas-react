@@ -41,18 +41,18 @@ const LoginPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError(null);
-
+  
     if (mode === 'register' && password !== repeatPassword) {
       setError('Passwords do not match');
       return;
     }
-
+  
     const url = mode === 'login'
       ? `https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/${stage}/auth/login`
       : `https://8pz5kzj96d.execute-api.us-east-1.amazonaws.com/${stage}/auth/register`;
-
+  
     const payload = { email, password };
-
+  
     try {
       const response = await fetch(url, {
         method: 'POST',
@@ -60,29 +60,38 @@ const LoginPage = () => {
         body: JSON.stringify(payload),
         credentials: 'include',
       });
-
+  
       if (!response.ok) {
         const errorMessage = await response.text();
         console.error('Error from server:', errorMessage);
         setError(errorMessage);
         return;
       }
-
+  
       const data = await response.json();
       console.log('Token received:', data.token);
       console.log('User ID received:', data.userId);
-
-      login(data.userId, data.token);
-
-      // Redirect immediately after login
-      const redirectTo = location.state?.from || '/itinerary';
-      console.log('Redirecting to:', redirectTo);
-      navigate(redirectTo);
+  
+      if (mode === 'login') {
+        // Only login user if mode is 'login'
+        login(data.userId, data.token);
+        const redirectTo = location.state?.from || '/itinerary';
+        console.log('Redirecting to:', redirectTo);
+        navigate(redirectTo);
+      } else {
+        // If registration is successful, redirect to login page
+        console.log('Registration successful, redirecting to login');
+        setMode('login');
+        setEmail('');
+        setPassword('');
+        setRepeatPassword('');
+        setError('Registration successful! Please log in.');
+      }
     } catch (error) {
       console.error('Login error:', error);
       setError('An error occurred. Please try again later.');
     }
-  };
+  };  
 
   const renderForm = () => {
     return (
