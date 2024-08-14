@@ -18,7 +18,7 @@ const App = () => {
           : 'portrait'
       }`}
     >
-      <Header />
+      
       <HomeContent />
       <Footer />
     </div>

@@ -41,68 +41,25 @@ const isValidCoordinate = (lat, lon) => {
 };
 
 const centerMap = (map, data, userLocation, nearMe) => {
-  if (nearMe && userLocation) {
-    const lat = parseFloat(userLocation.lat);
-    const lon = parseFloat(userLocation.lon);
-    if (!isNaN(lat) && !isNaN(lon)) {
-      let nearestMarker = null;
-      let minDistance = Infinity;
+  const padding = window.innerWidth < 768 ? { top: 50, bottom: 150, left: 50, right: 50 } : { top: 50, bottom: 50, left: 50, right: 50 };
+  const bounds = new mapboxgl.LngLatBounds();
 
-      data.forEach((item) => {
-        if (item.valid) {
-          const itemLat = parseFloat(item.lat);
-          const itemLon = parseFloat(item.long);
-          const distance = Math.sqrt(
-            (lat - itemLat) ** 2 + (lon - itemLon) ** 2
-          );
-          if (distance < minDistance) {
-            minDistance = distance;
-            nearestMarker = { lat: itemLat, lon: itemLon };
-          }
-        }
-      });
-
-      if (nearestMarker) {
-        const bounds = new mapboxgl.LngLatBounds();
-        bounds.extend([lon, lat]);
-        bounds.extend([nearestMarker.lon, nearestMarker.lat]);
-        map.fitBounds(bounds, {
-          padding: { top: 50, bottom: 50, left: 50, right: 50 },
-          maxZoom: 14,
-          duration: 500,
-        });
-      } else {
-        map.flyTo({
-          center: [lon, lat],
-          zoom: 14,
-          speed: 2,
-          offset: [0, 0],
-        });
-      }
+  data.forEach((item) => {
+    if (item.valid) {
+      bounds.extend([parseFloat(item.long), parseFloat(item.lat)]);
     } else {
-      console.error('Parsed user location resulted in NaN:', { lat, lon });
+      console.error(`Invalid item coordinates for ${item.name}: (${item.lat}, ${item.long})`);
     }
-  } else {
-    const bounds = new mapboxgl.LngLatBounds();
-    data.forEach((item) => {
-      if (item.valid) {
-        bounds.extend([parseFloat(item.long), parseFloat(item.lat)]);
-      } else {
-        console.error(
-          `Invalid item coordinates for ${item.name}: (${item.lat}, ${item.long})`
-        );
-      }
+  });
+
+  if (!bounds.isEmpty()) {
+    map.fitBounds(bounds, {
+      padding,
+      maxZoom: 15,
+      duration: 500,
     });
-
-    if (!bounds.isEmpty()) {
-      map.fitBounds(bounds, {
-        padding: { top: 50, bottom: 50, left: 50, right: 50 },
-        maxZoom: 15,
-        duration: 500,
-      });
-    } else {
-      console.error('Bounds are empty, cannot fit map to bounds.');
-    }
+  } else {
+    console.error('Bounds are empty, cannot fit map to bounds.');
   }
 };
 
@@ -214,10 +171,31 @@ const MapView = ({ data, type, selectedLocation }) => {
   const { addToItinerary } = useItineraryContext();
   const navigate = useNavigate();
 
+  const [mapHeight, setMapHeight] = useState('70vh'); // Default to 70vh
+
   const validatedData = data.map((item) => ({
     ...item,
     valid: isValidCoordinate(item.lat, item.long),
   }));
+
+  useEffect(() => {
+    const updateMapHeight = () => {
+      if (window.innerWidth > window.innerHeight) {
+        // Landscape mode
+        setMapHeight('85vh'); // Adjust to your preferred height in landscape
+      } else {
+        // Portrait mode
+        setMapHeight('70vh'); // Adjust to your preferred height in portrait
+      }
+    };
+
+    updateMapHeight(); // Set initial height
+    window.addEventListener('resize', updateMapHeight);
+
+    return () => {
+      window.removeEventListener('resize', updateMapHeight);
+    };
+  }, []);
 
   useEffect(() => {
     if (mapLoaded) {
@@ -225,11 +203,15 @@ const MapView = ({ data, type, selectedLocation }) => {
       if (selectedLocation && isValidCoordinate(selectedLocation.lat, selectedLocation.long)) {
         const lat = parseFloat(selectedLocation.lat);
         const lon = parseFloat(selectedLocation.long);
+
+        // Adjust offset based on screen orientation and size
+        const offsetY = window.innerHeight * 0.25; // Push markers up by 25% of screen height
+
         map.flyTo({
           center: [lon, lat],
           zoom: 14,
           speed: 2,
-          offset: [0, -240],
+          offset: [0, -offsetY],
         });
         setSelectedPlace(selectedLocation);
       } else {
@@ -256,11 +238,14 @@ const MapView = ({ data, type, selectedLocation }) => {
     if (mapRef.current) {
       const map = mapRef.current.getMap();
       if (item.valid) {
+        // Adjust offset based on screen orientation and size
+        const offsetY = window.innerHeight * 0.25; // Push markers up by 25% of screen height
+
         map.flyTo({
           center: [parseFloat(item.long), parseFloat(item.lat)],
           zoom: 14,
           speed: 2,
-          offset: [0, 0],
+          offset: [0, -offsetY],
         });
       } else {
         console.error(
@@ -275,11 +260,11 @@ const MapView = ({ data, type, selectedLocation }) => {
       <Map
         ref={mapRef}
         initialViewState={{
-          longitude: -100,
-          latitude: 40,
+          longitude: userLocation?.lon || -100,
+          latitude: userLocation?.lat || 40,
           zoom: 5,
         }}
-        style={{ width: '100%', height: '100vh' }}
+        style={{ width: '100%', height: mapHeight }}  // Dynamically adjust height
         mapStyle="mapbox://styles/mapbox/streets-v11"
         mapboxAccessToken="pk.eyJ1Ijoid29tYmF0MTk3MiIsImEiOiJjbDN1bmdqM2MyZHF2M2J1djg4bzRncWZpIn0.dXd3qQMnwuob5XB9HKXgkw"
         onLoad={() => setMapLoaded(true)}
@@ -287,15 +272,12 @@ const MapView = ({ data, type, selectedLocation }) => {
         {addMarkers(validatedData, handleMarkerClick)}
         {selectedPlace && renderPopup(selectedPlace, setSelectedPlace, addToItinerary, navigate, setIsMapView)}
         {userPin && (
-          <>
-            <Marker
-              longitude={userPin.lon}
-              latitude={userPin.lat}
-              anchor="bottom"
-              color="red"
-            >
-            </Marker>
-          </>
+          <Marker
+            longitude={userPin.lon}
+            latitude={userPin.lat}
+            anchor="bottom"
+            color="red"
+          />
         )}
       </Map>
     </div>
@@ -303,3 +285,5 @@ const MapView = ({ data, type, selectedLocation }) => {
 };
 
 export default MapView;
+
+   

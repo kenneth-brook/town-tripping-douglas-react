@@ -4,6 +4,9 @@ import { ReactComponent as NearMe } from '../../assets/icos/near-me.svg';
 import { ReactComponent as Alpha } from '../../assets/icos/alphabetic.svg';
 import { ReactComponent as Cuisine } from '../../assets/icos/cuisine.svg';
 import { ReactComponent as Cross } from '../../assets/icos/cross.svg';
+import { ReactComponent as Play } from '../../assets/icos/play.svg';
+import { ReactComponent as Stay } from '../../assets/icos/stay.svg';
+import { ReactComponent as Shop } from '../../assets/icos/shop.svg';
 import '../../sass/componentsass/SortMenu.scss';
 
 function SortMenu({ isOpen, top, menuList = [], orientation, toggleMenu2, selectedDate, setDate }) {
@@ -25,9 +28,9 @@ function SortMenu({ isOpen, top, menuList = [], orientation, toggleMenu2, select
     'Near Me': NearMe,
     Alphabetical: Alpha,
     'Cuisine Type': Cuisine,
-    'Play Type': Cuisine, // Placeholder icon for Play Type
-    'Stay Type': Cuisine, // Placeholder icon for Stay Type
-    'Shop Type': Cuisine, // Placeholder icon for Shop Type
+    'Play Type': Play, // Placeholder icon for Play Type
+    'Stay Type': Stay, // Placeholder icon for Stay Type
+    'Shop Type': Shop, // Placeholder icon for Shop Type
   };
 
   return (

@@ -3,10 +3,17 @@ import React, { useEffect, useState } from 'react';
 import Circle from './Circle';
 import chair from '../../assets/images/chair.png';
 import { useOrientation } from '../../hooks/OrientationContext';
+import { useHeightContext } from '../../hooks/HeightContext';
+import Header from './Header'
 
 const HomeContent = () => {
   const [circles, setCircles] = useState([]);
   const orientation = useOrientation();
+  const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext();
+
+  useEffect(() => {
+    updateHeights();
+  }, [headerRef, footerRef, updateHeights]);
 
   useEffect(() => {
     const iconsKeys = ['dine', 'play', 'stay', 'maps', 'events', 'shop'];
@@ -30,6 +37,8 @@ const HomeContent = () => {
   }, [orientation]);
 
   return (
+    <>
+    <Header ref={headerRef} />
     <main className="main-content homePage">
       <h1 className="exploring-header">Tap to begin exploring</h1>
       <div id="main-container">
@@ -62,6 +71,7 @@ const HomeContent = () => {
         </div>
       </div>
     </main>
+    </>
   );
 };
 
