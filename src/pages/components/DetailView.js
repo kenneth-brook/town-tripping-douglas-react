@@ -153,7 +153,7 @@ const DetailView = () => {
         className="internal-content"
         style={{
           paddingTop: `calc(${headerHeight}px)`,
-          paddingBottom: `calc(${footerHeight}px)`,
+          paddingBottom: `calc(${footerHeight}px + 90px)`,
         }}
       >
         {isMapView ? (

@@ -206,9 +206,9 @@ const Header = forwardRef((props, ref) => {
               : 'portrait'
           }`}
         >
-          <a href="/home">
+          <Link to="/home">
             <img src={logoDesk} alt="Header Image" className="centered-image" />
-          </a>
+          </Link>
         </div>
         <button
           className="circle-button"
