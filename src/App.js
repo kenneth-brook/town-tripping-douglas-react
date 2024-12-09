@@ -20,8 +20,11 @@ import { ViewModeProvider } from './hooks/ViewModeContext';
 import { AuthProvider, useAuth } from './hooks/AuthContext'; // Import the AuthProvider and useAuth hook
 import { ItineraryProvider } from './hooks/ItineraryContext';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import initializeAnalytics from './analytics';
 
 function App() {
+  initializeAnalytics();
+  
   useEffect(() => {
     const adjustViewportHeight = () => {
       const vh = window.innerHeight * 0.01;
