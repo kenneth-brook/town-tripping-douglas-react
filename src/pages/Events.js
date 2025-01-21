@@ -97,7 +97,7 @@ const Events = ({ pageTitle }) => {
 
                 const finalUrl = isAbsolute
                   ? rawUrl
-                  : `https://douglas.365easyflow.com/easyflow-images/${rawUrl}`;
+                  : rawUrl; //`https://douglas.365easyflow.com/easyflow-images/${rawUrl}`;
 
                 return (
                   <img
