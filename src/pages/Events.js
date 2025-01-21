@@ -83,18 +83,19 @@ const Events = ({ pageTitle }) => {
             <div className="content-box">
               <div className="box-top">
               {item.images && item.images.length > 0 && (() => {
-                let rawUrl = item.images[0] || '';
+                let rawUrl = item.images[0] || "";
 
-                // 1) Remove leading/trailing curly braces if they exist
-                //    e.g., turns "{https://...}" into "https://..."
-                rawUrl = rawUrl.replace(/^\{+|\}+$/g, '').trim();
+                // Remove leading/trailing braces:
+                rawUrl = rawUrl.replace(/^\{+|\}+$/g, "").trim();
 
-                // 2) If there are extra quotes, remove them:
-                //    turns "\"https://...\"" into "https://..."
-                rawUrl = rawUrl.replace(/^"+|"+$/g, '').trim();
+                // Remove leading/trailing quotes:
+                rawUrl = rawUrl.replace(/^"+|"+$/g, "").trim();
 
-                // 3) Now check if it starts with https:
-                const finalUrl = rawUrl.startsWith('https://')
+                // Now check if it's already a full URL:
+                const isAbsolute =
+                  rawUrl.startsWith("https://") || rawUrl.startsWith("http://");
+
+                const finalUrl = isAbsolute
                   ? rawUrl
                   : `https://douglas.365easyflow.com/easyflow-images/${rawUrl}`;
 
@@ -106,6 +107,7 @@ const Events = ({ pageTitle }) => {
                   />
                 );
               })()}
+
                 <div className="text-box">
                   <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
                 </div>
