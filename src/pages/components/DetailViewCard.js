@@ -67,14 +67,31 @@ const DetailViewCard = ({ item, category, handleShare }) => {
   return (
     <div className="content-item">
       <div className="top-container">
-        {item.images && item.images.length > 0 && (
-          <div className="image-container">
-            <img
-              src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
-              alt={item.name}
-            />
-          </div>
-        )}
+      {item.images && item.images.length > 0 && (() => {
+                let rawUrl = item.images[0] || "";
+
+                // Remove leading/trailing braces:
+                rawUrl = rawUrl.replace(/^\{+|\}+$/g, "").trim();
+
+                // Remove leading/trailing quotes:
+                rawUrl = rawUrl.replace(/^"+|"+$/g, "").trim();
+
+                // Now check if it's already a full URL:
+                const isAbsolute =
+                  rawUrl.startsWith("https://") || rawUrl.startsWith("http://");
+
+                const finalUrl = isAbsolute
+                  ? rawUrl
+                  : `https://douglas.365easyflow.com/easyflow-images/${rawUrl}`;
+
+                return (
+                  <img
+                    src={finalUrl}
+                    alt={item.name}
+                    className="content-image"
+                  />
+                );
+              })()}
         <div className="text-container">
           <h2>{item.name}</h2>
           {item.start_date && <h3>{formatDate(item.start_date)}</h3>}

@@ -162,14 +162,31 @@ const DetailView = () => {
           <div className="view-card content-item">
             <div className="top-image">
               <div className="img-back">
-                {item.images && item.images.length > 0 && (
-                  <div className="image-container">
-                    <img
-                      src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
-                      alt={item.name}
-                    />
-                  </div>
-                )}
+              {item.images && item.images.length > 0 && (() => {
+                let rawUrl = item.images[0] || "";
+
+                // Remove leading/trailing braces:
+                rawUrl = rawUrl.replace(/^\{+|\}+$/g, "").trim();
+
+                // Remove leading/trailing quotes:
+                rawUrl = rawUrl.replace(/^"+|"+$/g, "").trim();
+
+                // Now check if it's already a full URL:
+                const isAbsolute =
+                  rawUrl.startsWith("https://") || rawUrl.startsWith("http://");
+
+                const finalUrl = isAbsolute
+                  ? rawUrl
+                  : `https://douglas.365easyflow.com/easyflow-images/${rawUrl}`;
+
+                return (
+                  <img
+                    src={finalUrl}
+                    alt={item.name}
+                    className="content-image"
+                  />
+                );
+              })()}
                 {orientation === 'landscape-primary' ? (
                   <a onClick={handleBack} className="web-button-landscape">
                     <BackArrow />
