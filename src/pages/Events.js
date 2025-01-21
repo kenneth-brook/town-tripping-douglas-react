@@ -82,19 +82,30 @@ const Events = ({ pageTitle }) => {
             <p>{formatDate(item.start_date)}</p>
             <div className="content-box">
               <div className="box-top">
-              {item.images && item.images.length > 0 && (
-                <img
-                  src={
-                    // If the first image is already an absolute URL (starts with "https://"),
-                    // use it directly. Otherwise, prepend your image server URL.
-                    item.images[0].startsWith('https://')
-                      ? item.images[0]
-                      : `https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`
-                  }
-                  alt={item.name}
-                  className="content-image"
-                />
-              )}
+              {item.images && item.images.length > 0 && (() => {
+                let rawUrl = item.images[0] || '';
+
+                // 1) Remove leading/trailing curly braces if they exist
+                //    e.g., turns "{https://...}" into "https://..."
+                rawUrl = rawUrl.replace(/^\{+|\}+$/g, '').trim();
+
+                // 2) If there are extra quotes, remove them:
+                //    turns "\"https://...\"" into "https://..."
+                rawUrl = rawUrl.replace(/^"+|"+$/g, '').trim();
+
+                // 3) Now check if it starts with https:
+                const finalUrl = rawUrl.startsWith('https://')
+                  ? rawUrl
+                  : `https://douglas.365easyflow.com/easyflow-images/${rawUrl}`;
+
+                return (
+                  <img
+                    src={finalUrl}
+                    alt={item.name}
+                    className="content-image"
+                  />
+                );
+              })()}
                 <div className="text-box">
                   <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
                 </div>
