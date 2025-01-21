@@ -82,13 +82,31 @@ const AllView = ({ pageTitle }) => {
             <div key={item.id} className="content-item">
               <h2>{item.name}</h2>
               <div className="content-box">
-                {item.images && item.images.length > 0 && (
+              {item.images && item.images.length > 0 && (() => {
+                let rawUrl = item.images[0] || "";
+
+                // Remove leading/trailing braces:
+                rawUrl = rawUrl.replace(/^\{+|\}+$/g, "").trim();
+
+                // Remove leading/trailing quotes:
+                rawUrl = rawUrl.replace(/^"+|"+$/g, "").trim();
+
+                // Now check if it's already a full URL:
+                const isAbsolute =
+                  rawUrl.startsWith("https://") || rawUrl.startsWith("http://");
+
+                const finalUrl = isAbsolute
+                  ? rawUrl
+                  : `https://douglas.365easyflow.com/easyflow-images/${rawUrl}`;
+
+                return (
                   <img
-                    src={`https://douglas.365easyflow.com/easyflow-images/${item.images[0]}`}
+                    src={finalUrl}
                     alt={item.name}
                     className="content-image"
                   />
-                )}
+                );
+              })()}
                 <div className="text-box">
                   <p dangerouslySetInnerHTML={{ __html: item.description }}></p>
                   <div className="reviews-container">
