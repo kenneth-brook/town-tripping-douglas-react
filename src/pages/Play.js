@@ -19,6 +19,9 @@ const Play = ({ pageTitle }) => {
   const navigate = useNavigate();
   const orientation = useOrientation();
   const playData = data.play;
+  const filteredPlayData = playData.filter(
+    (item) => !item.play_types.includes(86)
+  );
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
@@ -109,7 +112,7 @@ const Play = ({ pageTitle }) => {
 
   const renderPlayDesktopContent = () => (
     <div className="two-column-layout-desk">
-      {playData.map((item) => (
+      {filteredPlayData.map((item) => (
         <DetailViewCard
           key={item.id}
           item={item}
@@ -146,7 +149,7 @@ const Play = ({ pageTitle }) => {
         {!loading && !error && (
           <div className="content">
             {isMapView ? (
-              <MapView data={playData} type="play" />
+              <MapView data={filteredPlayData} type="play" />
             ) : orientation === 'desktop' ? (
               renderPlayDesktopContent()
             ) : (
