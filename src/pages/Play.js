@@ -22,6 +22,7 @@ const Play = ({ pageTitle }) => {
   const filteredPlayData = playData.filter(item => {
     return !(item.play_types && item.play_types.hasOwnProperty("86"));
   });
+  console.log(filteredPlayData)
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
