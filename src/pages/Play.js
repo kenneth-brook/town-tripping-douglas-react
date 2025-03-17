@@ -24,7 +24,7 @@ const Play = ({ pageTitle }) => {
     
     // When play_types is an array, check if it includes 86
     if (Array.isArray(play_types)) {
-      return !play_types.includes(86);
+      return !play_types.includes(86) && !play_types.includes("86");
     }
     
     // When play_types is an object, check if it has a key "86"
