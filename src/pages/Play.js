@@ -19,9 +19,9 @@ const Play = ({ pageTitle }) => {
   const navigate = useNavigate();
   const orientation = useOrientation();
   const playData = data.play;
-  const filteredPlayData = playData.filter(
-    (item) => !item.play_types.includes(86)
-  );
+  const filteredPlayData = playData.filter(item => {
+    return !(item.play_types && item.play_types.hasOwnProperty("86"));
+  });
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
