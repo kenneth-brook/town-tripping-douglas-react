@@ -19,8 +19,21 @@ const Play = ({ pageTitle }) => {
   const navigate = useNavigate();
   const orientation = useOrientation();
   const playData = data.play;
-  const filteredPlayData = playData.filter(item => {
-    return !(item.play_types && item.play_types.hasOwnProperty("86"));
+  const filteredPlayData = playData.filter((item) => {
+    const { play_types } = item;
+    
+    // When play_types is an array, check if it includes 86
+    if (Array.isArray(play_types)) {
+      return !play_types.includes(86);
+    }
+    
+    // When play_types is an object, check if it has a key "86"
+    if (play_types && typeof play_types === 'object') {
+      return !Object.keys(play_types).includes("86");
+    }
+    
+    // If play_types is missing or not one of the expected types, keep the item
+    return true;
   });
   console.log(filteredPlayData)
 
