@@ -43,15 +43,17 @@ const Events = ({ pageTitle }) => {
   }, [headerRef, footerRef, updateHeights]);
 
   const sortedEventsData = useMemo(() => {
-    if (!data || !data.events) return []; // Defensive check for undefined data
+    if (!data || !data.events) return [];
+    const specialEventName = "Wings & Things Festival and Fly-in";
     return data.events.slice().sort((a, b) => {
+      // Check if one of the events is the special event.
+      if (a.name === specialEventName && b.name !== specialEventName) return -1;
+      if (b.name === specialEventName && a.name !== specialEventName) return 1;
+      
+      // If neither (or both) are the special event, sort by date.
       const dateA = new Date(a.start_date);
       const dateB = new Date(b.start_date);
-      if (sortOrder === 'asc') {
-        return dateA - dateB;
-      } else {
-        return dateB - dateA;
-      }
+      return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
     });
   }, [data, sortOrder]);
 
