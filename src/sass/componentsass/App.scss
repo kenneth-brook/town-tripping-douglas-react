@@ -781,7 +781,7 @@ main {
   .content-item {
     padding-bottom: 0;
   }
-  
+
   .content-box {
     flex-direction: column;
     margin: 0;
@@ -793,6 +793,7 @@ main {
 
   .box-top img {
     width: 100%;
+    max-height: 300px;
   }
 
   .text-box p {
