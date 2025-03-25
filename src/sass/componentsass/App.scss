@@ -776,3 +776,30 @@ main {
 .mapboxgl-ctrl-bottom-left {
   display: none !important;
 }
+
+@media only screen and (max-width: 1800px) {
+  .content-box {
+    flex-direction: column;
+    margin: 0;
+  }
+
+  .box-top img {
+    width: 100%;
+  }
+
+  .text-box p {
+    max-height: 200px;
+  }
+
+  .reviews-container {
+    width: 100%;
+  }
+
+  .reviews-container > *:nth-child(odd) {
+    background-color: #DEF3F8;
+  }
+  
+  .reviews-container > *:nth-child(even) {
+    background-color: #FFFFFF;
+  }
+}
