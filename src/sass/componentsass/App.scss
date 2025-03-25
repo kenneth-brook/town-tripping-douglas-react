@@ -778,6 +778,10 @@ main {
 }
 
 @media only screen and (max-width: 700px) {
+  .content-item {
+    padding-bottom: 0;
+  }
+  
   .content-box {
     flex-direction: column;
     margin: 0;
@@ -797,6 +801,7 @@ main {
 
   .reviews-container {
     width: 100%;
+    padding: 25px 0;
   }
 
   .content-item:nth-child(odd) .reviews-container {
