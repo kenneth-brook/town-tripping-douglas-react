@@ -799,11 +799,11 @@ main {
     width: 100%;
   }
 
-  .reviews-container:nth-child(odd) {
+  .content-item:nth-child(odd) .reviews-container {
     background-color: #DEF3F8;
   }
   
-  .reviews-container:nth-child(even) {
+  .content-item:nth-child(even) .reviews-container {
     background-color: #FFFFFF;
   }
 }
