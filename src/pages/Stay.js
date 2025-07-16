@@ -12,7 +12,19 @@ import { useNavigate } from 'react-router-dom';
 import DetailViewCard from './components/DetailViewCard';
 import ShareModal from './components/ShareModal'; // Import ShareModal
 
-const displayOrder = [
+const Stay = ({ pageTitle }) => {
+  const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext();
+  const { data, loading, error } = useDataContext();
+  const { isMapView, setIsMapView } = useViewMode();
+  const stayData = data.stay;
+  const navigate = useNavigate();
+  const orientation = useOrientation();
+
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
+  const [shareTitle, setShareTitle] = useState('');
+
+  const displayOrder = [
     "Fairfield Inn & Suites", "Hampton Inn",
     "Holiday Inn Express", "Jameson Inn",
     "Super 8 By Wyndham", "Western Inn and Suites",
@@ -32,18 +44,6 @@ const sortedStayData = useMemo(() => {
   
   return [...mapped, ...remaining];
 }, [stayData]);
-
-const Stay = ({ pageTitle }) => {
-  const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext();
-  const { data, loading, error } = useDataContext();
-  const { isMapView, setIsMapView } = useViewMode();
-  const stayData = data.stay;
-  const navigate = useNavigate();
-  const orientation = useOrientation();
-
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [shareUrl, setShareUrl] = useState('');
-  const [shareTitle, setShareTitle] = useState('');
 
   useEffect(() => {
     updateHeights();
