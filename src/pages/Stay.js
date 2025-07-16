@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { ReactComponent as StayIcon } from '../assets/icos/stay.svg';
@@ -11,6 +11,27 @@ import MapView from './components/MapView';
 import { useNavigate } from 'react-router-dom';
 import DetailViewCard from './components/DetailViewCard';
 import ShareModal from './components/ShareModal'; // Import ShareModal
+
+const displayOrder = [
+    "Fairfield Inn & Suites", "Hampton Inn",
+    "Holiday Inn Express", "Jameson Inn",
+    "Super 8 By Wyndham", "Western Inn and Suites",
+    "General Coffee State Park Cabin Rentals", "Blueberry Pointe",
+    "Econo Lodge", "Comfortel Suites",
+    "Benton’s Motel", "OYO Hotel"
+];
+
+const sortedStayData = useMemo(() => {
+  if (!Array.isArray(stayData)) return [];
+
+  const mapped = displayOrder
+    .map(name => stayData.find(item => item.name === name))
+    .filter(Boolean);
+
+  const remaining = stayData.filter(item => !displayOrder.includes(item.name));
+  
+  return [...mapped, ...remaining];
+}, [stayData]);
 
 const Stay = ({ pageTitle }) => {
   const { headerRef, footerRef, headerHeight, footerHeight, updateHeights } = useHeightContext();
@@ -69,7 +90,7 @@ const Stay = ({ pageTitle }) => {
 
   const renderStayContent = () => (
     <div className="two-column-layout">
-      {stayData.map((item) => (
+      {sortedStayData.map((item) => (
         <div key={item.id} className="content-item">
           <h2>{item.name}</h2>
           <div className="content-box">
@@ -109,7 +130,7 @@ const Stay = ({ pageTitle }) => {
 
   const renderStayDesktopContent = () => (
     <div className="two-column-layout-desk">
-      {stayData.map((item) => (
+      {sortedStayData.map((item) => (
         <DetailViewCard
           key={item.id}
           item={item}
